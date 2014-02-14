@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="col-md-offset-2 col-md-6">
+    <h3>Create new request from scratch</h3>
+    <div id="create-new-req-form">
+
+      <form class="form-horizontal" role="form">
+        <!-- Title -->
+        <div class="form-group">
+          <label for="inputTitle" class="col-sm-3 control-label">Title</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputTitle" placeholder="Title">
+          </div>
+        </div>
+        <!-- CMSSW release -->
+        <div class="form-group">
+          <label for="inputCmsswRelease" class="col-sm-3 control-label">CMSSW release</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="inputCmsswRelease" placeholder="CMSSW release">
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="form-group">
+          <div class="col-sm-12">
+            <button type="submit" class="btn btn-success btn-block">Submit</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Add step button -->
+      <div ng-click="addStep()" ng-hide="showStepForm">
+        <button type="button" class="btn btn-default">
+          <i class="fa fa-plus-square-o"></i> Add step
+        </button>
+      </div>
+
+      <!-- End of create request form -->
+
+      <!-- Add step form -->
+      <div ng-show="showStepForm">
+        <h3>Form to create step</h3>
+        <!-- step input fileds -->
+
+        <!-- Form start -->
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="stepTitle" class="col-sm-1 control-label">Title</label>
+            <div class="col-sm-9">
+              <input ng-model="currentStep.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
+            </div>
+          </div>
+
+          <div ng-repeat="param in currentStep.parameters">
+            <div class="form-group">
+              <label for="parameterFlag" class="col-sm-1 control-label">Flag</label>
+              <div class="col-sm-4">
+                <input ng-model="param.key" type="text" class="form-control" id="parameterFlag" placeholder="Flag">
+              </div>
+
+              <label for="parameterValue" class="col-sm-1 control-label">Value</label>
+              <div class="col-sm-4">
+                <input ng-model="param.value" type="text" class="form-control" id="parameterValue" placeholder="Value">
+              </div>
+              <button ng-click="removeParametersRow(index)" type="button" class="btn btn-sm btn-danger" class="col-sm-1">-</button>
+
+            </div>
+          </div>
+
+          <!-- <div class="row"> -->
+          <div id="step-add-remove-buttons" class="col-sm-4">
+            <button ng-click="addParametersRow()" type="button" class="btn btn-success">+</button>
+          </div>
+          <!-- </div> -->
+
+          <div id="step-buttons" class="col-sm-4 pull-right">
+            <button ng-click="discardStepCreation()" type="button" class="btn btn-danger">Discard</button>
+            <button ng-click="saveStep()" type="button" class="btn btn-success">Save</button>
+          </div>
+        </form>
+        <!-- Form end -->
+      </div>
+
+      <!-- End of add step form -->
+    </div>
+  </div>
+
+  <!-- Added steps in right side -->
+  <div ng-model="steps" id="added-steps-list" ng-show="steps.length" class="list-group col-sm-4">
+    <a class="list-group-item active">Created steps</a>
+    <div ng-repeat="step in steps" class="list-group-item step">
+        <span>{{ step.title}}</span>
+        <div class="pull-right">
+        <i ng-click="editStep($index)" class="fa fa-pencil-square-o fa-lg"></i>
+        <i ng-click="removeStep($index)" class="fa fa-times fa-lg"></i>
+    </div>
+  </div>
+</div>

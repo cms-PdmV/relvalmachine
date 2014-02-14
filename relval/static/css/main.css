@@ -1,0 +1,24 @@
+html, body {
+  height: 100%;
+}
+
+#container {
+    min-height: 100%;
+    padding-bottom: 50px;
+}
+
+#footer {
+  position: relative;
+  float: right;
+  margin-top: -50px; /* negative value of footer height */
+  height: 50px;
+  clear:both;
+  padding: 20px;
+  padding-right: 50px;
+}
+
+/* styling for added steps list*/
+
+#added-steps-list .step:hover  {
+  background-color: #f5f5f5;
+}
