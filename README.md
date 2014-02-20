@@ -11,3 +11,11 @@ After that You can create database with following command:
 If You want to drop database for whatever reason you can use fallowing command:
 
     python relval/database/drop.py
+
+### Unit tests
+
+You can run unit tests using command:
+
+    python tests_run.py
+
+All unit tests are located in `tests` package

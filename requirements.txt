@@ -1,2 +1,4 @@
 flask==0.10
 flask-sqlalchemy==0.16
+cx-Oracle==5.1.2
+#Flask-Testing==0.4
