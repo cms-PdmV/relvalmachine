@@ -9,7 +9,6 @@ HTML_TEMPLATES = "relval/templates/%s"
 
 @app.route('/')
 def index():
-    print app.template_folder
     return make_response(open(HTML_TEMPLATES % 'index.html').read())
 
 @app.route('/favicon.ico')
