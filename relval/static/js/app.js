@@ -2,7 +2,8 @@
 
 var relval = angular.module('relval',[
         'ngRoute',
-        'relvalControllers'
+        'relvalControllers',
+        'relvalDirectives'
     ]);
 
 relval.config(function($logProvider){

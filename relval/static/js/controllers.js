@@ -71,8 +71,16 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
         $scope.removeStep = function(index) {
             title = $scope.steps[index].title;
             removeApproved = false;
-            bootbox.confirm("Remove step " + title, function(removeApproved) {
+            bootbox.confirm("Do You really want to remove step " + title + " ?", function(removeApproved) {
                 if (removeApproved) {
+                    // if current step is the one we are removing then clean it up
+                    if ($scope.currentStep.hasOwnProperty('id')
+                        && $scope.currentStep.id == $scope.steps[index].id) {
+
+                        $scope.currentStep = {};
+                        $scope.showStepForm = false;
+                    }
+
                     $scope.steps.splice(index, 1);
                     $scope.$apply();
                 }
