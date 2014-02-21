@@ -2,6 +2,7 @@ __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
 #TODO: figure out how to hide those in git
+# This is local setup. It works only on my pc :)
 RELVAL_DB_PASSWORD = "123456"
 RELVAL_DB_USER = "zee"
 RELVAL_DB_HOST = "localhost"
