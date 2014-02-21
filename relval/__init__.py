@@ -8,7 +8,5 @@ app = Flask(__name__, template_folder="relval/templates")
 app.config.from_object('relval.config')
 db = SQLAlchemy(app)
 
-# print app.config
-
 import relval.views
 import relval.database.models
