@@ -67,6 +67,12 @@ class Revisions(db.Model):
 
     #TODO: add __repr__
 
+predefined_blobs_association = db.Table(
+    'predefined_blobs_association',
+    db.Column('step_id', db.Integer, db.ForeignKey('steps.id')),
+    db.Column('predefined_blob_id', db.Integer, db.ForeignKey('predefined_blob.id'))
+)
+
 
 class Steps(db.Model):
     __tablename__ = "steps"
@@ -78,6 +84,20 @@ class Steps(db.Model):
     revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=False)
 
     parameters = db.relationship("Parameters", backref="step")
+    predefined_blobs = db.relationship(
+        'PredefinedBlob',
+        secondary=predefined_blobs_association,
+        backref=db.backref("steps", lazy="dynamic"))
+
+    #TODO: add __repr__
+
+
+class PredefinedBlob(db.Model):
+    __tablename__ = "predefined_blob"
+    id = db.Column("id", db.Integer, db.Sequence("predefined_blob_id_seq"), primary_key=True)
+    title = db.Column("title", db.String(256))
+
+    parameters = db.relationship("Parameters", backref="predefined_blob")
 
     #TODO: add __repr__
 
@@ -86,6 +106,8 @@ class Parameters(db.Model):
     id = db.Column("id", db.Integer, db.Sequence("parameter_id_seq"), primary_key=True)
     flag = db.Column("flag", db.String(256))
     value = db.Column("value", db.String(256))
-    step_id = db.Column("step_id", db.Integer, db.ForeignKey("steps.id"), nullable=False)
+    step_id = db.Column("step_id", db.Integer, db.ForeignKey("steps.id"), nullable=True)
+    predefined_blob_id = db.Column(
+        "predefined_blob_id", db.Integer, db.ForeignKey("predefined_blob.id"), nullable=True)
 
     #TODO: add __repr__
