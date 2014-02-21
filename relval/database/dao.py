@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users
+from relval.database.models import Users, Requests
 
 
 class UsersDao(object):
@@ -36,3 +36,12 @@ class RequestsDao(object):
     def insertRequestObject(self, request):
         db.session.add(request)
         db.session.commit()
+
+
+class RevisionsDao(object):
+
+    def addRevisionToRequest(self, request_id, revision):
+        request = Requests.query.get(request_id)
+        last_revision = max([rev.revision_number for rev in request.revisions])
+        revision.revision_number = last_revision + 1
+        request.revisions.append(revision)

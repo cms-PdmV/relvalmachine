@@ -5,7 +5,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
     Script for creating database from scratch.
     cd into app root folder and run
-    Use `python relval/database/create.py`
+    `python relval/database/create.py`
 """
 
 from relval import db

@@ -5,7 +5,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
     Script for dropping database.
     cd into app root folder and run
-    Use `python relval/database/drop.py`
+    `python relval/database/drop.py`
 """
 
 from relval import db

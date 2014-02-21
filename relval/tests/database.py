@@ -6,8 +6,9 @@ __email__ = "zygimantas.gatelis@cern.ch"
     Unit tests for database layer
 """
 
+from relval.tests import factory
 from relval.tests.base import BaseTestsCase
-from relval.database.dao import UsersDao, RequestsDao
+from relval.database.dao import UsersDao, RequestsDao, RevisionsDao
 from relval.database.models import Users, Requests, Revisions, Steps
 
 
@@ -16,12 +17,7 @@ class UsersDaoTests(BaseTestsCase):
     def setUp(self):
         BaseTestsCase.setUp(self)
         self.users_dao = UsersDao()
-
-        self.test_user = Users(
-            user_name="TestUsername",
-            email="test@mail",
-            role="user",
-            notifications=True)
+        self.test_user = factory.user()
 
     def test_single_user_insert(self):
         user = self.test_user
@@ -55,41 +51,34 @@ class RequestsDaoTests(BaseTestsCase):
     def setUp(self):
         BaseTestsCase.setUp(self)
         self.request_dao = RequestsDao()
-        self.test_request = Requests(
-            status="NEW",
-            test_status="NOT-TESTED",
-            priority=1,
-            type="TYPE",
-            cmssw_release="7_0_0",
-            description="test description",
-            log_url="test-log-url",
-            event=100,
-            user=Users(
-                user_name="TestUsername",
-                email="test@mail",
-                role="user",
-                notifications=True),
-            revisions=[
-                Revisions(
-                    revision_number=1,
-                    run_the_matrix_conf="-wm=init",
-                    steps=[
-                        Steps(
-                            name="step1"
-                        ),
-                        Steps(
-                            name="step2"
-                        ),
-                    ]
-                )
-            ]
-
-        )
+        self.test_request = factory.request()
 
     def test_request_insertion(self):
         self.assertModelEmpty(Requests)
         self.request_dao.insertRequestObject(self.test_request)
         self.assertModelCount(Requests, 1)
+
+
+class RevisionsDaoTests(BaseTestsCase):
+
+    def setUp(self):
+        BaseTestsCase.setUp(self)
+        self.revision_dao = RevisionsDao()
+        self.request_dao = RequestsDao()
+        self.test_request = factory.request()
+
+    def test_revision_append_to_request(self):
+        self.request_dao.insertRequestObject(self.test_request)
+        revision_to_append = factory.create_revision(rev_num=2)
+
+        self.revision_dao.addRevisionToRequest(self.test_request.id, revision_to_append)
+
+        self.assertModelCount(Requests, 1)
+        revisions = Requests.query.one().revisions
+
+        self.assertEqual(len(revisions), 2)
+        self.assertEqual(revisions[0].revision_number, 1)
+        self.assertEqual(revisions[1].revision_number, 2)
 
 
 
