@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">Predefined blobs</div>
+
+    <table class="table">
+      <thead>
+        <td>#</td>
+        <td>Title</td>
+        <td>Creation date</td>
+        <td>Actions</td>
+      </thead>
+      <tbody>
+        <tr ng-repeat="blob in blobs">
+          <td>{{$index+1}}</td>
+          <td>{{blob.title}}</td>
+          <td>{{blob.creation_date}}</td>
+          <td>
+            <div>
+              <i ng-click="todo" class="fa fa-pencil-square-o fa-lg"></i>
+              <i ng-click="todo" class="fa fa-times fa-lg"></i>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

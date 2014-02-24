@@ -1,6 +1,6 @@
 # RelValMachine
 
-## CMS PdmV RelValMachine service
+CMS PdmV RelValMachine service
 
 ### Dependencies
 

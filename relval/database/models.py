@@ -96,6 +96,7 @@ class PredefinedBlob(db.Model):
     __tablename__ = "predefined_blob"
     id = db.Column("id", db.Integer, db.Sequence("predefined_blob_id_seq"), primary_key=True)
     title = db.Column("title", db.String(256))
+    creation_date = db.Column("creation_date", db.DateTime)
 
     parameters = db.relationship("Parameters", backref="predefined_blob")
 

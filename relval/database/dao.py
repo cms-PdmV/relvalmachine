@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests
+from relval.database.models import Users, Requests, PredefinedBlob
 
 
 class UsersDao(object):

@@ -2,8 +2,10 @@
 
 var relval = angular.module('relval',[
         'ngRoute',
+        'ngResource',
         'relvalControllers',
-        'relvalDirectives'
+        'relvalDirectives',
+        'relvalServices'
     ]);
 
 relval.config(function($logProvider){
@@ -37,4 +39,17 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'NewRequestCloneCtrl'
     })
 
+}]);
+
+// routes for predefined blobs
+relval.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+    .when('/blobs',  {
+        templateUrl: 'static/partials/predefined-blobs/blobs.html',
+        controller: 'BlobsCtrl'
+    })
+    .when('/blobs/new', {
+        templateUrl: 'static/partials/new-request/clone-req.html',
+        controller: 'NewRequestCloneCtrl'
+    })
 }]);

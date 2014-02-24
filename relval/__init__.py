@@ -9,4 +9,5 @@ app.config.from_object('relval.config')
 db = SQLAlchemy(app)
 
 import relval.views
+import relval.rest
 import relval.database.models

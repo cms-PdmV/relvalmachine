@@ -123,3 +123,13 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
 relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
     function($scope) {}
 ]);
+
+
+// controllers related to blobs
+relvalControllers.controller('BlobsCtrl', ['$scope', 'PredefinedBlobs',
+    function($scope, PredefinedBlobs) {
+        var blobs = PredefinedBlobs.all(function() {
+            $scope.blobs = blobs.objects
+        });
+    }
+]);
