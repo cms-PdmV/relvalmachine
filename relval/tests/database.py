@@ -93,6 +93,23 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
     def test_blob_insertion_with_single_params(self):
         self.blob_insertion_test(1)
 
+    def test_blob_deletion(self):
+        blob = factory.predefined_blob(1)
+        parameters = factory.predefined_blob_paramters(2)
+
+        self.blobs_dao.add(blob.title, blob.creation_date, parameters)
+
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Parameters, 2)
+        id = PredefinedBlob.query.one().id
+
+        self.blobs_dao.delete(id)
+
+        self.assertModelEmpty(PredefinedBlob)
+        self.assertModelEmpty(Parameters)
+
+
+
     def blob_insertion_test(self, params_num):
         blob = factory.predefined_blob(params_num)
         parameters = factory.predefined_blob_paramters(params_num)
