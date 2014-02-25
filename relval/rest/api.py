@@ -8,6 +8,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from flask.ext.restful import Resource, Api, fields, marshal_with
 from flask import request
+import collections
 
 from relval.database.models import PredefinedBlob, Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao
@@ -18,10 +19,14 @@ def convert_keys_to_string(dictionary):
         Utility to help deal with unicode keys in dictionaries created from json requests.
         In order to pass dict to function as **kwarg we should transform key/value to str.
     """
-    if not isinstance(dictionary, dict):
+    if isinstance(dictionary, basestring):
+        return str(dictionary)
+    elif isinstance(dictionary, collections.Mapping):
+        return dict(map(convert_keys_to_string, dictionary.iteritems()))
+    elif isinstance(dictionary, collections.Iterable):
+        return type(dictionary)(map(convert_keys_to_string, dictionary))
+    else:
         return dictionary
-    return dict(
-        (str(k), convert_keys_to_string(v)) for k, v in dictionary.items())
 
 
 class UsersListApi(Resource):
@@ -66,5 +71,4 @@ class PredefinedBlobsApi(Resource):
         """ Creates new predefined blob
         """
         data = convert_keys_to_string(request.json)
-        print data
         self.blobs_dao.add(**data)

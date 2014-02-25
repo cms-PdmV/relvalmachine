@@ -67,3 +67,19 @@ def predefined_blob_paramters(params_count=1):
         {"flag": "F%d" % i, "value": "V%d" % i} for i in range(params_count)
     ]
 
+
+class JSONRequests(object):
+    """ Class stores methods for request json creation
+    """
+
+    @staticmethod
+    def new_blob():
+        return {
+            "title": "test-blob-title",
+            # "current_time": datetime.now().isoformat(),
+            "parameters": [
+                {"flag": "flag1", "value": "value1"},
+                {"flag": "flag2", "value": "value2"}
+            ]
+        }
+

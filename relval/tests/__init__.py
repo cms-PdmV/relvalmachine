@@ -3,7 +3,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 import unittest
 from relval.tests import \
-    database
+    database, rest
     # add more
 
 
@@ -21,6 +21,7 @@ class RelValMachineTestSuite(unittest.TestSuite):
 
     def suite(self):
         self.add_module(database)
+        self.add_module(rest)
         # add more modules here
 
         return self

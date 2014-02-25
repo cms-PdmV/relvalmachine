@@ -10,7 +10,6 @@ from relval.tests import factory
 from relval.tests.base import BaseTestsCase
 from relval.database.dao import UsersDao, RequestsDao, RevisionsDao, PredefinedBlobsDao
 from relval.database.models import Users, Requests, Parameters, PredefinedBlob
-from datetime import datetime
 
 
 class UsersDaoTests(BaseTestsCase):
