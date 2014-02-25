@@ -22,3 +22,14 @@ html, body {
 #added-steps-list .step:hover  {
   background-color: #f5f5f5;
 }
+
+/* Support for button in table */
+.btn.btn-table {
+  padding: 1px 20px 1px;
+}
+
+/* For button imitation using link */
+.btn > a {
+  color: white; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}

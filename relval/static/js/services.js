@@ -2,6 +2,12 @@ var relvalServices = angular.module('relvalServices', ['ngResource']);
 
 relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
         return $resource('api/predefined_blob/:id', {}, {
-            all: { method: 'GET' }
+            all: {
+                method: 'GET',
+                isArray: true
+            },
+            create: {
+                method: 'POST'
+            }
         });
 }]);

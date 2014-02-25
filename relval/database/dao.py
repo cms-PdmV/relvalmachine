@@ -11,7 +11,9 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters
+
+from datetime import datetime
 
 
 class UsersDao(object):
@@ -22,8 +24,8 @@ class UsersDao(object):
             raise Exception("Cannot find user with id=%s" % id)
         return user
 
-    def insertUser(self, username, email, role, notifications):
-        user = Users(user_name=username, email=email, role=role, notifications=notifications)
+    def insertUser(self, user_name, email=None, role=None, notifications=None):
+        user = Users(user_name=user_name, email=email, role=role, notifications=notifications)
         self.insertUserObject(user)
 
     def insertUserObject(self, user):
@@ -45,3 +47,16 @@ class RevisionsDao(object):
         last_revision = max([rev.revision_number for rev in request.revisions])
         revision.revision_number = last_revision + 1
         request.revisions.append(revision)
+
+
+class PredefinedBlobsDao(object):
+
+    def add(self, title, parameters=[]):
+        predefinedBlob = PredefinedBlob(
+            title=title,
+            creation_date=datetime.utcnow())
+        predefinedBlob.parameters = [
+            Parameters(flag=param['flag'], value=param['value']) for param in parameters
+        ]
+        db.session.add(predefinedBlob)
+        db.session.commit()

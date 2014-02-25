@@ -49,7 +49,7 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'BlobsCtrl'
     })
     .when('/blobs/new', {
-        templateUrl: 'static/partials/new-request/clone-req.html',
-        controller: 'NewRequestCloneCtrl'
+        templateUrl: 'static/partials/predefined-blobs/new.html',
+        controller: 'NewBlobCtrl'
     })
 }]);

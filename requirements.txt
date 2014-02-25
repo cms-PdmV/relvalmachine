@@ -1,4 +1,4 @@
 flask==0.10
 flask-sqlalchemy==0.16
-flask-restless==0.12.1
+flask-restful==0.2.1
 cx-Oracle==5.1.2

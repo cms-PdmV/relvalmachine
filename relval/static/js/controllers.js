@@ -32,7 +32,7 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
             $scope.showStepForm = true; // show step creation form
 
             $scope.currentStep.parameters = [{
-                "key": "",
+                "flag": "",
                 "value": ""
             }];
         };
@@ -52,7 +52,7 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
 
         $scope.addParametersRow = function() {
             $scope.currentStep.parameters.push({
-                "key": "",
+                "flag": "",
                 "value": ""
             });
         };
@@ -129,7 +129,44 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 relvalControllers.controller('BlobsCtrl', ['$scope', 'PredefinedBlobs',
     function($scope, PredefinedBlobs) {
         var blobs = PredefinedBlobs.all(function() {
-            $scope.blobs = blobs.objects
+            $scope.blobs = blobs
         });
+    }
+]);
+
+relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs',
+    function($scope, $location, PredefinedBlobs) {
+        $scope.currentStep = {};
+        $scope.currentStep.parameters = [{
+            "flag": "",
+            "value": ""
+        }];
+
+        $scope.addParametersRow = function() {
+            $scope.currentStep.parameters.push({
+                "flag": "",
+                "value": ""
+            });
+        };
+
+        $scope.removeParametersRow = function(index) {
+            $scope.currentStep.parameters.splice(index, 1);
+        };
+
+        $scope.discardStepCreation = function() {
+            $location.path("/blobs");
+        };
+
+        $scope.saveStep = function() {
+            var blob = new PredefinedBlobs({
+                title: $scope.currentStep.title,
+                parameters: $scope.currentStep.parameters
+            });
+            console.log(blob);
+            blob.$create(function() {
+                $location.path("/blobs");
+                // todo smth else on failure
+            });
+        };
     }
 ]);
