@@ -59,7 +59,7 @@ class PredefinedBlobsApi(Resource):
         """ Returns all existing predefined blobs
         """
 
-        blobs = PredefinedBlob.query.all()
+        blobs = self.blobs_dao.all()
         return blobs
 
     def post(self):

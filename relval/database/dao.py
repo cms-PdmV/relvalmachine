@@ -51,12 +51,15 @@ class RevisionsDao(object):
 
 class PredefinedBlobsDao(object):
 
-    def add(self, title, parameters=[]):
-        predefinedBlob = PredefinedBlob(
+    def add(self, title, creation_date=datetime.utcnow(), parameters=[]):
+        predefined_blob = PredefinedBlob(
             title=title,
-            creation_date=datetime.utcnow())
-        predefinedBlob.parameters = [
+            creation_date=creation_date)
+        predefined_blob.parameters = [
             Parameters(flag=param['flag'], value=param['value']) for param in parameters
         ]
-        db.session.add(predefinedBlob)
+        db.session.add(predefined_blob)
         db.session.commit()
+
+    def all(self):
+        return PredefinedBlob.query.all()

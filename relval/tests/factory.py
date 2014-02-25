@@ -8,8 +8,8 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval.database.models import \
-    Users, Requests, Revisions, Steps
-
+    Users, Requests, Revisions, Steps, PredefinedBlob, Parameters
+from datetime import datetime
 
 def user():
     return Users(
@@ -51,3 +51,19 @@ def request():
         revisions=[
             create_revision(1)
         ])
+
+
+def predefined_blob(params_count=1):
+    return PredefinedBlob(
+        title="test-title",
+        creation_date=datetime.utcnow(),
+        parameters=[
+            Parameters(flag="F%d" % i, value="V%d" % i) for i in range(params_count)
+        ])
+
+
+def predefined_blob_paramters(params_count=1):
+    return [
+        {"flag": "F%d" % i, "value": "V%d" % i} for i in range(params_count)
+    ]
+
