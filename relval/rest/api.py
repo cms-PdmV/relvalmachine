@@ -72,3 +72,14 @@ class PredefinedBlobsApi(Resource):
         """
         data = convert_keys_to_string(request.json)
         self.blobs_dao.add(**data)
+
+
+class PredefinedBlobApi(Resource):
+    """ Predefined blobs resource to work with single entity
+    """
+
+    def __init__(self):
+        self.blobs_dao = PredefinedBlobsDao()
+
+    def delete(self, blob_id):
+        self.blobs_dao.delete(blob_id)

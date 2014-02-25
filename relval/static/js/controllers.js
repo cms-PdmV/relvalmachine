@@ -131,6 +131,18 @@ relvalControllers.controller('BlobsCtrl', ['$scope', 'PredefinedBlobs',
         var blobs = PredefinedBlobs.all(function() {
             $scope.blobs = blobs
         });
+
+        $scope.deleteBlob = function(index) {
+            bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
+                function(removeApproved) {
+                    if (removeApproved) {
+                        var id = $scope.blobs[index].id
+                        // DELETE blob
+                        PredefinedBlobs.delete({blob_id: id}, function() {
+                            $scope.blobs.splice(index, 1);
+                        });
+                    }});
+        }
     }
 ]);
 
@@ -162,10 +174,10 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
                 title: $scope.currentStep.title,
                 parameters: $scope.currentStep.parameters
             });
-            console.log(blob);
+
+            // POST to create new blob
             blob.$create(function() {
                 $location.path("/blobs");
-                // todo smth else on failure
             });
         };
     }

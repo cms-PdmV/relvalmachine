@@ -45,3 +45,14 @@ class PredefinedBlobsRestTests(BaseTestsCase):
         self.assertEqual(response.status_code, 200)
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Parameters, 2)
+
+    def test_blob_deletion(self):
+        blob = factory.predefined_blob(3)
+        self.blobs_dao.add(title=blob.title,
+                           parameters=factory.predefined_blob_paramters(3))
+
+        self.assertModelCount(PredefinedBlob, 1)
+        blob_id = PredefinedBlob.query.one().id
+        response = self.app.delete("/api/predefined_blob/%d" % blob_id)
+        self.assertEqual(response.status_code, 200)
+        self.assertModelEmpty(PredefinedBlob)
