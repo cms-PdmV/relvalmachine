@@ -98,9 +98,6 @@ class PredefinedBlobApi(Resource):
     def put(self, blob_id):
         """ Updates blob
         """
-        print blob_id
-        print request.json
-
         data = convert_keys_to_string(request.json)
         self.blobs_dao.update(id=blob_id, **data)
 

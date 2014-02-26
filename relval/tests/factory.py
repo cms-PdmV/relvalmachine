@@ -72,6 +72,8 @@ class JSONRequests(object):
     """ Class stores methods for request json creation
     """
 
+    new_blob_title = "new-blob-title"
+
     @staticmethod
     def new_blob():
         return {
@@ -83,3 +85,13 @@ class JSONRequests(object):
             ]
         }
 
+    @staticmethod
+    def update_blob():
+        return {
+            "title": JSONRequests.new_blob_title,
+            "parameters": [
+                {"flag": "flag1", "value": "value1"},
+                {"flag": "flag2", "value": "value2"},
+                {"flag": "flag1", "value": "value1"}
+            ]
+        }

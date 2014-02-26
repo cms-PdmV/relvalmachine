@@ -56,3 +56,20 @@ class PredefinedBlobsRestTests(BaseTestsCase):
         response = self.app.delete("/api/predefined_blob/%d" % blob_id)
         self.assertEqual(response.status_code, 200)
         self.assertModelEmpty(PredefinedBlob)
+
+    def test_blob_update(self):
+        blob = factory.predefined_blob(1)
+        self.blobs_dao.add(title=blob.title,
+                           parameters=factory.predefined_blob_paramters(1))
+        id = PredefinedBlob.query.one().id
+
+        response = self.app.put(
+            "/api/predefined_blob/%d" % id,
+            data=json.dumps(factory.JSONRequests.update_blob()),
+            content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Parameters, 3)
+        self.assertEqual(PredefinedBlob.query.one().title, factory.JSONRequests.new_blob_title)
+
