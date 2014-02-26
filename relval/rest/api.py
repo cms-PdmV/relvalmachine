@@ -89,7 +89,18 @@ class PredefinedBlobApi(Resource):
 
     @marshal_with(marshallers.blob_marshaller)
     def get(self, blob_id):
-        """ Retrieves predefined blob wth id=blob_id
+        """ Retrieves predefined blob with id=blob_id
         """
         blob = self.blobs_dao.get(blob_id)
+        blob.parameters  # load all parameters from blob
         return blob
+
+    def put(self, blob_id):
+        """ Updates blob
+        """
+        print blob_id
+        print request.json
+
+        data = convert_keys_to_string(request.json)
+        self.blobs_dao.update(id=blob_id, **data)
+

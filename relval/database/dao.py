@@ -67,6 +67,18 @@ class PredefinedBlobsDao(object):
     def get(self, id):
         return PredefinedBlob.query.get(id)
 
+    def update(self, id, title=None, parameters=[]):
+        blob = self.get(id)
+        if title != None:
+            blob.title = title
+        for parameter in blob.parameters:
+            db.session.delete(parameter)
+
+        blob.parameters = [
+            Parameters(flag=param['flag'], value=param['value']) for param in parameters
+        ]
+        db.session.commit()
+
     def delete(self, id):
         blob = PredefinedBlob.query.get(id)
         db.session.delete(blob)

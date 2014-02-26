@@ -98,7 +98,10 @@ class PredefinedBlob(db.Model):
     title = db.Column("title", db.String(256))
     creation_date = db.Column("creation_date", db.DateTime)
 
-    parameters = db.relationship("Parameters", backref="predefined_blob", cascade="all")
+    parameters = db.relationship(
+        "Parameters",
+        backref="predefined_blob",
+        cascade="all")
 
     #TODO: add __repr__
 

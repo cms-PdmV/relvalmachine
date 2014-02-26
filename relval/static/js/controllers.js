@@ -189,14 +189,42 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
     }
 ]);
 
-relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', 'PredefinedBlobs',
-    function($scope, $routeParams, PredefinedBlobs) {
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
+    function($scope, $routeParams, $location, PredefinedBlobs) {
         var id = $routeParams.blobId;
-        console.log(id);
+
         var blob = PredefinedBlobs.get({blob_id: id}, function() {
-            console.log(blob)
             $scope.currentStep = {};
             $scope.currentStep.title = blob.title;
             $scope.currentStep.parameters = blob.parameters;
         });
+
+        $scope.addParametersRow = function() {
+            $scope.currentStep.parameters.push({
+                "flag": "",
+                "value": ""
+            });
+        };
+
+        $scope.removeParametersRow = function(index) {
+            console.log(index)
+            $scope.currentStep.parameters.splice(index, 1);
+        };
+
+
+        $scope.discardStepCreation = function() {
+            $location.path("/blobs");
+        };
+
+        $scope.saveStep = function() {
+            var blob = new PredefinedBlobs({
+                title: $scope.currentStep.title,
+                parameters: $scope.currentStep.parameters
+            });
+
+            // POST to create new blob
+            blob.$update({blob_id: id}, function() {
+                $location.path("/blobs");
+            });
+        };
     }]);

@@ -108,7 +108,22 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.assertModelEmpty(PredefinedBlob)
         self.assertModelEmpty(Parameters)
 
+    def blob_update_test(self):
+        blob = factory.predefined_blob(1)
+        parameters = factory.predefined_blob_paramters(2)
+        self.blobs_dao.add(blob.title, blob.creation_date, parameters)
+        id = PredefinedBlob.query.one().id
 
+        new_title = "new-blob-title"
+        new_parameters = factory.predefined_blob_paramters(3)
+
+        self.blobs_dao.update(id=id, title=new_title, parameters=new_parameters)
+
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Parameters, 3)
+
+        new_blob = PredefinedBlob.query.one()
+        self.assertEqual(new_blob.title, new_title)
 
     def blob_insertion_test(self, params_num):
         blob = factory.predefined_blob(params_num)
