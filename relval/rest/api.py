@@ -6,13 +6,14 @@ __email__ = "zygimantas.gatelis@cern.ch"
     Relval Machine rest api
 """
 
-from flask.ext.restful import Resource, Api, fields, marshal_with
+from flask.ext.restful import Resource, marshal_with
 from flask import request
 import collections
 
-from relval.database.models import PredefinedBlob, Users
+from relval.database.models import Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao
-from relval.rest.marshallers import users_marshaller, blobs_marshaller
+from relval.rest import marshallers
+
 
 def convert_keys_to_string(dictionary):
     """ Recursively converts dictionary keys to strings.
@@ -36,7 +37,7 @@ class UsersListApi(Resource):
     def __init__(self):
         self.users_dao = UsersDao()
 
-    @marshal_with(users_marshaller)
+    @marshal_with(marshallers.users_marshaller)
     def get(self):
         """ Returns list of all available users id db.
         """
@@ -59,7 +60,7 @@ class PredefinedBlobsApi(Resource):
     def __init__(self):
         self.blobs_dao = PredefinedBlobsDao()
 
-    @marshal_with(blobs_marshaller)
+    @marshal_with(marshallers.blobs_marshaller)
     def get(self):
         """ Returns all existing predefined blobs
         """
@@ -82,4 +83,13 @@ class PredefinedBlobApi(Resource):
         self.blobs_dao = PredefinedBlobsDao()
 
     def delete(self, blob_id):
+        """ Deletes predefined blob with id=blob_id
+        """
         self.blobs_dao.delete(blob_id)
+
+    @marshal_with(marshallers.blob_marshaller)
+    def get(self, blob_id):
+        """ Retrieves predefined blob wth id=blob_id
+        """
+        blob = self.blobs_dao.get(blob_id)
+        return blob

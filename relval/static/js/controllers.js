@@ -126,11 +126,17 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 
 
 // controllers related to blobs
-relvalControllers.controller('BlobsCtrl', ['$scope', 'PredefinedBlobs',
-    function($scope, PredefinedBlobs) {
+relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs',
+    function($scope, $location, PredefinedBlobs) {
         var blobs = PredefinedBlobs.all(function() {
             $scope.blobs = blobs
         });
+
+        $scope.editBlob = function(index) {
+            var id = $scope.blobs[index].id
+            console.log(id)
+            $location.path("/blobs/edit/" + id);
+        }
 
         $scope.deleteBlob = function(index) {
             bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
@@ -182,3 +188,15 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
         };
     }
 ]);
+
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', 'PredefinedBlobs',
+    function($scope, $routeParams, PredefinedBlobs) {
+        var id = $routeParams.blobId;
+        console.log(id);
+        var blob = PredefinedBlobs.get({blob_id: id}, function() {
+            console.log(blob)
+            $scope.currentStep = {};
+            $scope.currentStep.title = blob.title;
+            $scope.currentStep.parameters = blob.parameters;
+        });
+    }]);

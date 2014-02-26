@@ -52,4 +52,8 @@ relval.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'static/partials/predefined-blobs/new.html',
         controller: 'NewBlobCtrl'
     })
+    .when('/blobs/edit/:blobId', {
+        templateUrl: 'static/partials/predefined-blobs/new.html',
+        controller: 'EditBlobCtrl'
+    })
 }]);

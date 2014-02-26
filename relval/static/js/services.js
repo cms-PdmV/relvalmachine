@@ -6,6 +6,9 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
                 method: 'GET',
                 isArray: true
             },
+            get: {
+                method: 'GET'
+            },
             create: {
                 method: 'POST'
             },

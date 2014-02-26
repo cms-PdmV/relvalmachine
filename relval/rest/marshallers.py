@@ -22,3 +22,15 @@ blobs_marshaller = {
     'title': fields.String,
     'creation_date': fields.String
 }
+
+parameter_marshaller = {
+    "flag": fields.String,
+    "value": fields.String
+}
+
+blob_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'creation_date': fields.String,
+    'parameters': fields.Nested(parameter_marshaller)
+}

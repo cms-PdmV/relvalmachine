@@ -64,6 +64,9 @@ class PredefinedBlobsDao(object):
     def all(self):
         return PredefinedBlob.query.all()
 
+    def get(self, id):
+        return PredefinedBlob.query.get(id)
+
     def delete(self, id):
         blob = PredefinedBlob.query.get(id)
         db.session.delete(blob)
