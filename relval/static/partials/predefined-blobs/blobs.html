@@ -9,13 +9,13 @@
 
     <table class="table">
       <thead>
-        <td>#</td>
-        <td>Title</td>
-        <td>Creation date</td>
-        <td>Actions</td>
+        <th>#</th>
+        <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+        <th ng-click="changeSorting('creation_date')" ng-class="selectedCls('creation_date')"> Creation date</th>
+        <th>Actions</th>
       </thead>
       <tbody>
-        <tr ng-repeat="blob in blobs">
+        <tr ng-repeat="blob in blobs | orderBy:sort.column:sort.descending">
           <td>{{$index+1}}</td>
           <td>{{blob.title}}</td>
           <td>{{blob.creation_date}}</td>

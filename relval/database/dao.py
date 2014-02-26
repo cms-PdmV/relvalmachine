@@ -51,7 +51,9 @@ class RevisionsDao(object):
 
 class PredefinedBlobsDao(object):
 
-    def add(self, title, creation_date=datetime.utcnow(), parameters=[]):
+    def add(self, title, creation_date=None, parameters=[]):
+        if not creation_date:
+            creation_date = datetime.utcnow();
         predefined_blob = PredefinedBlob(
             title=title,
             creation_date=creation_date)

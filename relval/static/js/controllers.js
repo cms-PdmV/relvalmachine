@@ -136,7 +136,7 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
             var id = $scope.blobs[index].id
             console.log(id)
             $location.path("/blobs/edit/" + id);
-        }
+        };
 
         $scope.deleteBlob = function(index) {
             bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
@@ -148,7 +148,31 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                             $scope.blobs.splice(index, 1);
                         });
                     }});
+        };
+
+        $scope.sort = {
+            column: '',
+            descending: false
+        };
+
+        $scope.changeSorting = function(column) {
+            var sort = $scope.sort;
+
+            if (sort.column == column) { // only change order
+                sort.descending = !sort.descending;
+            } else {
+                sort.column = column;
+                sort.descending = false;
+            }
+        };
+
+        $scope.selectedCls = function(column) {
+            // if column is the one that is selected then add class for icon
+            console.log(column + "   " + $scope.sort.column + "   " + $scope.descending)
+            return column == $scope.sort.column &&
+                "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
         }
+
     }
 ]);
 
