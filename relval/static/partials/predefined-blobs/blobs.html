@@ -1,32 +1,47 @@
 <div class="container">
   <div class="panel panel-default">
-    <div class="panel-heading">
-        <span>Predefined blobs</span>
-        <div type="button" class="btn btn-success pull-right btn-table">
-            <a href="/#blobs/new"><i class="fa fa-plus-square-o"></i> Create new</a>
-        </div>
-    </div>
+    <div class="panel-heading clearfix">
+      <h4 class="pull-left">Predefined blobs</h4>
 
+      <div class="col-sm-6 col-sm-offset-1">
+        <form class="form" role="search" method="get" id="search-form" name="search-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" ng-model="searchText" name="query" />
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-success" ng-click="searchAll()">
+                <i class="fa fa-search"></i> Search all
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div type="button" class="btn btn-success pull-right ">
+        <a href="/#blobs/new"><i class="fa fa-plus-square-o"></i> Create new</a>
+      </div>
+    </div>
+    `
     <table class="table">
       <thead>
-        <th>#</th>
-        <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
-        <th ng-click="changeSorting('creation_date')" ng-class="selectedCls('creation_date')"> Creation date</th>
-        <th>Actions</th>
+      <th>#</th>
+      <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+      <th ng-click="changeSorting('creation_date')" ng-class="selectedCls('creation_date')"> Creation date</th>
+      <th>Actions</th>
       </thead>
       <tbody>
-        <tr ng-repeat="blob in blobs | orderBy:sort.column:sort.descending">
-          <td>{{$index+1}}</td>
-          <td>{{blob.title}}</td>
-          <td>{{blob.creation_date}}</td>
-          <td>
-            <div>
-              <i ng-click="editBlob($index)" class="fa fa-pencil-square-o fa-lg"></i>
-              <i ng-click="deleteBlob($index)" class="fa fa-times fa-lg"></i>
-            </div>
-          </td>
-        </tr>
+      <tr ng-repeat="blob in blobs | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+        <td>{{$index+1}}</td>
+        <td>{{blob.title}}</td>
+        <td>{{blob.creation_date}}</td>
+        <td>
+          <div>
+            <i ng-click="editBlob($index)" class="fa fa-pencil-square-o fa-lg"></i>
+            <i ng-click="deleteBlob($index)" class="fa fa-times fa-lg"></i>
+          </div>
+        </td>
+      </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+

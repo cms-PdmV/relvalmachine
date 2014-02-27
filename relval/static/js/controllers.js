@@ -140,6 +140,8 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
             $scope.blobs = blobs
         });
 
+        $scope.searchText = ""
+
         $scope.editBlob = function(index) {
             var id = $scope.blobs[index].id
             console.log(id)
@@ -181,6 +183,12 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
             // if column is the one that is selected then add class for icon
             return column == $scope.sort.column &&
                 "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
+        }
+
+        // search functionality
+        $scope.searchAll = function() {
+            //TODO: query service
+            console.log($scope.searchText);
         }
 
     }
