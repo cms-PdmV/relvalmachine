@@ -1,0 +1,12 @@
+<script id="template/alert/alert.html" type="text/ng-template">
+      <div class='alert fade in' ng-class='type && "alert-" + type'>
+          <button ng-show='closeable' type='button' class='close' ng-click='close()'>&times;</button>
+          <div ng-transclude></div>
+      </div>
+</script>
+
+<div ng-controller="AlertCtrl" class="container">
+  <div class="col-sm-6 col-sm-offset-3">
+    <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
+  </div>
+</div>

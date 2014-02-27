@@ -20,3 +20,45 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
             }
         });
 }]);
+
+relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
+        var alerts = [];
+        var alertsService = {
+
+            fetchAlerts: function() {
+                console.log("Fetch");
+                return alerts;
+            },
+
+            close: function(index) {
+                alerts.splice(index, 1);
+            },
+
+            closeAfterDelay: function(alertToRemove) {
+                $timeout(function() {
+                    var index = alerts.indexOf(alertToRemove);
+                    if (index > -1) {
+                        alerts.splice(index, 1);
+                    }
+                }, 5000);
+            },
+
+            add: function(newAlert) {
+                alerts.push(newAlert);
+                this.closeAfterDelay(newAlert);
+            },
+
+            addSuccess:  function(newAlert) {
+                newAlert.type = 'success';
+                this.add(newAlert);
+            },
+
+            addError:  function(newAlert) {
+                newAlert.type = 'error';
+                this.add(newAlert);
+            }
+        };
+
+
+        return alertsService ;
+}]);

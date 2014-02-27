@@ -12,7 +12,15 @@ relvalControllers.controller('NavbarCtrl', ['$scope', '$location',
             return viewLocation === $location.path();
         };
     }
-])
+]);
+
+relvalControllers.controller('AlertCtrl', ['$scope', 'AlertsService', function($scope, AlertsService) {
+    $scope.alerts = AlertsService.fetchAlerts();
+
+    $scope.closeAlert = function(index) {
+        AlertsService.close(index);
+    }
+}]);
 
 // New request creation controllers
 relvalControllers.controller('NewRequestMainCtrl', ['$scope',
@@ -69,8 +77,8 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
         };
 
         $scope.removeStep = function(index) {
-            title = $scope.steps[index].title;
-            removeApproved = false;
+            var title = $scope.steps[index].title;
+            var removeApproved = false;
             bootbox.confirm("Do You really want to remove step " + title + " ?", function(removeApproved) {
                 if (removeApproved) {
                     // if current step is the one we are removing then clean it up
@@ -126,8 +134,8 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 
 
 // controllers related to blobs
-relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs',
-    function($scope, $location, PredefinedBlobs) {
+relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $location, PredefinedBlobs, AlertsService) {
         var blobs = PredefinedBlobs.all(function() {
             $scope.blobs = blobs
         });
@@ -146,6 +154,9 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                         // DELETE blob
                         PredefinedBlobs.delete({blob_id: id}, function() {
                             $scope.blobs.splice(index, 1);
+                            AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
+                        }, function() {
+                            AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
                         });
                     }});
         };
@@ -168,7 +179,6 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
 
         $scope.selectedCls = function(column) {
             // if column is the one that is selected then add class for icon
-            console.log(column + "   " + $scope.sort.column + "   " + $scope.descending)
             return column == $scope.sort.column &&
                 "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
         }
