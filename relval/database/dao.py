@@ -66,6 +66,11 @@ class PredefinedBlobsDao(object):
     def all(self):
         return PredefinedBlob.query.all()
 
+    def get_paginated(self, page_number=1, items_per_page=10):
+        return PredefinedBlob.query \
+            .order_by(PredefinedBlob.creation_date.asc()) \
+            .paginate(page_number, items_per_page, False)
+
     def search_all(self, search):
         return PredefinedBlob.query.filter(PredefinedBlob.title.ilike("%{0}%".format(search))).all()
 

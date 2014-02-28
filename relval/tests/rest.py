@@ -32,7 +32,8 @@ class PredefinedBlobsRestTests(BaseTestsCase):
         data = json.loads(response.data)
 
         self.assertModelCount(PredefinedBlob, 3)
-        self.assertEqual(len(data), 3)
+        self.assertEqual(len(data['blobs']), 3)
+        self.assertEqual(data['total'], "3")
 
     def test_blob_search(self):
         pass

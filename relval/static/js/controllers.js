@@ -136,11 +136,17 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 // controllers related to blobs
 relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
     function($scope, $location, PredefinedBlobs, AlertsService) {
-        $scope.searchText = ""
+        $scope.searchText = "";
+        var resp = PredefinedBlobs.all(function() {
+            $scope.totalItems = parseInt(resp.total)
+            $scope.blobs = resp.blobs
+        }, function() { // on failure
+            AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
+        });
+
 
         $scope.editBlob = function(index) {
             var id = $scope.blobs[index].id
-            console.log(id)
             $location.path("/blobs/edit/" + id);
         };
 
@@ -189,26 +195,36 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
          */
         $scope.searchAll = function() {
             //TODO: query service
-            console.log($scope.searchText);
-            var blobs = PredefinedBlobs.all({search: $scope.searchText}, function() {
-                $scope.blobs = blobs
+            var resp = PredefinedBlobs.all({search: $scope.searchText}, function() {
+                $scope.totalItems = resp.total
+                $scope.blobs = resp.blobs
+                $scope.itemsPerPage = 0; // turn off pagination
+            });
+        }
+
+        $scope.resetSearch = function() {
+            $scope.searchText = "";
+            var resp = PredefinedBlobs.all({search: $scope.searchText}, function() {
+                $scope.totalItems = resp.total
+                $scope.blobs = resp.blobs
+                $scope.currentPage = 1;
+                $scope.itemsPerPage = 10; // turn on pagination
             });
         }
 
         /*
          * Pagination
          */
-        var blobs = PredefinedBlobs.all(function() {
-            $scope.blobs = blobs
-        });
-
-        $scope.totalItems = 2000;  // how many items in total exists
-        $scope.itemsPerPage = 100; // how many items are in one page
+        $scope.itemsPerPage = 10;  // how many items are in one page
         $scope.currentPage = 1;    // current page that is selected
         $scope.maxSize = 10;       // how many pages display
 
-        $scope.setPage = function (pageNo) {
+        $scope.setPage = function(pageNo) {
             $scope.currentPage = pageNo;
+            var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                $scope.totalItems = parseInt(resp.total)
+                $scope.blobs = resp.blobs
+            });
         };
 
     }

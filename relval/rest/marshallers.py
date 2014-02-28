@@ -23,6 +23,11 @@ blobs_marshaller = {
     'creation_date': fields.String
 }
 
+blobs_marshaller_paginated = {
+    'total': fields.String,
+    'blobs': fields.Nested(blobs_marshaller)
+}
+
 parameter_marshaller = {
     "flag": fields.String,
     "value": fields.String

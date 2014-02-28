@@ -3,8 +3,7 @@ var relvalServices = angular.module('relvalServices', ['ngResource']);
 relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
         return $resource('api/predefined_blob/:blob_id', {}, {
             all: {
-                method: 'GET',
-                isArray: true
+                method: 'GET'
             },
             search: {
                 method: 'GET',
@@ -58,7 +57,7 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
             },
 
             addError:  function(newAlert) {
-                newAlert.type = 'error';
+                newAlert.type = 'danger';
                 this.add(newAlert);
             }
         };

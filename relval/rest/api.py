@@ -6,13 +6,16 @@ __email__ = "zygimantas.gatelis@cern.ch"
     Relval Machine rest api
 """
 
-from flask.ext.restful import Resource, marshal_with
+from flask.ext.restful import Resource, marshal_with, reqparse
 from flask import request
 import collections
 
+from relval import app
 from relval.database.models import Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao
 from relval.rest import marshallers
+
+BLOBS_PER_PAGE = app.config['BLOBS_PER_PAGE']
 
 
 def convert_keys_to_string(dictionary):
@@ -60,22 +63,46 @@ class PredefinedBlobsApi(Resource):
     def __init__(self):
         self.blobs_dao = PredefinedBlobsDao()
 
-    @marshal_with(marshallers.blobs_marshaller)
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('page_num', type=int)
+        self.parser.add_argument('items_per_page', type=int)
+        self.parser.add_argument('search', type=str)
+
+    @marshal_with(marshallers.blobs_marshaller_paginated)
     def get(self):
         """ Returns all existing predefined blobs
         """
-        search = request.args.get("search")
-        if search:
-            blobs = self.blobs_dao.search_all(search)
+        args = self.parser.parse_args()
+
+        if args['search']:
+            blobs, total = self.__search(args['search'])
+        elif args['page_num'] and args['items_per_page']:
+            blobs, total = self.__get_page(args['page_num'], args['items_per_page'])
         else:
-            blobs = self.blobs_dao.all()
-        return blobs
+            blobs, total = self.__get_page()
+
+        resp = {
+            'blobs': blobs,
+            'total': total
+        }
+        return resp
 
     def post(self):
         """ Creates new predefined blob
         """
         data = convert_keys_to_string(request.json)
         self.blobs_dao.add(**data)
+
+    def __search(self, query):
+        blobs = self.blobs_dao.search_all(query)
+        total = len(blobs)
+        return blobs, total
+
+    def __get_page(self, page_num=1, items_per_page=BLOBS_PER_PAGE):
+        result = self.blobs_dao.get_paginated(page_num, items_per_page)
+        blobs = result.items
+        total = result.total
+        return blobs, total
 
 
 class PredefinedBlobApi(Resource):
