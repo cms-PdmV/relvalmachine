@@ -136,10 +136,6 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 // controllers related to blobs
 relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
     function($scope, $location, PredefinedBlobs, AlertsService) {
-        var blobs = PredefinedBlobs.all(function() {
-            $scope.blobs = blobs
-        });
-
         $scope.searchText = ""
 
         $scope.editBlob = function(index) {
@@ -163,6 +159,9 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                     }});
         };
 
+        /*
+         * Sorting
+         */
         $scope.sort = {
             column: '',
             descending: false
@@ -185,7 +184,9 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                 "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
         }
 
-        // search functionality
+        /*
+         * Search functionality
+         */
         $scope.searchAll = function() {
             //TODO: query service
             console.log($scope.searchText);
@@ -193,6 +194,23 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                 $scope.blobs = blobs
             });
         }
+
+        /*
+         * Pagination
+         */
+        var blobs = PredefinedBlobs.all(function() {
+            $scope.blobs = blobs
+        });
+
+        $scope.totalItems = 2000;  // how many items in total exists
+        $scope.itemsPerPage = 100; // how many items are in one page
+        $scope.currentPage = 1;    // current page that is selected
+        $scope.maxSize = 10;       // how many pages display
+
+        $scope.setPage = function (pageNo) {
+            $scope.currentPage = pageNo;
+        };
+
     }
 ]);
 

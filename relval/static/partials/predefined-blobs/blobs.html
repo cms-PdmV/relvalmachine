@@ -6,7 +6,8 @@
       <div class="col-sm-6 col-sm-offset-1">
         <form class="form" role="search" method="get" id="search-form" name="search-form">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search" ng-model="searchText" name="query" />
+            <input type="text" class="form-control" placeholder="Search" ng-model="searchText" name="query"/>
+
             <div class="input-group-btn">
               <button type="submit" class="btn btn-success" ng-click="searchAll()">
                 <i class="fa fa-search fa-lg"></i> Search all
@@ -29,18 +30,34 @@
       </thead>
       <tbody>
       <tr ng-repeat="blob in blobs | filter: {title: searchText} | orderBy:sort.column:sort.descending">
-        <td>{{$index+1}}</td>
+        <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
         <td>{{blob.title}}</td>
         <td>{{blob.creation_date}}</td>
         <td>
           <div>
-            <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)" ><i class="fa fa-pencil-square-o fa-lg"></i></button>
-            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i class="fa fa-times fa-lg"></i></button>
+            <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)"><i
+                    class="fa fa-pencil-square-o fa-lg"></i></button>
+            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i class="fa fa-times fa-lg"></i>
+            </button>
           </div>
         </td>
       </tr>
       </tbody>
     </table>
+  </div>
+  <div class="col-sm-offset-3 col-sm-8">
+    <pagination
+            boundary-links="true"
+            total-items="totalItems"
+            page="currentPage"
+            items-per-page="itemsPerPage"
+            max-size="maxSize"
+            rotate="false"
+            previous-text="&lsaquo;"
+            next-text="&rsaquo;"
+            first-text="&laquo;"
+            last-text="&raquo;">
+    </pagination>
   </div>
 </div>
 
