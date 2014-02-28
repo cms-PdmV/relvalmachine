@@ -13,6 +13,8 @@ from relval.database.dao import PredefinedBlobsDao
 from relval.database.models import PredefinedBlob, Parameters
 
 import json
+from flask_sqlalchemy import Pagination
+from mock import patch
 
 
 class PredefinedBlobsRestTests(BaseTestsCase):
@@ -22,59 +24,84 @@ class PredefinedBlobsRestTests(BaseTestsCase):
         self.blobs_dao = PredefinedBlobsDao()
 
     def test_blob_fetch(self):
+        blobs = []
         for _ in range(3):
-            blob = factory.predefined_blob(3)
-            self.blobs_dao.add(title=blob.title,
-                               parameters=factory.predefined_blob_paramters(3))
-        response = self.app.get("/api/predefined_blob")
+            blobs.append(factory.predefined_blob(3))
+        page = Pagination(None, None, None, 3, blobs)
 
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
+        with patch.object(PredefinedBlobsDao, "get_paginated") as mock_method:
+            mock_method.return_value = page
+            response = self.app.get("/api/predefined_blob")
 
-        self.assertModelCount(PredefinedBlob, 3)
-        self.assertEqual(len(data['blobs']), 3)
-        self.assertEqual(data['total'], "3")
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+
+            self.assertEqual(len(data['blobs']), 3)
+            self.assertEqual(data['total'], "3")
+            mock_method.assert_called_once_with(1, 3)  # default items per page
+
+    def test_blob_fetch_paginating(self):
+        blobs = []
+        for _ in range(2):
+            blobs.append(factory.predefined_blob(3))
+        page = Pagination(None, None, None, 2, blobs)
+
+        with patch.object(PredefinedBlobsDao, "get_paginated") as mock_method:
+            mock_method.return_value = page
+            response = self.app.get("/api/predefined_blob?page_num=1&items_per_page=2")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+
+            self.assertEqual(len(data['blobs']), 2)
+            self.assertEqual(data['total'], "2")
+            mock_method.assert_called_once_with(1, 2)
 
     def test_blob_search(self):
-        pass
-        #todo add test
+        blobs = [factory.predefined_blob(3)]
+
+        with patch.object(PredefinedBlobsDao, "search_all") as mock_method:
+            mock_method.return_value = blobs
+            response = self.app.get("/api/predefined_blob?search=query")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+            self.assertEqual(len(data['blobs']), 1)
+            self.assertEqual(data['total'], "1")
+            mock_method.assert_called_once_with("query")
 
     def test_new_blob_creation(self):
-        self.assertModelEmpty(PredefinedBlob)
+        with patch.object(PredefinedBlobsDao, "add") as mock_method:
+            request = factory.JSONRequests.new_blob()
+            response = self.app.post(
+                "/api/predefined_blob",
+                data=json.dumps(request),
+                content_type='application/json')
 
-        response = self.app.post(
-            "/api/predefined_blob",
-            data=json.dumps(factory.JSONRequests.new_blob()),
-            content_type='application/json')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertModelCount(PredefinedBlob, 1)
-        self.assertModelCount(Parameters, 2)
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                title=request["title"],
+                parameters=request["parameters"])
 
     def test_blob_deletion(self):
-        blob = factory.predefined_blob(3)
-        self.blobs_dao.add(title=blob.title,
-                           parameters=factory.predefined_blob_paramters(3))
+        with patch.object(PredefinedBlobsDao, "delete") as mock_method:
+            response = self.app.delete("/api/predefined_blob/1")
 
-        self.assertModelCount(PredefinedBlob, 1)
-        blob_id = PredefinedBlob.query.one().id
-        response = self.app.delete("/api/predefined_blob/%d" % blob_id)
-        self.assertEqual(response.status_code, 200)
-        self.assertModelEmpty(PredefinedBlob)
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(1)
 
     def test_blob_update(self):
-        blob = factory.predefined_blob(1)
-        self.blobs_dao.add(title=blob.title,
-                           parameters=factory.predefined_blob_paramters(1))
-        id = PredefinedBlob.query.one().id
+        with patch.object(PredefinedBlobsDao, "update") as mock_method:
+            request = factory.JSONRequests.update_blob()
+            response = self.app.put(
+                "/api/predefined_blob/3",
+                data=json.dumps(request),
+                content_type='application/json')
 
-        response = self.app.put(
-            "/api/predefined_blob/%d" % id,
-            data=json.dumps(factory.JSONRequests.update_blob()),
-            content_type='application/json')
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                id=3,
+                title=request["title"],
+                parameters=request["parameters"])
 
-        self.assertEqual(response.status_code, 200)
-        self.assertModelCount(PredefinedBlob, 1)
-        self.assertModelCount(Parameters, 3)
-        self.assertEqual(PredefinedBlob.query.one().title, factory.JSONRequests.new_blob_title)
 

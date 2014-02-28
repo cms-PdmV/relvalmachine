@@ -15,8 +15,6 @@ from relval.database.models import Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao
 from relval.rest import marshallers
 
-BLOBS_PER_PAGE = app.config['BLOBS_PER_PAGE']
-
 
 def convert_keys_to_string(dictionary):
     """ Recursively converts dictionary keys to strings.
@@ -98,7 +96,9 @@ class PredefinedBlobsApi(Resource):
         total = len(blobs)
         return blobs, total
 
-    def __get_page(self, page_num=1, items_per_page=BLOBS_PER_PAGE):
+    def __get_page(self, page_num=1, items_per_page=None):
+        if not items_per_page:
+            items_per_page = app.config['BLOBS_PER_PAGE']
         result = self.blobs_dao.get_paginated(page_num, items_per_page)
         blobs = result.items
         total = result.total

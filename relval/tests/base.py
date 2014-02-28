@@ -12,6 +12,7 @@ class BaseTestsCase(unittest.TestCase):
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///:memory:"
         app.config['SQLALCHEMY_ECHO'] = False
+        app.config['BLOBS_PER_PAGE'] = 3
         db.create_all()
         self.app = app.test_client()
 

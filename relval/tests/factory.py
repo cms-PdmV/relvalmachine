@@ -92,6 +92,6 @@ class JSONRequests(object):
             "parameters": [
                 {"flag": "flag1", "value": "value1"},
                 {"flag": "flag2", "value": "value2"},
-                {"flag": "flag1", "value": "value1"}
+                {"flag": "flag3", "value": "value3"}
             ]
         }
