@@ -189,8 +189,10 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
         $scope.searchAll = function() {
             //TODO: query service
             console.log($scope.searchText);
+            var blobs = PredefinedBlobs.all({search: $scope.searchText}, function() {
+                $scope.blobs = blobs
+            });
         }
-
     }
 ]);
 

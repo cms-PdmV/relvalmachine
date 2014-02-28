@@ -9,14 +9,14 @@
             <input type="text" class="form-control" placeholder="Search" ng-model="searchText" name="query" />
             <div class="input-group-btn">
               <button type="submit" class="btn btn-success" ng-click="searchAll()">
-                <i class="fa fa-search"></i> Search all
+                <i class="fa fa-search fa-lg"></i> Search all
               </button>
             </div>
           </div>
         </form>
       </div>
       <div type="button" class="btn btn-success pull-right ">
-        <a href="/#blobs/new"><i class="fa fa-plus-square-o"></i> Create new</a>
+        <a href="/#blobs/new"><i class="fa fa-plus-square-o fa-lg"></i> Create new</a>
       </div>
     </div>
     `
@@ -34,8 +34,8 @@
         <td>{{blob.creation_date}}</td>
         <td>
           <div>
-            <i ng-click="editBlob($index)" class="fa fa-pencil-square-o fa-lg"></i>
-            <i ng-click="deleteBlob($index)" class="fa fa-times fa-lg"></i>
+            <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)" ><i class="fa fa-pencil-square-o fa-lg"></i></button>
+            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i class="fa fa-times fa-lg"></i></button>
           </div>
         </td>
       </tr>

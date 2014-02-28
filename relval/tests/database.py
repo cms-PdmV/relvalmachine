@@ -94,10 +94,7 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.blob_insertion_test(1)
 
     def test_blob_deletion(self):
-        blob = factory.predefined_blob(1)
-        parameters = factory.predefined_blob_paramters(2)
-
-        self.blobs_dao.add(blob.title, blob.creation_date, parameters)
+        self.prepare_blob(parameters_count=2)
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Parameters, 2)
@@ -108,10 +105,29 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.assertModelEmpty(PredefinedBlob)
         self.assertModelEmpty(Parameters)
 
+    def test_blob_search_single_result(self):
+        self.prepare_blob()
+        self.prepare_blob("aa-search-this")
+
+        result = self.blobs_dao.search_all("search")
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].title, "aa-search-this")
+
+    def test_blob_search_multiple_result(self):
+        self.prepare_blob()
+        self.prepare_blob("search-aa-smt")
+        self.prepare_blob("aa-search")
+
+        result = self.blobs_dao.search_all("search")
+
+        result.sort(key=lambda blob: blob.title)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].title, "aa-search")
+        self.assertEqual(result[1].title, "search-aa-smt")
+
     def blob_update_test(self):
-        blob = factory.predefined_blob(1)
-        parameters = factory.predefined_blob_paramters(2)
-        self.blobs_dao.add(blob.title, blob.creation_date, parameters)
+        self.prepare_blob(parameters_count=2)
         id = PredefinedBlob.query.one().id
 
         new_title = "new-blob-title"
@@ -126,17 +142,23 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.assertEqual(new_blob.title, new_title)
 
     def blob_insertion_test(self, params_num):
-        blob = factory.predefined_blob(params_num)
-        parameters = factory.predefined_blob_paramters(params_num)
-
         self.assertModelEmpty(PredefinedBlob)
-        self.blobs_dao.add(blob.title, blob.creation_date, parameters)
+        blob = self.prepare_blob(parameters_count=params_num)
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Parameters, params_num)
 
         actual_blob = PredefinedBlob.query.one()
         self.assertBlobs(blob, actual_blob)
+
+    def prepare_blob(self, title=None, parameters_count=1):
+        blob = factory.predefined_blob(parameters_count)
+        if title:
+            blob.title = title
+        parameters = factory.predefined_blob_paramters(parameters_count)
+
+        self.blobs_dao.add(blob.title, creation_date=blob.creation_date, parameters=parameters)
+        return blob
 
     def assertBlobs(self, expected, actual):
 

@@ -64,8 +64,11 @@ class PredefinedBlobsApi(Resource):
     def get(self):
         """ Returns all existing predefined blobs
         """
-
-        blobs = self.blobs_dao.all()
+        search = request.args.get("search")
+        if search:
+            blobs = self.blobs_dao.search_all(search)
+        else:
+            blobs = self.blobs_dao.all()
         return blobs
 
     def post(self):

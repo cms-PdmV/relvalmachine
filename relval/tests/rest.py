@@ -34,6 +34,10 @@ class PredefinedBlobsRestTests(BaseTestsCase):
         self.assertModelCount(PredefinedBlob, 3)
         self.assertEqual(len(data), 3)
 
+    def test_blob_search(self):
+        pass
+        #todo add test
+
     def test_new_blob_creation(self):
         self.assertModelEmpty(PredefinedBlob)
 

@@ -3,6 +3,7 @@
 var relval = angular.module('relval',[
         'ngRoute',
         'ngResource',
+        'ngAnimate',
         'ui.bootstrap',
         'relvalControllers',
         'relvalDirectives',

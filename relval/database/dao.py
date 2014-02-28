@@ -66,6 +66,9 @@ class PredefinedBlobsDao(object):
     def all(self):
         return PredefinedBlob.query.all()
 
+    def search_all(self, search):
+        return PredefinedBlob.query.filter(PredefinedBlob.title.ilike("%{0}%".format(search))).all()
+
     def get(self, id):
         return PredefinedBlob.query.get(id)
 
