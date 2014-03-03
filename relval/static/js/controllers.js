@@ -138,7 +138,7 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
     function($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
         $scope.searchText = "";
         var resp = PredefinedBlobs.all(function() {
-            $scope.totalItems = parseInt(resp.total)
+            $scope.totalItems = resp.total
             $scope.blobs = resp.blobs
         }, function() { // on failure
             AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
@@ -219,6 +219,9 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
             BlobsSearchService.search($scope.searchText, $scope.itemsPerPage, function(response) {
                 $scope.totalItems = response.total
                 $scope.blobs = response.blobs
+                if ($scope.totalItems == 0) {
+                    AlertsService.addWarn({msg: "No result find for query " + $scope.searchText + "."})
+                }
             });
         }
 

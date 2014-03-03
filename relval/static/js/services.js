@@ -59,6 +59,11 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
             addError:  function(newAlert) {
                 newAlert.type = 'danger';
                 this.add(newAlert);
+            },
+
+            addWarn: function(newAlert) {
+                newAlert.type = 'warning';
+                this.add(newAlert)
             }
         };
 
