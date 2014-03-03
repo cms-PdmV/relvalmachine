@@ -38,7 +38,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
 
             self.assertEqual(len(data['blobs']), 3)
             self.assertEqual(data['total'], "3")
-            mock_method.assert_called_once_with(1, 3)  # default items per page
+            mock_method.assert_called_once_with(page_num=1, items_per_page=3)  # default items per page
 
     def test_blob_fetch_paginating(self):
         blobs = []
@@ -55,20 +55,37 @@ class PredefinedBlobsRestTests(BaseTestsCase):
 
             self.assertEqual(len(data['blobs']), 2)
             self.assertEqual(data['total'], "2")
-            mock_method.assert_called_once_with(1, 2)
+            mock_method.assert_called_once_with(page_num=1, items_per_page=2)
 
     def test_blob_search(self):
         blobs = [factory.predefined_blob(3)]
+        page = Pagination(None, None, None, 1, blobs)
 
         with patch.object(PredefinedBlobsDao, "search_all") as mock_method:
-            mock_method.return_value = blobs
+            mock_method.return_value = page
             response = self.app.get("/api/predefined_blob?search=query")
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
             self.assertEqual(len(data['blobs']), 1)
             self.assertEqual(data['total'], "1")
-            mock_method.assert_called_once_with("query")
+            mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=3)
+
+    def test_blob_search_with_pagination_params(self):
+        blobs = []
+        for _ in range(3):
+            blobs.append(factory.predefined_blob(3))
+        page = Pagination(None, None, None, 6, blobs)
+
+        with patch.object(PredefinedBlobsDao, "search_all") as mock_method:
+            mock_method.return_value = page
+            response = self.app.get("/api/predefined_blob?search=query&page_num=2&items_per_page=3")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+            self.assertEqual(len(data['blobs']), 3)
+            self.assertEqual(data['total'], "6")
+            mock_method.assert_called_once_with(query="query", page_num=2, items_per_page=3)
 
     def test_new_blob_creation(self):
         with patch.object(PredefinedBlobsDao, "add") as mock_method:

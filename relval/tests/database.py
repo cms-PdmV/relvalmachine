@@ -109,22 +109,22 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.prepare_blob()
         self.prepare_blob("aa-search-this")
 
-        result = self.blobs_dao.search_all("search")
+        result = self.blobs_dao.search_all("search", 1, 10)
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].title, "aa-search-this")
+        self.assertEqual(len(result.items), 1)
+        self.assertEqual(result.items[0].title, "aa-search-this")
 
     def test_blob_search_multiple_result(self):
         self.prepare_blob()
         self.prepare_blob("search-aa-smt")
         self.prepare_blob("aa-search")
 
-        result = self.blobs_dao.search_all("search")
+        result = self.blobs_dao.search_all("search", 1, 10)
 
-        result.sort(key=lambda blob: blob.title)
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0].title, "aa-search")
-        self.assertEqual(result[1].title, "search-aa-smt")
+        result.items.sort(key=lambda blob: blob.title)
+        self.assertEqual(len(result.items), 2)
+        self.assertEqual(result.items[0].title, "aa-search")
+        self.assertEqual(result.items[1].title, "search-aa-smt")
 
     def test_blob_paginated_fetch_single(self):
         for i in range(3):

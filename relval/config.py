@@ -18,3 +18,5 @@ SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
     RELVAL_DB_PORT,
     RELVAL_DB_SID
 )
+
+BLOBS_PER_PAGE=100

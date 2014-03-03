@@ -73,7 +73,9 @@ class PredefinedBlobsApi(Resource):
         args = self.parser.parse_args()
 
         if args['search']:
-            blobs, total = self.__search(args['search'])
+            page_num = args['page_num'] if args['page_num'] else 1
+            items_per_page = args['items_per_page'] if args['items_per_page'] else None
+            blobs, total = self.__search(args['search'], page_num, items_per_page)
         elif args['page_num'] and args['items_per_page']:
             blobs, total = self.__get_page(args['page_num'], args['items_per_page'])
         else:
@@ -91,18 +93,28 @@ class PredefinedBlobsApi(Resource):
         data = convert_keys_to_string(request.json)
         self.blobs_dao.add(**data)
 
-    def __search(self, query):
-        blobs = self.blobs_dao.search_all(query)
-        total = len(blobs)
-        return blobs, total
+    def __search(self, query, page_num=1, items_per_page=None):
+        return self.__paginated_result(
+            self.blobs_dao.search_all,
+            page_num=page_num,
+            items_per_page=items_per_page,
+            query=query)
 
     def __get_page(self, page_num=1, items_per_page=None):
+        return self.__paginated_result(
+            self.blobs_dao.get_paginated,
+            page_num,
+            items_per_page
+        )
+
+    def __paginated_result(self, dao_func, page_num=1, items_per_page=None, **kwargs):
         if not items_per_page:
             items_per_page = app.config['BLOBS_PER_PAGE']
-        result = self.blobs_dao.get_paginated(page_num, items_per_page)
+        result = dao_func(page_num=page_num, items_per_page=items_per_page, **kwargs)
         blobs = result.items
         total = result.total
         return blobs, total
+
 
 
 class PredefinedBlobApi(Resource):

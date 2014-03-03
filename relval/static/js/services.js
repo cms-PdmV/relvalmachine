@@ -65,3 +65,45 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
 
         return alertsService ;
 }]);
+
+
+// blobs services
+relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(PredefinedBlobs) {
+    var searchingMode = false;
+    var query = "";
+
+    var searchService = {
+
+        search: function(search_query, items_per_page, callback) {
+            searchingMode = true;
+            query = search_query;
+            var resp = PredefinedBlobs.all({search: query, page_num: 1, items_per_page: items_per_page}, function() {
+                callback(resp)
+            });
+            return resp;
+        },
+
+        changePage: function(page, itemsPerPage, callback) {
+            var resp = PredefinedBlobs.all({search: query, page_num: page, items_per_page: itemsPerPage},
+                function() {
+                    callback(resp)
+                });
+            return resp;
+        },
+
+        resetSearch: function(callback) {
+            searchingMode = false;
+            query = "";
+            var resp = PredefinedBlobs.all(function() {
+                callback(resp)
+            });
+            return resp;
+        },
+
+        isSearchingMode: function() {
+            return searchingMode;
+        }
+    };
+
+    return searchService;
+}]);

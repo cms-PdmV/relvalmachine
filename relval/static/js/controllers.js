@@ -134,8 +134,8 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 
 
 // controllers related to blobs
-relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $location, PredefinedBlobs, AlertsService) {
+relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
+    function($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
         $scope.searchText = "";
         var resp = PredefinedBlobs.all(function() {
             $scope.totalItems = parseInt(resp.total)
@@ -191,41 +191,45 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
         }
 
         /*
+         * Pagination
+         */
+        $scope.itemsPerPage = 100;  // how many items are in one page
+        $scope.currentPage = 1;    // current page that is selected
+        $scope.maxSize = 10;       // how many pages display
+
+        $scope.setPage = function(pageNo) {
+            if (BlobsSearchService.isSearchingMode()) { // if in search mode then change page with same search query
+                BlobsSearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
+                    $scope.totalItems = response.total;
+                    $scope.blobs = response.blobs;
+                });
+            } else {
+                var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                    $scope.totalItems = parseInt(resp.total);
+                    $scope.blobs = resp.blobs;
+                });
+            }
+            $scope.currentPage = pageNo;
+        };
+
+        /*
          * Search functionality
          */
         $scope.searchAll = function() {
-            //TODO: query service
-            var resp = PredefinedBlobs.all({search: $scope.searchText}, function() {
-                $scope.totalItems = resp.total
-                $scope.blobs = resp.blobs
-                $scope.itemsPerPage = 0; // turn off pagination
+            BlobsSearchService.search($scope.searchText, $scope.itemsPerPage, function(response) {
+                $scope.totalItems = response.total
+                $scope.blobs = response.blobs
             });
         }
 
         $scope.resetSearch = function() {
             $scope.searchText = "";
-            var resp = PredefinedBlobs.all({search: $scope.searchText}, function() {
-                $scope.totalItems = resp.total
-                $scope.blobs = resp.blobs
+            BlobsSearchService.resetSearch(function(response) {
+                $scope.totalItems = response.total
+                $scope.blobs = response.blobs
                 $scope.currentPage = 1;
-                $scope.itemsPerPage = 10; // turn on pagination
             });
         }
-
-        /*
-         * Pagination
-         */
-        $scope.itemsPerPage = 10;  // how many items are in one page
-        $scope.currentPage = 1;    // current page that is selected
-        $scope.maxSize = 10;       // how many pages display
-
-        $scope.setPage = function(pageNo) {
-            $scope.currentPage = pageNo;
-            var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                $scope.totalItems = parseInt(resp.total)
-                $scope.blobs = resp.blobs
-            });
-        };
 
     }
 ]);
