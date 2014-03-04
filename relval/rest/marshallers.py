@@ -20,7 +20,8 @@ users_marshaller = {
 blobs_marshaller = {
     'id': fields.String,
     'title': fields.String,
-    'creation_date': fields.String
+    'creation_date': fields.String,
+    'immutable': fields.Boolean
 }
 
 blobs_marshaller_paginated = {
@@ -37,5 +38,6 @@ blob_marshaller = {
     'id': fields.String,
     'title': fields.String,
     'creation_date': fields.String,
+    'immutable': fields.Boolean,
     'parameters': fields.Nested(parameter_marshaller)
 }

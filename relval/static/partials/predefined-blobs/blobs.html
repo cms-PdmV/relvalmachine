@@ -29,7 +29,9 @@
       <th>#</th>
       <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
       <th ng-click="changeSorting('creation_date')" ng-class="selectedCls('creation_date')"> Creation date</th>
+      <th>Frozen</th>
       <th>Actions</th>
+      <th></th>
       </thead>
       <tbody>
       <tr ng-repeat="blob in blobs | filter: {title: searchText} | orderBy:sort.column:sort.descending">
@@ -37,12 +39,20 @@
         <td>{{blob.title}}</td>
         <td>{{blob.creation_date}}</td>
         <td>
-          <div>
+          <div ng-show="blob.immutable">
+            <i class="fa fa-check fa-lg"></i>
+          </div>
+        </td>
+        <td>
+          <div ng-hide="blob.immutable">
             <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)"><i
                     class="fa fa-pencil-square-o fa-lg"></i></button>
-            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i class="fa fa-times fa-lg"></i>
-            </button>
+            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i
+                    class="fa fa-times fa-lg"></i></button>
           </div>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary" ng-click="cloneBlob($index)">Clone</button>
         </td>
       </tr>
       </tbody>

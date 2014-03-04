@@ -73,8 +73,6 @@ relvalControllers.controller('NewRequestCreateCtrl', ['$scope',
 
         $scope.editStep = function(index) {
             $scope.showStepForm = true; // show step creation form
-            console.log(index)
-            console.log($scope.steps[index]);
             $scope.currentStep = $scope.steps[index];
         };
 
@@ -167,6 +165,11 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                     }});
         };
 
+        $scope.cloneBlob = function(index) {
+            var id = $scope.blobs[index].id
+            $location.path("/blobs/clone/" + id);
+        }
+
         /*
          * Sorting
          */
@@ -195,7 +198,7 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
         /*
          * Pagination
          */
-        $scope.itemsPerPage = 100;  // how many items are in one page
+        $scope.itemsPerPage = 20;  // how many items are in one page
         $scope.currentPage = 1;    // current page that is selected
         $scope.maxSize = 10;       // how many pages display
 
@@ -233,38 +236,58 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                 $scope.totalItems = response.total
                 $scope.blobs = response.blobs
                 $scope.currentPage = 1;
+                $scope.sort.column = '';
             });
         }
 
     }
 ]);
 
-relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $location, PredefinedBlobs, AlertService) {
-        $scope.currentStep = {};
-        $scope.currentStep.parameters = [{
+function BaseBlobEditPageController($scope, $location) {
+    $scope.currentStep = {};
+    $scope.currentStep.parameters = [{
+        "flag": "",
+        "value": ""
+    }];
+
+    $scope.addParametersRow = function() {
+        $scope.currentStep.parameters.push({
             "flag": "",
             "value": ""
-        }];
+        });
+    };
 
-        $scope.addParametersRow = function() {
-            $scope.currentStep.parameters.push({
-                "flag": "",
-                "value": ""
-            });
-        };
+    $scope.removeParametersRow = function(index) {
+        $scope.currentStep.parameters.splice(index, 1);
+    };
 
-        $scope.removeParametersRow = function(index) {
-            $scope.currentStep.parameters.splice(index, 1);
-        };
+    $scope.discardStepCreation = function() {
+        $location.path("/blobs");
+    };
+}
 
-        $scope.discardStepCreation = function() {
-            $location.path("/blobs");
-        };
+function BaseBlobEditPageControllerWithInitialLoad($scope, $location, $routeParams, PredefinedBlobs) {
+    angular.extend(this, new BaseBlobEditPageController($scope, $location));
+
+    // load blob data
+    $scope.id = $routeParams.blobId;
+    var blob = PredefinedBlobs.get({blob_id: $scope.id}, function() {
+        $scope.currentStep = {};
+        $scope.currentStep.title = blob.title;
+        $scope.currentStep.immutable = blob.immutable;
+        $scope.currentStep.parameters = blob.parameters;
+    });
+}
+
+relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs',
+    function($scope, $location, PredefinedBlobs) {
+        angular.extend(this, new BaseBlobEditPageController($scope, $location));
+        $scope.actionName = "Save";
 
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
                 title: $scope.currentStep.title,
+                immutable: $scope.currentStep.immutable,
                 parameters: $scope.currentStep.parameters
             });
 
@@ -278,39 +301,40 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
     }
 ]);
 
-relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $routeParams, $location, PredefinedBlobs, AlertService) {
-        var id = $routeParams.blobId;
-        var blob = PredefinedBlobs.get({blob_id: id}, function() {
-            $scope.currentStep = {};
-            $scope.currentStep.title = blob.title;
-            $scope.currentStep.parameters = blob.parameters;
-        });
-
-        $scope.addParametersRow = function() {
-            $scope.currentStep.parameters.push({
-                "flag": "",
-                "value": ""
-            });
-        };
-
-        $scope.removeParametersRow = function(index) {
-            $scope.currentStep.parameters.splice(index, 1);
-        };
-
-
-        $scope.discardStepCreation = function() {
-            $location.path("/blobs");
-        };
-
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
+    function($scope, $routeParams, $location, PredefinedBlobs) {
+        angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
+            $scope, $location, $routeParams, PredefinedBlobs));
+        $scope.actionName = "Update";
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
                 title: $scope.currentStep.title,
+                immutable: $scope.currentStep.immutable,
                 parameters: $scope.currentStep.parameters
             });
 
             // POST to create new blob
-            blob.$update({blob_id: id}, function() {
+            blob.$update({blob_id: $scope.id}, function() {
+                $location.path("/blobs");
+            });
+        };
+    }]);
+
+relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
+    function($scope, $routeParams, $location, PredefinedBlobs) {
+        angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
+            $scope, $location, $routeParams, PredefinedBlobs));
+        $scope.actionName = "Clone";
+
+        $scope.saveStep = function() {
+            var blob = new PredefinedBlobs({
+                title: $scope.currentStep.title,
+                immutable: $scope.currentStep.immutable,
+                parameters: $scope.currentStep.parameters
+            });
+
+            // POST to create new blob
+            blob.$create(function() {
                 $location.path("/blobs");
             }, function() {
                 AlertService.addError("Server Error. Failed to update predefined blob.");

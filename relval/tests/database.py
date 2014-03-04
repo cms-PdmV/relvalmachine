@@ -158,7 +158,7 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.assertEqual(len(result.items), 1)
         self.assertEqual(result.items[0].title, "title9")
 
-    def blob_update_test(self):
+    def test_blob_update(self):
         self.prepare_blob(parameters_count=2)
         id = PredefinedBlob.query.one().id
 
@@ -173,6 +173,15 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         new_blob = PredefinedBlob.query.one()
         self.assertEqual(new_blob.title, new_title)
 
+    def test_immutable_blob_update(self):
+        self.prepare_blob(parameters_count=2, immutable=True)
+        id = PredefinedBlob.query.one().id
+
+        self.assertRaises(Exception, self.blobs_dao.update, id=id)
+
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Parameters, 2)
+
     def blob_insertion_test(self, params_num):
         self.assertModelEmpty(PredefinedBlob)
         blob = self.prepare_blob(parameters_count=params_num)
@@ -183,13 +192,13 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         actual_blob = PredefinedBlob.query.one()
         self.assertBlobs(blob, actual_blob)
 
-    def prepare_blob(self, title=None, parameters_count=1):
+    def prepare_blob(self, title=None, parameters_count=1, immutable=False):
         blob = factory.predefined_blob(parameters_count)
         if title:
             blob.title = title
         parameters = factory.predefined_blob_paramters(parameters_count)
 
-        self.blobs_dao.add(blob.title, creation_date=blob.creation_date, parameters=parameters)
+        self.blobs_dao.add(blob.title, creation_date=blob.creation_date, immutable=immutable, parameters=parameters)
         return blob
 
     def assertBlobs(self, expected, actual):
