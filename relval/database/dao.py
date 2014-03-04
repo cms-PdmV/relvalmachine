@@ -51,12 +51,13 @@ class RevisionsDao(object):
 
 class PredefinedBlobsDao(object):
 
-    def add(self, title, creation_date=None, parameters=[]):
+    def add(self, title, creation_date=None, immutable=False, parameters=[]):
         if not creation_date:
             creation_date = datetime.utcnow();
         predefined_blob = PredefinedBlob(
             title=title,
-            creation_date=creation_date)
+            creation_date=creation_date,
+            immutable=immutable)
         predefined_blob.parameters = [
             Parameters(flag=param['flag'], value=param['value']) for param in parameters
         ]
@@ -80,13 +81,15 @@ class PredefinedBlobsDao(object):
     def get(self, id):
         return PredefinedBlob.query.get(id)
 
-    def update(self, id, title=None, parameters=[]):
+    def update(self, id, title=None, immutable=False, parameters=[]):
         blob = self.get(id)
-        if title != None:
+        if blob.immutable:
+            raise Exception("Cannot edit entity that is immutable.")
+        if title is not None:
             blob.title = title
         for parameter in blob.parameters:
             db.session.delete(parameter)
-
+        blob.immutable = immutable
         blob.parameters = [
             Parameters(flag=param['flag'], value=param['value']) for param in parameters
         ]

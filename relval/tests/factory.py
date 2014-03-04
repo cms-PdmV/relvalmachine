@@ -57,6 +57,7 @@ def predefined_blob(params_count=1):
     return PredefinedBlob(
         title="test-title",
         creation_date=datetime.utcnow(),
+        immutable=False,
         parameters=[
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(params_count)
         ])
@@ -78,6 +79,7 @@ class JSONRequests(object):
     def new_blob():
         return {
             "title": "test-blob-title",
+            "immutable": False,
             # "current_time": datetime.now().isoformat(),
             "parameters": [
                 {"flag": "flag1", "value": "value1"},
@@ -89,6 +91,7 @@ class JSONRequests(object):
     def update_blob():
         return {
             "title": JSONRequests.new_blob_title,
+            "immutable": True,
             "parameters": [
                 {"flag": "flag1", "value": "value1"},
                 {"flag": "flag2", "value": "value2"},

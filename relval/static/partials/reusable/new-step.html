@@ -2,6 +2,7 @@
 <form class="form-horizontal" role="form">
   <div class="form-group">
     <label for="stepTitle" class="col-sm-1 control-label">Title</label>
+
     <div class="col-sm-9">
       <input ng-model="currentStep.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
     </div>
@@ -10,28 +11,36 @@
   <div ng-repeat="param in currentStep.parameters">
     <div class="form-group">
       <label for="parameterFlag" class="col-sm-1 control-label">Flag</label>
+
       <div class="col-sm-4">
         <input ng-model="param.flag" type="text" class="form-control" id="parameterFlag" placeholder="Flag">
       </div>
 
       <label for="parameterValue" class="col-sm-1 control-label">Value</label>
+
       <div class="col-sm-4">
         <input ng-model="param.value" type="text" class="form-control" id="parameterValue" placeholder="Value">
       </div>
-      <button ng-click="removeParametersRow($index)" type="button" class="btn btn-sm btn-danger" class="col-sm-1">-</button>
+      <button ng-click="removeParametersRow($index)" type="button" class="btn btn-sm btn-danger" class="col-sm-1">-
+      </button>
 
     </div>
   </div>
 
-  <!-- <div class="row"> -->
-  <div id="step-add-remove-buttons" class="col-sm-4">
+  <div id="step-add-remove-buttons" class="col-sm-2 ">
     <button ng-click="addParametersRow()" type="button" class="btn btn-success">+</button>
   </div>
-  <!-- </div> -->
+  <div class="checkbox col-sm-4" data-toggle="tooltip" data-placement="top" data-delay="0"
+       title="When you mark predefined blob as frozen you cannot edit it, only clone will be possible.">
+    <label>
+      <input type="checkbox" ng-model="currentStep.immutable"> Mark as frozen blob
+    </label>
+  </div>
+
 
   <div id="step-buttons" class="col-sm-4 pull-right">
     <button ng-click="discardStepCreation()" type="button" class="btn btn-danger">Discard</button>
-    <button ng-click="saveStep()" type="button" class="btn btn-success">Save</button>
+    <button ng-click="saveStep()" type="button" class="btn btn-success">{{actionName}}</button>
   </div>
 </form>
 <!-- Form end -->

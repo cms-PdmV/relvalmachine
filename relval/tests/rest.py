@@ -98,6 +98,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
             self.assertEqual(response.status_code, 200)
             mock_method.assert_called_once_with(
                 title=request["title"],
+                immutable=False,
                 parameters=request["parameters"])
 
     def test_blob_deletion(self):
@@ -119,6 +120,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
             mock_method.assert_called_once_with(
                 id=3,
                 title=request["title"],
+                immutable=True,
                 parameters=request["parameters"])
 
 

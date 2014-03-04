@@ -51,11 +51,15 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'BlobsCtrl'
     })
     .when('/blobs/new', {
-        templateUrl: 'static/partials/predefined-blobs/new.html',
+        templateUrl: 'static/partials/predefined-blobs/edit.html',
         controller: 'NewBlobCtrl'
     })
     .when('/blobs/edit/:blobId', {
-        templateUrl: 'static/partials/predefined-blobs/new.html',
+        templateUrl: 'static/partials/predefined-blobs/edit.html',
         controller: 'EditBlobCtrl'
+    })
+    .when('/blobs/clone/:blobId', {
+        templateUrl: 'static/partials/predefined-blobs/edit.html',
+        controller: 'CloneBlobCtrl'
     })
 }]);
