@@ -239,8 +239,8 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
     }
 ]);
 
-relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs',
-    function($scope, $location, PredefinedBlobs) {
+relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $location, PredefinedBlobs, AlertService) {
         $scope.currentStep = {};
         $scope.currentStep.parameters = [{
             "flag": "",
@@ -271,6 +271,8 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
             // POST to create new blob
             blob.$create(function() {
                 $location.path("/blobs");
+            }, function() {
+                AlertService.addError("Server Error. Failed to create new predefined blob.");
             });
         };
     }

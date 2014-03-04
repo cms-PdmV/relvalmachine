@@ -211,4 +211,82 @@ describe('Blobs page', function() {
             });
         });
     });
+
+    describe('New Blob Controller:', function() {
+        var scope, ctrl, $httpBackend, location, alertService;
+
+        beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
+            $httpBackend = _$httpBackend_;
+            scope = $rootScope.$new();
+            location = $location;
+            alertService = {};
+
+            ctrl = $controller('NewBlobCtrl', {
+                $scope: scope,
+                AlertsService: alertService
+            });
+        }));
+
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        it('should has empty current step at first', function() {
+            expect(scope.currentStep).toEqual({parameters: [{flag: "", value: ""}]})
+        });
+
+        it('should add parameters row on addParametersrow()', function() {
+            expect(scope.currentStep.parameters.length).toBe(1);
+            scope.addParametersRow();
+            expect(scope.currentStep.parameters.length).toBe(2);
+        });
+
+        it('should remove parameters row on removeParametersrow()', function() {
+            expect(scope.currentStep.parameters.length).toBe(1);
+            scope.removeParametersRow();
+            expect(scope.currentStep.parameters.length).toBe(0);
+        });
+
+        it('should redirect to blobs index page when creation discarded', function() {
+            scope.discardStepCreation();
+            expect(location.path()).toBe('/blobs')
+        });
+
+        describe('when creating new blob', function() {
+
+            beforeEach(function() {
+                scope.currentStep = {
+                    title: "test-title",
+                    parameters: [
+                        {flag: "1st flag", value: "1st value"},
+                        {flag: "2nd flag", value: "2nd value"}
+                    ]
+                };
+            });
+
+
+            it('should call HTTP POST with new blob data and redirect to index when success', function() {
+                var postData = scope.currentStep;
+                $httpBackend.expectPOST('api/predefined_blob', postData).respond(200);
+
+                scope.saveStep();
+                $httpBackend.flush();
+
+                expect(location.path()).toBe('/blobs');
+            });
+
+            it('should call HTTP POST with new blob data and show error alert when server failed', function() {
+                alertService.addError = jasmine.createSpy('addError');
+                var postData = scope.currentStep;
+
+                $httpBackend.expectPOST('api/predefined_blob', postData).respond(500);
+                scope.saveStep();
+
+                $httpBackend.flush();
+                expect(alertService.addError).toHaveBeenCalled();
+            });
+        });
+
+    });
 });
