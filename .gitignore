@@ -47,3 +47,9 @@ nosetests.xml
 
 # SublimeText project files
 *.sublime-workspace
+
+### Javascript ###
+node_modules
+
+# karma-coverage generates coverage here
+coverage
