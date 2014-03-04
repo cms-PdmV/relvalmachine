@@ -1,3 +1,5 @@
+"use strict";
+
 var relvalControllers = angular.module('relvalControllers', []);
 
 relvalControllers.controller('HomeCtrl', ['$scope',
@@ -205,7 +207,7 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
                 });
             } else {
                 var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                    $scope.totalItems = parseInt(resp.total);
+                    $scope.totalItems = resp.total;
                     $scope.blobs = resp.blobs;
                 });
             }
