@@ -67,7 +67,7 @@ describe('Blobs page', function() {
                 expect(scope.totalItems).toBe(101);
 
                 scope.setPage(2);
-                $httpBackend.expectGET('api/predefined_blob?items_per_page=100&page_num=2').respond(200, {
+                $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=2').respond(200, {
                     total: 102,
                     blobs: [blobs[2], blobs[3]]
                 });
@@ -82,7 +82,7 @@ describe('Blobs page', function() {
                 scope.searchText = "text";
                 scope.searchAll();
 
-                $httpBackend.expectGET('api/predefined_blob?items_per_page=100&page_num=1&search=text').respond(200, {
+                $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
                     total: 4,
                     blobs: [blobs[0], blobs[1]]
                 });
@@ -93,7 +93,7 @@ describe('Blobs page', function() {
 
                 // change page
                 scope.setPage(2);
-                $httpBackend.expectGET('api/predefined_blob?items_per_page=100&page_num=2&search=text').respond(200, {
+                $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=2&search=text').respond(200, {
                     total: 3,
                     blobs: [blobs[3]]
                 });
@@ -109,7 +109,7 @@ describe('Blobs page', function() {
                 scope.searchText = "text";
                 scope.searchAll();
 
-                $httpBackend.expectGET('api/predefined_blob?items_per_page=100&page_num=1&search=text').respond(200, {
+                $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
                     total: 4,
                     blobs: []
                 });
@@ -140,6 +140,11 @@ describe('Blobs page', function() {
             it('should redirect to edit page after edit', function() {
                 scope.editBlob(0);
                 expect(location.path()).toBe('/blobs/edit/42')
+            });
+
+            it('should redirect to clone page after clone', function() {
+                scope.cloneBlob(0);
+                expect(location.path()).toBe('/blobs/clone/42')
             });
 
             it('should send HTTP DELETE when confirm deletion and create success message', function() {
@@ -304,6 +309,7 @@ describe('Blobs page', function() {
             blob = {
                 id: 42,
                 title: "test-title",
+                immutable: true,
                 parameters: [
                     {flag: "1st flag", value: "1st value"},
                     {flag: "2nd flag", value: "2nd value"}
@@ -320,18 +326,6 @@ describe('Blobs page', function() {
             $httpBackend.flush();
         }));
 
-        it('should add parameters row on addParametersrow()', function() {
-            expect(scope.currentStep.parameters.length).toBe(2);
-            scope.addParametersRow();
-            expect(scope.currentStep.parameters.length).toBe(3);
-        });
-
-        it('should remove parameters row on removeParametersrow()', function() {
-            expect(scope.currentStep.parameters.length).toBe(2);
-            scope.removeParametersRow(1);
-            expect(scope.currentStep.parameters.length).toBe(1);
-        });
-
         it('should redirect to blobs index page when edit discarded', function() {
             scope.discardStepCreation();
             expect(location.path()).toBe('/blobs')
@@ -347,6 +341,7 @@ describe('Blobs page', function() {
 
                 updatedBlob = {
                     title: "new-title",
+                    immutable: true,
                     parameters: [
                         {flag: "1st flag", value: "1st value"},
                         {flag: "2nd flag", value: "2nd value"},
@@ -369,6 +364,65 @@ describe('Blobs page', function() {
                 $httpBackend.flush();
                 expect(alertService.addError).toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('Clone Blob Controller:', function() {
+        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob;
+
+        beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
+            $httpBackend = _$httpBackend_;
+            scope = $rootScope.$new();
+            location = $location;
+            routeParams = {};
+            alertService = {};
+            routeParams.blobId = 42;
+
+            blob = {
+                title: "test-title",
+                immutable: false,
+                parameters: [
+                    {flag: "1st flag", value: "1st value"},
+                    {flag: "2nd flag", value: "2nd value"}
+                ]
+            };
+
+            ctrl = $controller('CloneBlobCtrl', {
+                $scope: scope,
+                $routeParams: routeParams,
+                AlertsService: alertService
+            });
+
+            $httpBackend.expectGET('api/predefined_blob/42').respond(200, blob);
+            $httpBackend.flush();
+        }));
+
+        it('should send HTTP POST to server and redirect to blobs index page', function() {
+            var updatedBlob = {
+                title: "new-title",
+                immutable: true,
+                parameters: [
+                    {flag: "1st flag", value: "1st value"},
+                    {flag: "2nd flag", value: "2nd value"},
+                    {flag: "3rd flag", value: "3rd value"}
+                ]
+            }
+            scope.currentStep.title = "new-title";
+            scope.addParametersRow();
+            scope.currentStep.parameters[2] = {flag: "3rd flag", value: "3rd value"};
+            scope.currentStep.immutable = true;
+            scope.saveStep();
+            $httpBackend.expectPOST('api/predefined_blob', updatedBlob).respond(200);
+            $httpBackend.flush();
+            expect(location.path()).toBe('/blobs')
+        });
+
+        it('should send HTTP POST to server and show error alert after failure', function() {
+            alertService.addError = jasmine.createSpy('AlertService.addError');
+            scope.saveStep();
+            $httpBackend.expectPOST('api/predefined_blob', blob).respond(500);
+            $httpBackend.flush();
+            expect(alertService.addError).toHaveBeenCalled();
         });
     });
 });

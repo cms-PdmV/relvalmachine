@@ -279,8 +279,8 @@ function BaseBlobEditPageControllerWithInitialLoad($scope, $location, $routePara
     });
 }
 
-relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs',
-    function($scope, $location, PredefinedBlobs) {
+relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $location, PredefinedBlobs, AlertsService) {
         angular.extend(this, new BaseBlobEditPageController($scope, $location));
         $scope.actionName = "Save";
 
@@ -295,14 +295,14 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
             blob.$create(function() {
                 $location.path("/blobs");
             }, function() {
-                AlertService.addError("Server Error. Failed to create new predefined blob.");
+                AlertsService.addError("Server Error. Failed to create new predefined blob.");
             });
         };
     }
 ]);
 
-relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
-    function($scope, $routeParams, $location, PredefinedBlobs) {
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $location, PredefinedBlobs, AlertsService) {
         angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
             $scope, $location, $routeParams, PredefinedBlobs));
         $scope.actionName = "Update";
@@ -316,12 +316,14 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$locati
             // POST to create new blob
             blob.$update({blob_id: $scope.id}, function() {
                 $location.path("/blobs");
+            }, function() {
+                AlertsService.addError("Server Error. Failed to update predefined blob.");
             });
         };
     }]);
 
-relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
-    function($scope, $routeParams, $location, PredefinedBlobs) {
+relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $location, PredefinedBlobs, AlertsService) {
         angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
             $scope, $location, $routeParams, PredefinedBlobs));
         $scope.actionName = "Clone";
@@ -337,7 +339,7 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$locat
             blob.$create(function() {
                 $location.path("/blobs");
             }, function() {
-                AlertService.addError("Server Error. Failed to update predefined blob.");
+                AlertsService.addError("Server Error. Failed to update predefined blob.");
             });
         };
     }]);
