@@ -244,7 +244,7 @@ describe('Blobs page', function() {
 
         it('should remove parameters row on removeParametersrow()', function() {
             expect(scope.currentStep.parameters.length).toBe(1);
-            scope.removeParametersRow();
+            scope.removeParametersRow(0);
             expect(scope.currentStep.parameters.length).toBe(0);
         });
 
@@ -288,5 +288,87 @@ describe('Blobs page', function() {
             });
         });
 
+    });
+
+    describe('Edit Blob Controller:', function() {
+        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob;
+
+        beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
+            $httpBackend = _$httpBackend_;
+            scope = $rootScope.$new();
+            location = $location;
+            routeParams = {};
+            routeParams.blobId = 42;
+            alertService = {};
+
+            blob = {
+                id: 42,
+                title: "test-title",
+                parameters: [
+                    {flag: "1st flag", value: "1st value"},
+                    {flag: "2nd flag", value: "2nd value"}
+                ]
+            };
+
+            ctrl = $controller('EditBlobCtrl', {
+                $scope: scope,
+                $routeParams: routeParams,
+                AlertsService: alertService
+            });
+
+            $httpBackend.expectGET('api/predefined_blob/42').respond(200, blob);
+            $httpBackend.flush();
+        }));
+
+        it('should add parameters row on addParametersrow()', function() {
+            expect(scope.currentStep.parameters.length).toBe(2);
+            scope.addParametersRow();
+            expect(scope.currentStep.parameters.length).toBe(3);
+        });
+
+        it('should remove parameters row on removeParametersrow()', function() {
+            expect(scope.currentStep.parameters.length).toBe(2);
+            scope.removeParametersRow(1);
+            expect(scope.currentStep.parameters.length).toBe(1);
+        });
+
+        it('should redirect to blobs index page when edit discarded', function() {
+            scope.discardStepCreation();
+            expect(location.path()).toBe('/blobs')
+        });
+
+        describe('when send HTTP PUT to update page', function() {
+            var updatedBlob;
+
+            beforeEach(function() {
+                scope.currentStep.title = "new-title";
+                scope.addParametersRow();
+                scope.currentStep.parameters[2] = {flag: "3rd flag", value: "3rd value"}
+
+                updatedBlob = {
+                    title: "new-title",
+                    parameters: [
+                        {flag: "1st flag", value: "1st value"},
+                        {flag: "2nd flag", value: "2nd value"},
+                        {flag: "3rd flag", value: "3rd value"}
+                    ]
+                }
+            });
+
+            it('should redirect to blobs index after success', function() {
+                scope.saveStep();
+                $httpBackend.expectPUT('api/predefined_blob/42', updatedBlob).respond(200);
+                $httpBackend.flush();
+                expect(location.path()).toBe('/blobs')
+            });
+
+            it('should show alert after failure', function() {
+                alertService.addError = jasmine.createSpy('AlertService.addError');
+                scope.saveStep();
+                $httpBackend.expectPUT('api/predefined_blob/42', updatedBlob).respond(500);
+                $httpBackend.flush();
+                expect(alertService.addError).toHaveBeenCalled();
+            });
+        });
     });
 });

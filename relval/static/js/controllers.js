@@ -278,10 +278,9 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
     }
 ]);
 
-relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs',
-    function($scope, $routeParams, $location, PredefinedBlobs) {
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $location, PredefinedBlobs, AlertService) {
         var id = $routeParams.blobId;
-
         var blob = PredefinedBlobs.get({blob_id: id}, function() {
             $scope.currentStep = {};
             $scope.currentStep.title = blob.title;
@@ -296,7 +295,6 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$locati
         };
 
         $scope.removeParametersRow = function(index) {
-            console.log(index)
             $scope.currentStep.parameters.splice(index, 1);
         };
 
@@ -314,6 +312,8 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$locati
             // POST to create new blob
             blob.$update({blob_id: id}, function() {
                 $location.path("/blobs");
+            }, function() {
+                AlertService.addError("Server Error. Failed to update predefined blob.");
             });
         };
     }]);
