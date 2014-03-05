@@ -13,12 +13,21 @@ PRODUCTION_ENV_CONFIG_FILE = ""
 
 
 # Load configuration from another file
+if ENVIRONMENT == "LOCAL":
+    config_file = LOCAL_ENV_CONFIG_FILE
+elif ENVIRONMENT == "DEVELOPMENT":
+    config_file = DEVELOPMENT_ENV_CONFIG_FILE
+elif ENVIRONMENT == "PRODUCTION":
+    config_file = PRODUCTION_ENV_CONFIG_FILE
+else:
+    raise Exception("%s is not valid environment. Use one of: [LOCAL, DEVELOPMENT, PRODUCTION]")
+
 configuration = ConfigParser.ConfigParser()
-configuration.readfp(open(LOCAL_ENV_CONFIG_FILE))
+configuration.readfp(open(config_file))
 
 
 #
-# Configuration setup
+# Configuration setupW
 #
 
 RELVAL_DB_PASSWORD = configuration.get("DB", "PASSWORD")
