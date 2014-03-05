@@ -47,3 +47,5 @@ nosetests.xml
 
 # SublimeText project files
 *.sublime-workspace
+
+nohup.out
