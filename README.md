@@ -23,6 +23,10 @@ If You want to drop database for whatever reason you can use fallowing command:
 
 ### Deployment
 
+If you want to deploy application into production/development server look at
+`deployment-descriptor.md` file for detail instruction how to prepare virtual
+machine and deploy application.
+
 Use this command if you want to deploy RelValMachine:
 
     python run.py
