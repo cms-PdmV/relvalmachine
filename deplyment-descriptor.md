@@ -74,7 +74,7 @@ At first make sure that you still using virtualenv created previously, then cd i
 
 Configuration is stored in file `relval/config.py`.
 Before deployment you should set correct `ENVIRONMENT` property
-and verify that corresponding configuration file (defined in property `[ENVIRONMENT]_ENV__CONFIG_FILE`)
+and verify that corresponding configuration file (defined in property `[ENVIRONMENT]_ENV_CONFIG_FILE`)
 holds correct database configuration.
 
 After you verify database connection parameters you can create database (if not created yet) with command:
@@ -84,7 +84,7 @@ After you verify database connection parameters you can create database (if not 
 ## Deploy application
 
 At first make sure that port 80 is open in your virtual machine.
-After running command iptables-save you should see following line if port 80 is open:
+After running command `iptables-save` you should see following line if port 80 is open:
 
     -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 
