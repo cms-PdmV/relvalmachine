@@ -1,13 +1,40 @@
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
-#TODO: figure out how to hide those in git
-# This is local setup. It works only on my pc :)
-RELVAL_DB_PASSWORD = "123456"
-RELVAL_DB_USER = "zee"
-RELVAL_DB_HOST = "localhost"
-RELVAL_DB_PORT = "1521"
-RELVAL_DB_SID = "xe"
+import ConfigParser
+
+# Set this property before deployment to identify environment
+# Available environments "LOCAL", "DEVELOPMENT", "PRODUCTION"
+ENVIRONMENT = "LOCAL"
+
+LOCAL_ENV_CONFIG_FILE = "relval/configuration/local.properties"
+DEVELOPMENT_ENV_CONFIG_FILE = "/afs/cern.ch/user/z/zgatelis/development.properties"
+PRODUCTION_ENV_CONFIG_FILE = ""
+
+
+# Load configuration from another file
+if ENVIRONMENT == "LOCAL":
+    config_file = LOCAL_ENV_CONFIG_FILE
+elif ENVIRONMENT == "DEVELOPMENT":
+    config_file = DEVELOPMENT_ENV_CONFIG_FILE
+elif ENVIRONMENT == "PRODUCTION":
+    config_file = PRODUCTION_ENV_CONFIG_FILE
+else:
+    raise Exception("%s is not valid environment. Use one of: [LOCAL, DEVELOPMENT, PRODUCTION]")
+
+configuration = ConfigParser.ConfigParser()
+configuration.readfp(open(config_file))
+
+
+#
+# Configuration setupW
+#
+
+RELVAL_DB_PASSWORD = configuration.get("DB", "PASSWORD")
+RELVAL_DB_USER = configuration.get("DB", "USER")
+RELVAL_DB_HOST = configuration.get("DB", "HOST")
+RELVAL_DB_PORT = configuration.get("DB", "PORT")
+RELVAL_DB_SID = configuration.get("DB", "SID")
 
 
 SQLALCHEMY_ECHO = True
@@ -19,4 +46,4 @@ SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
     RELVAL_DB_SID
 )
 
-BLOBS_PER_PAGE=100
+BLOBS_PER_PAGE=20

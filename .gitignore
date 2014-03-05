@@ -53,3 +53,5 @@ node_modules
 
 # karma-coverage generates coverage here
 coverage
+
+nohup.out
