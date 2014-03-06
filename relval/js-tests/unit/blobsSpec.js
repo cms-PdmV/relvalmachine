@@ -132,7 +132,7 @@ describe('Blobs page', function() {
             beforeEach(function() {
                 $httpBackend.expectGET('api/predefined_blob').respond(200, {
                     total: 1,
-                    blobs: [{id: 42}]
+                    blobs: [{id: 42}, {id: 43}]
                 });
                 $httpBackend.flush();
             });
@@ -167,7 +167,6 @@ describe('Blobs page', function() {
 
             it('should send HTTP DELETE and show error alert when deletion failed', function() {
                 alertService.addError = jasmine.createSpy();
-
                 scope.deleteBlob(0);
 
                 // dialog should show up. Then press ok button
@@ -177,6 +176,7 @@ describe('Blobs page', function() {
 
                 runs(function() {
                     $('.modal-dialog .modal-footer button[data-bb-handler="confirm"]').click();
+
                     $httpBackend.expectDELETE('api/predefined_blob/42').respond(500, '');
                     $httpBackend.flush();
                     expect(alertService.addError).toHaveBeenCalled();
@@ -184,7 +184,7 @@ describe('Blobs page', function() {
             });
 
 
-            it('should send HTTP DELETE and show error alert when deletion failed', function() {
+            it('should not send HTTP DELETE when deletion canceled', function() {
                 alertService.addError = jasmine.createSpy();
 
                 scope.deleteBlob(0);

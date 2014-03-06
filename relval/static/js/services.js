@@ -26,10 +26,10 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
 
 relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
         var alerts = [];
+        var time_out = 5000;
         var alertsService = {
 
             fetchAlerts: function() {
-                console.log("Fetch");
                 return alerts;
             },
 
@@ -43,7 +43,7 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
                     if (index > -1) {
                         alerts.splice(index, 1);
                     }
-                }, 5000);
+                }, time_out);
             },
 
             add: function(newAlert) {
@@ -64,6 +64,10 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
             addWarn: function(newAlert) {
                 newAlert.type = 'warning';
                 this.add(newAlert)
+            },
+
+            setTimeout: function(time) {
+                time_out = time;
             }
         };
 
