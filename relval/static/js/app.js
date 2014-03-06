@@ -17,6 +17,9 @@ relval.config(function($logProvider){
 relval.config(['$routeProvider', function($routeProvider){
     $routeProvider
     .when('/', {
+        redirectTo: '/home'
+    })
+    .when('/home', {
         templateUrl: 'static/partials/home.html',
         controller: 'HomeCtrl'
     })
@@ -63,3 +66,32 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'CloneBlobCtrl'
     })
 }]);
+
+// routes for admin
+relval.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+    .when('/admin/',  {
+        redirectTo: '/admin/users'
+    })
+    .when('/admin/:entity',  {
+        templateUrl: 'static/partials/admin/index.html',
+        controller: 'AdminCtrl'
+    })
+}]);
+
+
+// Added for ability to do back() in history
+relval.run(function ($rootScope, $location) {
+
+    var history = [];
+
+    $rootScope.$on('$routeChangeSuccess', function() {
+        history.push($location.$$path);
+    });
+
+    $rootScope.back = function () {
+        var prevUrl = history.length > 1 ? history.splice(-2)[0] : "/";
+        $location.path(prevUrl);
+    };
+
+});

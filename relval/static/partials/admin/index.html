@@ -1,0 +1,9 @@
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li ng-class="{ active: isActive('users')}"><a href="/#admin/users">Users</a></li>
+    <li ng-class="{ active: isActive('blobs')}"><a href="/#admin/blobs">Predefined blobs</a></li>
+  </ul>
+
+  <div ng-show="isActive('users')" ng-include="'static/partials/admin/users.html'"></div>
+  <div ng-show="isActive('blobs')" ng-include="'static/partials/admin/blobs.html'"></div>
+</div>

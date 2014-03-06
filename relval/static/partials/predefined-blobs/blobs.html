@@ -44,7 +44,7 @@
           </div>
         </td>
         <td>
-          <div ng-hide="blob.immutable">
+          <div ng-show="showEditControllers($index)">
             <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)"><i
                     class="fa fa-pencil-square-o fa-lg"></i></button>
             <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i

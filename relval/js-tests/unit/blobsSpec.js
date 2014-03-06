@@ -218,13 +218,15 @@ describe('Blobs page', function() {
     });
 
     describe('New Blob Controller:', function() {
-        var scope, ctrl, $httpBackend, location, alertService;
+        var scope, ctrl, $httpBackend, location, alertService, rootScope;
 
         beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
             scope = $rootScope.$new();
             location = $location;
             alertService = {};
+            rootScope = $rootScope
+            rootScope.back = jasmine.createSpy('back');
 
             ctrl = $controller('NewBlobCtrl', {
                 $scope: scope,
@@ -255,7 +257,7 @@ describe('Blobs page', function() {
 
         it('should redirect to blobs index page when creation discarded', function() {
             scope.discardStepCreation();
-            expect(location.path()).toBe('/blobs')
+            expect(rootScope.back.callCount).toBe(1);
         });
 
         describe('when creating new blob', function() {
@@ -278,7 +280,7 @@ describe('Blobs page', function() {
                 scope.saveStep();
                 $httpBackend.flush();
 
-                expect(location.path()).toBe('/blobs');
+                expect(rootScope.back.callCount).toBe(1);
             });
 
             it('should call HTTP POST with new blob data and show error alert when server failed', function() {
@@ -296,7 +298,7 @@ describe('Blobs page', function() {
     });
 
     describe('Edit Blob Controller:', function() {
-        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob;
+        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob, rootScope;
 
         beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
@@ -304,6 +306,8 @@ describe('Blobs page', function() {
             location = $location;
             routeParams = {};
             routeParams.blobId = 42;
+            rootScope = $rootScope
+            rootScope.back = jasmine.createSpy('back');
             alertService = {};
 
             blob = {
@@ -319,6 +323,7 @@ describe('Blobs page', function() {
             ctrl = $controller('EditBlobCtrl', {
                 $scope: scope,
                 $routeParams: routeParams,
+                $rootScope: $rootScope,
                 AlertsService: alertService
             });
 
@@ -328,7 +333,7 @@ describe('Blobs page', function() {
 
         it('should redirect to blobs index page when edit discarded', function() {
             scope.discardStepCreation();
-            expect(location.path()).toBe('/blobs')
+            expect(rootScope.back.callCount).toBe(1);
         });
 
         describe('when send HTTP PUT to update page', function() {
@@ -354,7 +359,7 @@ describe('Blobs page', function() {
                 scope.saveStep();
                 $httpBackend.expectPUT('api/predefined_blob/42', updatedBlob).respond(200);
                 $httpBackend.flush();
-                expect(location.path()).toBe('/blobs')
+                expect(rootScope.back.callCount).toBe(1);
             });
 
             it('should show alert after failure', function() {
@@ -368,13 +373,15 @@ describe('Blobs page', function() {
     });
 
     describe('Clone Blob Controller:', function() {
-        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob;
+        var scope, ctrl, $httpBackend, location, routeParams, alertService, blob, rootScope;
 
         beforeEach(inject(function(_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
             scope = $rootScope.$new();
             location = $location;
             routeParams = {};
+            rootScope = $rootScope
+            rootScope.back = jasmine.createSpy('back');
             alertService = {};
             routeParams.blobId = 42;
 
@@ -414,7 +421,7 @@ describe('Blobs page', function() {
             scope.saveStep();
             $httpBackend.expectPOST('api/predefined_blob', updatedBlob).respond(200);
             $httpBackend.flush();
-            expect(location.path()).toBe('/blobs')
+            expect(rootScope.back.callCount).toBe(1);
         });
 
         it('should send HTTP POST to server and show error alert after failure', function() {

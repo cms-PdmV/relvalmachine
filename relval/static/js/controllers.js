@@ -11,7 +11,7 @@ relvalControllers.controller('HomeCtrl', ['$scope',
 relvalControllers.controller('NavbarCtrl', ['$scope', '$location',
     function($scope, $location) {
         $scope.isActive = function(viewLocation) {
-            return viewLocation === $location.path();
+            return $location.path().lastIndexOf(viewLocation, 0) === 0
         };
     }
 ]);
@@ -134,116 +134,129 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
 
 
 // controllers related to blobs
+function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
+    $scope.searchText = "";
+    var resp = PredefinedBlobs.all(function() {
+        $scope.totalItems = resp.total
+        $scope.blobs = resp.blobs
+    }, function() { // on failure
+        AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
+    });
+
+    $scope.showEditControllers = function(index) {
+        return !$scope.blobs[index].immutable; // if not immutable than show edit controllers
+    }
+
+    $scope.editBlob = function(index) {
+        var id = $scope.blobs[index].id
+        $location.path("/blobs/edit/" + id);
+    };
+
+    $scope.deleteBlob = function(index) {
+        bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
+            function(removeApproved) {
+                if (removeApproved) {
+                    var id = $scope.blobs[index].id
+                    // DELETE blob
+                    PredefinedBlobs.delete({blob_id: id}, function() {
+                        $scope.blobs.splice(index, 1);
+                        AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
+                    }, function() {
+                        AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
+                    });
+                }});
+    };
+
+    $scope.cloneBlob = function(index) {
+        var id = $scope.blobs[index].id
+        $location.path("/blobs/clone/" + id);
+    }
+
+    /*
+     * Sorting
+     */
+    $scope.sort = {
+        column: '',
+        descending: false
+    };
+
+    $scope.changeSorting = function(column) {
+        var sort = $scope.sort;
+
+        if (sort.column == column) { // only change order
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+
+    $scope.selectedCls = function(column) {
+        // if column is the one that is selected then add class for icon
+        return column == $scope.sort.column &&
+            "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
+    }
+
+    /*
+     * Pagination
+     */
+    $scope.itemsPerPage = 20;  // how many items are in one page
+    $scope.currentPage = 1;    // current page that is selected
+    $scope.maxSize = 10;       // how many pages display
+
+    $scope.setPage = function(pageNo) {
+        if (BlobsSearchService.isSearchingMode()) { // if in search mode then change page with same search query
+            BlobsSearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
+                $scope.totalItems = response.total;
+                $scope.blobs = response.blobs;
+            });
+        } else {
+            var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                $scope.totalItems = resp.total;
+                $scope.blobs = resp.blobs;
+            });
+        }
+        $scope.currentPage = pageNo;
+    };
+
+    /*
+     * Search functionality
+     */
+    $scope.searchAll = function() {
+        BlobsSearchService.search($scope.searchText, $scope.itemsPerPage, function(response) {
+            $scope.totalItems = response.total
+            $scope.blobs = response.blobs
+            if ($scope.totalItems == 0) {
+                AlertsService.addWarn({msg: "No result find for query " + $scope.searchText + "."})
+            }
+        });
+    }
+
+    $scope.resetSearch = function() {
+        $scope.searchText = "";
+        BlobsSearchService.resetSearch(function(response) {
+            $scope.totalItems = response.total
+            $scope.blobs = response.blobs
+            $scope.currentPage = 1;
+            $scope.sort.column = '';
+        });
+    }
+
+}
+
 relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
     function($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
-        $scope.searchText = "";
-        var resp = PredefinedBlobs.all(function() {
-            $scope.totalItems = resp.total
-            $scope.blobs = resp.blobs
-        }, function() { // on failure
-            AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
-        });
-
-
-        $scope.editBlob = function(index) {
-            var id = $scope.blobs[index].id
-            $location.path("/blobs/edit/" + id);
-        };
-
-        $scope.deleteBlob = function(index) {
-            bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
-                function(removeApproved) {
-                    if (removeApproved) {
-                        var id = $scope.blobs[index].id
-                        // DELETE blob
-                        PredefinedBlobs.delete({blob_id: id}, function() {
-                            $scope.blobs.splice(index, 1);
-                            AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
-                        }, function() {
-                            AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
-                        });
-                    }});
-        };
-
-        $scope.cloneBlob = function(index) {
-            var id = $scope.blobs[index].id
-            $location.path("/blobs/clone/" + id);
-        }
-
-        /*
-         * Sorting
-         */
-        $scope.sort = {
-            column: '',
-            descending: false
-        };
-
-        $scope.changeSorting = function(column) {
-            var sort = $scope.sort;
-
-            if (sort.column == column) { // only change order
-                sort.descending = !sort.descending;
-            } else {
-                sort.column = column;
-                sort.descending = false;
-            }
-        };
-
-        $scope.selectedCls = function(column) {
-            // if column is the one that is selected then add class for icon
-            return column == $scope.sort.column &&
-                "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
-        }
-
-        /*
-         * Pagination
-         */
-        $scope.itemsPerPage = 20;  // how many items are in one page
-        $scope.currentPage = 1;    // current page that is selected
-        $scope.maxSize = 10;       // how many pages display
-
-        $scope.setPage = function(pageNo) {
-            if (BlobsSearchService.isSearchingMode()) { // if in search mode then change page with same search query
-                BlobsSearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
-                    $scope.totalItems = response.total;
-                    $scope.blobs = response.blobs;
-                });
-            } else {
-                var resp = PredefinedBlobs.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                    $scope.totalItems = resp.total;
-                    $scope.blobs = resp.blobs;
-                });
-            }
-            $scope.currentPage = pageNo;
-        };
-
-        /*
-         * Search functionality
-         */
-        $scope.searchAll = function() {
-            BlobsSearchService.search($scope.searchText, $scope.itemsPerPage, function(response) {
-                $scope.totalItems = response.total
-                $scope.blobs = response.blobs
-                if ($scope.totalItems == 0) {
-                    AlertsService.addWarn({msg: "No result find for query " + $scope.searchText + "."})
-                }
-            });
-        }
-
-        $scope.resetSearch = function() {
-            $scope.searchText = "";
-            BlobsSearchService.resetSearch(function(response) {
-                $scope.totalItems = response.total
-                $scope.blobs = response.blobs
-                $scope.currentPage = 1;
-                $scope.sort.column = '';
-            });
-        }
-
+        angular.extend(this, new BaseBlobsController(
+            $scope,
+            $location,
+            PredefinedBlobs,
+            AlertsService,
+            BlobsSearchService
+        ));
     }
 ]);
 
-function BaseBlobEditPageController($scope, $location) {
+function BaseBlobEditPageController($scope, $rootScope) {
     $scope.currentStep = {};
     $scope.currentStep.parameters = [{
         "flag": "",
@@ -262,12 +275,12 @@ function BaseBlobEditPageController($scope, $location) {
     };
 
     $scope.discardStepCreation = function() {
-        $location.path("/blobs");
+        $rootScope.back();
     };
 }
 
-function BaseBlobEditPageControllerWithInitialLoad($scope, $location, $routeParams, PredefinedBlobs) {
-    angular.extend(this, new BaseBlobEditPageController($scope, $location));
+function BaseBlobEditPageControllerWithInitialLoad($scope, $rootScope, $routeParams, PredefinedBlobs) {
+    angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
 
     // load blob data
     $scope.id = $routeParams.blobId;
@@ -279,9 +292,9 @@ function BaseBlobEditPageControllerWithInitialLoad($scope, $location, $routePara
     });
 }
 
-relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $location, PredefinedBlobs, AlertsService) {
-        angular.extend(this, new BaseBlobEditPageController($scope, $location));
+relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $rootScope, PredefinedBlobs, AlertsService) {
+        angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
         $scope.actionName = "Save";
 
         $scope.saveStep = function() {
@@ -293,7 +306,7 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
 
             // POST to create new blob
             blob.$create(function() {
-                $location.path("/blobs");
+                $rootScope.back();
             }, function() {
                 AlertsService.addError("Server Error. Failed to create new predefined blob.");
             });
@@ -301,10 +314,10 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$location', 'PredefinedB
     }
 ]);
 
-relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $routeParams, $location, PredefinedBlobs, AlertsService) {
+relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $rootScope, PredefinedBlobs, AlertsService) {
         angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
-            $scope, $location, $routeParams, PredefinedBlobs));
+            $scope, $rootScope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Update";
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
@@ -315,17 +328,17 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$locati
 
             // POST to create new blob
             blob.$update({blob_id: $scope.id}, function() {
-                $location.path("/blobs");
+                $rootScope.back();
             }, function() {
                 AlertsService.addError("Server Error. Failed to update predefined blob.");
             });
         };
     }]);
 
-relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$location', 'PredefinedBlobs', 'AlertsService',
-    function($scope, $routeParams, $location, PredefinedBlobs, AlertsService) {
+relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $rootScope, PredefinedBlobs, AlertsService) {
         angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
-            $scope, $location, $routeParams, PredefinedBlobs));
+            $scope, $rootScope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Clone";
 
         $scope.saveStep = function() {
@@ -337,9 +350,43 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$locat
 
             // POST to create new blob
             blob.$create(function() {
-                $location.path("/blobs");
+                $rootScope.back();
             }, function() {
                 AlertsService.addError("Server Error. Failed to update predefined blob.");
             });
         };
+    }]);
+
+
+// Admin controllers
+relvalControllers.controller('AdminCtrl', ['$scope', '$routeParams',
+    function($scope, $routeParams) {
+        $scope.selectedTab = $routeParams.entity || 'users'; // set default user
+
+        $scope.isActive = function(tab) {
+            return $scope.selectedTab == tab;
+        }
+
+        $scope.selectTab = function(tab) {
+            $scope.selectedTab = tab;
+        }
+    }]);
+
+relvalControllers.controller('AdminUsersCtrl', ['$scope',
+    function($scope) {
+
+    }]);
+
+relvalControllers.controller('AdminBlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
+    function($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
+        angular.extend(this, new BaseBlobsController(
+            $scope,
+            $location,
+            PredefinedBlobs,
+            AlertsService,
+            BlobsSearchService
+        ));
+        $scope.showEditControllers = function(index) {
+            return true; // always show edit controllers for admin
+        }
     }]);
