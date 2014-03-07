@@ -79,7 +79,7 @@ describe('Blobs page', function() {
 
             it('should be able to search and paginate through search results', function() {
                 // perform search
-                scope.searchText = "text";
+                scope.search.searchText = "text";
                 scope.searchAll();
 
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
@@ -106,7 +106,7 @@ describe('Blobs page', function() {
 
             it('should reset search when reset button pressed', function() {
                 // perform search
-                scope.searchText = "text";
+                scope.search.searchText = "text";
                 scope.searchAll();
 
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
@@ -117,7 +117,7 @@ describe('Blobs page', function() {
 
                 // reset
                 scope.resetSearch();
-                expect(scope.searchText).toBe('');
+                expect(scope.search.searchText).toBe('');
                 expect(searchService.isSearchingMode()).toBe(false);
                 $httpBackend.expectGET('api/predefined_blob').respond(200, {
                     total: 4,
