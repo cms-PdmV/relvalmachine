@@ -394,8 +394,8 @@ var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, Aler
     }
 };
 
-relvalControllers.controller('NewStepCtrl', ['$scope', '$modal',
-    function($scope, $modal) {
+relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
+    function($scope, $modal, $rootScope, AlertsService, Steps) {
         // prepare
         $scope.actionName = "Save";
         $scope.currentStep = {};
@@ -404,6 +404,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal',
             "value": ""
         }];
         $scope.currentStep.blobs = [];
+        $scope.currentStep.immutable = false;
         $scope.showMonteCarlo = true;
 
 
@@ -424,7 +425,6 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal',
 
         $scope.removeBlob = function(index) {
             var title = $scope.currentStep.blobs[index].title;
-            console.log(index)
             bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
                 if (removeApproved) {
                     $scope.currentStep.blobs.splice(index, 1);
@@ -441,6 +441,31 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal',
             });
             modal.result.then(function(selected) {
                 $scope.currentStep.blobs.push(selected);
+            });
+        };
+
+        $scope.discard = function() {
+            $rootScope.back();
+        }
+
+        $scope.saveStep = function() {
+            var step = new Steps({
+                title: $scope.currentStep.title,
+                immutable: $scope.currentStep.immutable,
+                parameters: $scope.currentStep.parameters,
+                blobs: $scope.currentStep.blobs
+            });
+            if ($scope.showMonteCarlo) { // monte carlo step
+                step.isMonteCarlo = true;
+            } else {  // data step
+                step.isMonteCarlo = false;
+            }
+            console.log(step.immutable)
+            // POST to create step
+            step.$create(function() {
+                $rootScope.back();
+            }, function() {
+                AlertsService.addError({msg: "Server Error. Failed to create step."});
             });
         }
     }]);

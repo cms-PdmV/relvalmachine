@@ -24,6 +24,17 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
         });
 }]);
 
+relvalServices.factory('Steps', ['$resource', function($resource) {
+        return $resource('api/steps/:blob_id', {}, {
+            all: {
+                method: 'GET'
+            },
+            create: {
+                method: 'POST'
+            }
+        });
+}]);
+
 relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
         var alerts = [];
         var time_out = 5000;

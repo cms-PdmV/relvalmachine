@@ -116,7 +116,6 @@ class PredefinedBlobsApi(Resource):
         return blobs, total
 
 
-
 class PredefinedBlobApi(Resource):
     """ Predefined blobs resource to work with single entity
     """
@@ -142,4 +141,18 @@ class PredefinedBlobApi(Resource):
         """
         data = convert_keys_to_string(request.json)
         self.blobs_dao.update(id=blob_id, **data)
+
+
+class StepsApi(Resource):
+
+     def post(self):
+        """ Creates new predefined blob
+        """
+        data = convert_keys_to_string(request.json)
+        print data
+
+
+class StepApi(Resource):
+    pass
+
 
