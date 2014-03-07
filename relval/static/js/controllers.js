@@ -406,6 +406,9 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentStep.blobs = [];
         $scope.currentStep.immutable = false;
         $scope.showMonteCarlo = true;
+        $scope.currentStep.title = "";
+        $scope.currentStep.dataSet = "";
+        $scope.currentStep.runLumi = "";
 
 
         $scope.addParametersRow = function() {
@@ -451,16 +454,18 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.saveStep = function() {
             var step = new Steps({
                 title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                parameters: $scope.currentStep.parameters,
-                blobs: $scope.currentStep.blobs
+                immutable: $scope.currentStep.immutable
             });
             if ($scope.showMonteCarlo) { // monte carlo step
-                step.isMonteCarlo = true;
+                step.is_monte_carlo = true;
+                step.parameters = $scope.currentStep.parameters;
+                step.blobs = $scope.currentStep.blobs;
             } else {  // data step
-                step.isMonteCarlo = false;
+                step.is_monte_carlo = false;
+                step.data_set = $scope.currentStep.dataSet;
+                step.run_lumi = $scope.currentStep.runLumi;
+                console.log(step.data_set, step.run_lumi)
             }
-            console.log(step.immutable)
             // POST to create step
             step.$create(function() {
                 $rootScope.back();

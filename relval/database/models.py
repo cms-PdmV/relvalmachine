@@ -78,10 +78,13 @@ class Steps(db.Model):
     __tablename__ = "steps"
     id = db.Column("id", db.Integer, db.Sequence("step_id_seq"), primary_key=True)
     sequence_number = db.Column("sequence_number", db.Integer)
-    name = db.Column("name", db.String(256))
+    title = db.Column("title", db.String(256))
     data_set = db.Column("data_set", db.String(1024))
     run_lumi = db.Column("run_lumi", db.Text)
-    revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=False)
+    immutable = db.Column("immutable", db.Boolean, default=False)
+    is_monte_carlo = db.Column("is_monte_carlo", db.Boolean)
+
+    revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=True)
 
     parameters = db.relationship("Parameters", backref="step")
     predefined_blobs = db.relationship(

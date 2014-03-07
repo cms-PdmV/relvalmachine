@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob, Parameters
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps
 
 from datetime import datetime
 
@@ -47,6 +47,31 @@ class RevisionsDao(object):
         last_revision = max([rev.revision_number for rev in request.revisions])
         revision.revision_number = last_revision + 1
         request.revisions.append(revision)
+
+
+class StepsDao(object):
+
+    def __init__(self):
+        self.blobs_dao = PredefinedBlobsDao()
+
+    def add(self, title="", immutable=False, data_set="", run_lumi="", is_monte_carlo=True, parameters=[], blobs=[]):
+        step = Steps(
+            title=title,
+            immutable=immutable,
+            is_monte_carlo=is_monte_carlo,
+        )
+        if is_monte_carlo:
+            step.parameters = [
+                Parameters(flag=param['flag'], value=param['value']) for param in parameters
+            ]
+            step.predefined_blobs = [
+                self.blobs_dao.get(blob['id']) for blob in blobs
+            ]
+        else:
+            step.data_set = data_set
+            step.run_lumi = run_lumi
+        db.session.add(step)
+        db.session.commit()
 
 
 class PredefinedBlobsDao(object):

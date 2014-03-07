@@ -25,10 +25,10 @@ def create_revision(rev_num=1):
         run_the_matrix_conf="-wm=init",
         steps=[
             Steps(
-                name="step1"
+                title="step1"
             ),
             Steps(
-                name="step2"
+                title="step2"
             ),
         ])
 
@@ -63,7 +63,7 @@ def predefined_blob(params_count=1):
         ])
 
 
-def predefined_blob_paramters(params_count=1):
+def parameters(params_count=1):
     return [
         {"flag": "F%d" % i, "value": "V%d" % i} for i in range(params_count)
     ]
@@ -97,4 +97,18 @@ class JSONRequests(object):
                 {"flag": "flag2", "value": "value2"},
                 {"flag": "flag3", "value": "value3"}
             ]
+        }
+
+    @staticmethod
+    def new_step():
+        return {
+            "title": "test-title",
+            "immutable": True,
+            "data_set": "test-data-set",
+            "run_lumi": "test_lumi",
+            "parameters": [
+                {"flag": "flag1", "value": "value1"}
+            ],
+            "blobs": [{"id": 1}],
+            "is_monte_carlo": True
         }

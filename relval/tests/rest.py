@@ -9,7 +9,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from relval.tests.base import BaseTestsCase
 from relval.tests import factory
-from relval.database.dao import PredefinedBlobsDao
+from relval.database.dao import PredefinedBlobsDao, StepsDao
 from relval.database.models import PredefinedBlob, Parameters
 
 import json
@@ -124,3 +124,26 @@ class PredefinedBlobsRestTests(BaseTestsCase):
                 parameters=request["parameters"])
 
 
+class StepsRestTests(BaseTestsCase):
+
+    def setUp(self):
+        BaseTestsCase.setUp(self)
+        # self.steps_dao = StepsDao()
+
+    def test_new_step_creation(self):
+        with patch.object(StepsDao, "add") as mock_method:
+            request = factory.JSONRequests.new_step()
+            response = self.app.post(
+                "/api/steps",
+                data=json.dumps(request),
+                content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                title=request["title"],
+                immutable=True,
+                parameters=request["parameters"],
+                blobs=request["blobs"],
+                is_monte_carlo=True,
+                data_set="test-data-set",
+                run_lumi="test_lumi")

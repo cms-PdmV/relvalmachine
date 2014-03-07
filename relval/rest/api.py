@@ -12,7 +12,7 @@ import collections
 
 from relval import app
 from relval.database.models import Users
-from relval.database.dao import UsersDao, PredefinedBlobsDao
+from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao
 from relval.rest import marshallers
 
 
@@ -145,11 +145,14 @@ class PredefinedBlobApi(Resource):
 
 class StepsApi(Resource):
 
-     def post(self):
+    def __init__(self):
+        self.steps_dao = StepsDao()
+
+    def post(self):
         """ Creates new predefined blob
         """
         data = convert_keys_to_string(request.json)
-        print data
+        self.steps_dao.add(**data)
 
 
 class StepApi(Resource):
