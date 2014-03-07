@@ -147,3 +147,20 @@ class StepsRestTests(BaseTestsCase):
                 is_monte_carlo=True,
                 data_set="test-data-set",
                 run_lumi="test_lumi")
+
+    def test_step_fetch_paginating(self):
+        steps = []
+        for _ in range(2):
+            steps.append(factory.step())
+        page = Pagination(None, None, None, 3, steps)
+
+        with patch.object(StepsDao, "get_paginated") as mock_method:
+            mock_method.return_value = page
+            response = self.app.get("/api/steps?page_num=1&items_per_page=2")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+
+            self.assertEqual(len(data['steps']), 2)
+            self.assertEqual(data['total'], "3")
+            mock_method.assert_called_once_with(page_num=1, items_per_page=2)

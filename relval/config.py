@@ -47,3 +47,4 @@ SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
 )
 
 BLOBS_PER_PAGE=20
+STEPS_PER_PAGE=20

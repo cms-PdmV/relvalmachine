@@ -73,6 +73,10 @@ class StepsDao(object):
         db.session.add(step)
         db.session.commit()
 
+    def get_paginated(self, page_num=1, items_per_page=10):
+        return Steps.query \
+            .paginate(page_num, items_per_page, False)
+
 
 class PredefinedBlobsDao(object):
 

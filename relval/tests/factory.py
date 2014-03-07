@@ -62,6 +62,22 @@ def predefined_blob(params_count=1):
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(params_count)
         ])
 
+def step(title="test-title", parameters_count=1, blobs_count=1,
+                 immutable=False, is_monte_carlo=True, data_set="", run_lumi=""):
+    return Steps(
+        title=title,
+        immutable=immutable,
+        is_monte_carlo=is_monte_carlo,
+        data_set=data_set,
+        run_lumi=run_lumi,
+        parameters=[
+            Parameters(flag="F%d" % i, value="V%d" % i) for i in range(parameters_count)
+        ],
+        predefined_blobs=[
+            predefined_blob() for _ in range(blobs_count)
+        ]
+    )
+
 
 def parameters(params_count=1):
     return [

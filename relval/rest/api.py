@@ -148,11 +148,53 @@ class StepsApi(Resource):
     def __init__(self):
         self.steps_dao = StepsDao()
 
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('page_num', type=int)
+        self.parser.add_argument('items_per_page', type=int)
+        self.parser.add_argument('search', type=str)
+
     def post(self):
-        """ Creates new predefined blob
+        """ Creates new step
         """
         data = convert_keys_to_string(request.json)
         self.steps_dao.add(**data)
+
+    @marshal_with(marshallers.steps_marshaller_paginated)
+    def get(self):
+        """ Returns all existing steps
+        """
+        args = self.parser.parse_args()
+
+        if args['search']:
+            page_num = args['page_num'] if args['page_num'] else 1
+            items_per_page = args['items_per_page'] if args['items_per_page'] else None
+            steps, total = self.__search(args['search'], page_num, items_per_page)
+        elif args['page_num'] and args['items_per_page']:
+            steps, total = self.__get_page(args['page_num'], args['items_per_page'])
+        else:
+            steps, total = self.__get_page()
+
+        resp = {
+            'steps': steps,
+            'total': total
+        }
+        return resp
+
+    def __get_page(self, page_num=1, items_per_page=None):
+        return self.__paginated_result(
+            self.steps_dao.get_paginated,
+            page_num,
+            items_per_page
+        )
+
+    def __paginated_result(self, dao_func, page_num=1, items_per_page=None, **kwargs):
+        if not items_per_page:
+            items_per_page = app.config['STEPS_PER_PAGE']
+        result = dao_func(page_num=page_num, items_per_page=items_per_page, **kwargs)
+        steps = result.items
+        total = result.total
+        return steps, total
+
 
 
 class StepApi(Resource):

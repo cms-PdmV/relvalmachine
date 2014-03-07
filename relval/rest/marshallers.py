@@ -41,3 +41,15 @@ blob_marshaller = {
     'immutable': fields.Boolean,
     'parameters': fields.Nested(parameter_marshaller)
 }
+
+steps_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'immutable': fields.Boolean,
+    'is_monte_carlo': fields.Boolean
+}
+
+steps_marshaller_paginated = {
+    'total': fields.String,
+    'steps': fields.Nested(steps_marshaller)
+}
