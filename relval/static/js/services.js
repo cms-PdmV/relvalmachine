@@ -25,13 +25,17 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
 }]);
 
 relvalServices.factory('Steps', ['$resource', function($resource) {
-        return $resource('api/steps/:blob_id', {}, {
+        return $resource('api/steps/:step_id', {}, {
             all: {
                 method: 'GET'
             },
             create: {
                 method: 'POST'
+            },
+            get: {
+                method: 'GET'
             }
+
         });
 }]);
 

@@ -42,6 +42,11 @@ blob_marshaller = {
     'parameters': fields.Nested(parameter_marshaller)
 }
 
+blob_tight_marshaller = {
+    'id': fields.String,
+    'title': fields.String
+}
+
 steps_marshaller = {
     'id': fields.String,
     'title': fields.String,
@@ -52,4 +57,13 @@ steps_marshaller = {
 steps_marshaller_paginated = {
     'total': fields.String,
     'steps': fields.Nested(steps_marshaller)
+}
+
+step_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'immutable': fields.Boolean,
+    'is_monte_carlo': fields.Boolean,
+    'parameters': fields.Nested(parameter_marshaller),
+    'blobs': fields.Nested(blob_tight_marshaller, attribute="predefined_blobs")
 }

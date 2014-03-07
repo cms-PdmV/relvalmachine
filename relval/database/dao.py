@@ -77,6 +77,9 @@ class StepsDao(object):
         return Steps.query \
             .paginate(page_num, items_per_page, False)
 
+    def get(self, id):
+        return Steps.query.get(id)
+
 
 class PredefinedBlobsDao(object):
 

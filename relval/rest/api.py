@@ -198,6 +198,17 @@ class StepsApi(Resource):
 
 
 class StepApi(Resource):
-    pass
+
+    def __init__(self):
+        self.steps_dao = StepsDao()
+
+    @marshal_with(marshallers.step_marshaller)
+    def get(self, blob_id):
+        """ Retrieves predefined blob with id=blob_id
+        """
+        step = self.steps_dao.get(blob_id)
+        step.parameters  # load all parameters from blob
+        step.predefined_blobs # load all blobs
+        return step
 
 

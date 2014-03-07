@@ -56,6 +56,10 @@ relval.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'static/partials/steps/new.html',
         controller: 'NewStepCtrl'
     })
+    .when('/steps/clone/:stepId',  {
+        templateUrl: 'static/partials/steps/new.html',
+        controller: 'CloneStepCtrl'
+    })
 }]);
 
 // routes for predefined blobs

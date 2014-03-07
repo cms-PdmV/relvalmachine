@@ -7,6 +7,65 @@
         <a href="/#steps/new"><i class="fa fa-plus-square-o fa-lg"></i> Create new</a>
       </div>
     </div>
+  </div>
 
+  <table class="table">
+      <thead>
+      <th>#</th>
+      <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+      <th>Frozen</th>
+      <th>Monte Carlo</th>
+      <th>Data</th>
+      <th>Actions</th>
+      <th></th>
+      </thead>
+      <tbody>
+      <tr ng-repeat="step in steps | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+        <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
+        <td>{{step.title}}</td>
+        <td>
+          <div ng-show="step.immutable">
+            <i class="fa fa-check fa-lg"></i>
+          </div>
+        </td>
+        <td>
+          <div ng-show="step.is_monte_carlo">
+            <i class="fa fa-check fa-lg"></i>
+          </div>
+        </td>
+        <td>
+          <div ng-hide="step.is_monte_carlo">
+            <i class="fa fa-check fa-lg"></i>
+          </div>
+        </td>
+        <td>
+          <div ng-show="showEditControllers($index)">
+            <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)"><i
+                    class="fa fa-pencil-square-o fa-lg"></i></button>
+            <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i
+                    class="fa fa-times fa-lg"></i></button>
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary" ng-click="cloneStep($index)">Clone</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-offset-3 col-sm-8">
+    <pagination
+            boundary-links="true"
+            total-items="totalItems"
+            page="currentPage"
+            items-per-page="itemsPerPage"
+            max-size="maxSize"
+            rotate="false"
+            on-select-page="setPage(page)"
+            previous-text="&lsaquo;"
+            next-text="&rsaquo;"
+            first-text="&laquo;"
+            last-text="&raquo;">
+    </pagination>
   </div>
 </div>

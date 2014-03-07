@@ -372,10 +372,35 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
 
 
 // Steps controllers
-relvalControllers.controller('StepsCtrl', ['$scope',
-    function($scope) {
-        // data fetch
-    }]);
+relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'AlertsService',
+    function($scope, $location, Steps, AlertsService) {
+         // pre-load steps
+        var resp = Steps.all({page_num: 1, items_per_page: $scope.itemsPerPage}, function() {
+            $scope.totalItems = resp.total
+            $scope.steps = resp.steps
+        }, function() { // on failure
+            AlertsService.addError({msg: "Server error. Failed to fetch steps"});
+        });
+
+        $scope.cloneStep = function(index) {
+            var id = $scope.steps[index].id
+            $location.path("/steps/clone/" + id);
+        }
+
+
+        /*
+         * Pagination
+         */
+        $scope.itemsPerPage = 20;  // how many items are in one page
+        $scope.currentPage = 1;    // current page that is selected
+        $scope.maxSize = 10;       // how many pages display
+
+        $scope.setPage = function(pageNo) {
+
+        }
+
+
+}]);
 
 var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseBlobsViewPageController(
@@ -394,8 +419,80 @@ var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, Aler
     }
 };
 
+var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
+    $scope.addParametersRow = function() {
+        $scope.currentStep.parameters.push({
+            "flag": "",
+            "value": ""
+        });
+    };
+
+    $scope.removeParametersRow = function(index) {
+        $scope.currentStep.parameters.splice(index, 1);
+    };
+
+    $scope.showBlobDetails = function(index) {
+        // TODO
+    };
+
+    $scope.removeBlob = function(index) {
+        var title = $scope.currentStep.blobs[index].title;
+        bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
+            if (removeApproved) {
+                $scope.currentStep.blobs.splice(index, 1);
+                $scope.$apply();
+            }
+        });
+    };
+
+    $scope.addBlob = function() {
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/select-blob.html',
+            windowClass: 'blobs-select-dialog',
+            controller: BlobSelectModalCtrl
+        });
+        modal.result.then(function(selected) {
+            $scope.currentStep.blobs.push(selected);
+        });
+    };
+
+    $scope.discard = function() {
+        $rootScope.back();
+    }
+}
+
+var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Steps) {
+    angular.extend(this, new BaseStepEditPageCtrl(
+        $scope,
+        $modal,
+        $rootScope
+    ));
+
+    // load blob data
+    $scope.id = $routeParams.stepId;
+    console.log($scope.id)
+    var step = Steps.get({step_id: $scope.id}, function() {
+        $scope.currentStep = {};
+        $scope.currentStep.title = step.title;
+        $scope.currentStep.immutable = step.immutable;
+        $scope.currentStep.parameters = step.parameters;
+        $scope.currentStep.blobs = step.blobs;
+        $scope.showMonteCarlo = step.is_monte_carlo;
+        $scope.currentStep.dataSet = step.data_set;
+        $scope.currentStep.runLumi = step.run_lumi;
+    });
+
+
+}
+
 relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
     function($scope, $modal, $rootScope, AlertsService, Steps) {
+        angular.extend(this, new BaseStepEditPageCtrl(
+            $scope,
+            $modal,
+            $rootScope
+        ));
+
         // prepare
         $scope.actionName = "Save";
         $scope.currentStep = {};
@@ -410,46 +507,35 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentStep.dataSet = "";
         $scope.currentStep.runLumi = "";
 
-
-        $scope.addParametersRow = function() {
-            $scope.currentStep.parameters.push({
-                "flag": "",
-                "value": ""
+        $scope.saveStep = function() {
+            var step = new Steps({
+                title: $scope.currentStep.title,
+                immutable: $scope.currentStep.immutable
             });
-        };
-
-        $scope.removeParametersRow = function(index) {
-            $scope.currentStep.parameters.splice(index, 1);
-        };
-
-        $scope.showBlobDetails = function(index) {
-            // TODO
-        };
-
-        $scope.removeBlob = function(index) {
-            var title = $scope.currentStep.blobs[index].title;
-            bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
-                if (removeApproved) {
-                    $scope.currentStep.blobs.splice(index, 1);
-                    $scope.$apply();
-                }
+            if ($scope.showMonteCarlo) { // monte carlo step
+                step.is_monte_carlo = true;
+                step.parameters = $scope.currentStep.parameters;
+                step.blobs = $scope.currentStep.blobs;
+            } else {  // data step
+                step.is_monte_carlo = false;
+                step.data_set = $scope.currentStep.dataSet;
+                step.run_lumi = $scope.currentStep.runLumi;
+            }
+            // POST to create step
+            step.$create(function() {
+                $rootScope.back();
+            }, function() {
+                AlertsService.addError({msg: "Server Error. Failed to create step."});
             });
-        };
-
-        $scope.addBlob = function() {
-            var modal = $modal.open({
-                templateUrl: 'static/partials/modal/select-blob.html',
-                windowClass: 'blobs-select-dialog',
-                controller: BlobSelectModalCtrl
-            });
-            modal.result.then(function(selected) {
-                $scope.currentStep.blobs.push(selected);
-            });
-        };
-
-        $scope.discard = function() {
-            $rootScope.back();
         }
+    }]);
+
+relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'Steps',
+    function($scope, $modal, $rootScope, $routeParams, Steps) {
+        angular.extend(this, new BaseStepEditPageWithPreloadCtrl(
+            $scope, $modal, $rootScope, $routeParams, Steps));
+
+        $scope.actionName = "Clone";
 
         $scope.saveStep = function() {
             var step = new Steps({
@@ -464,7 +550,6 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
                 step.is_monte_carlo = false;
                 step.data_set = $scope.currentStep.dataSet;
                 step.run_lumi = $scope.currentStep.runLumi;
-                console.log(step.data_set, step.run_lumi)
             }
             // POST to create step
             step.$create(function() {
@@ -473,7 +558,9 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
                 AlertsService.addError({msg: "Server Error. Failed to create step."});
             });
         }
-    }]);
+
+}])
+
 
 
 // Admin controllers
