@@ -37,3 +37,8 @@ html, body {
     background: transparent;
     background-color: transparent;
 }
+
+.blobs-select-dialog .modal-dialog {
+    width :90%;
+    min-width: 400px;
+}

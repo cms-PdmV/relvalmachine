@@ -132,46 +132,20 @@ relvalControllers.controller('NewRequestCloneCtrl', ['$scope',
     function($scope) {}
 ]);
 
-
 // controllers related to blobs
-function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
-    $scope.searchText = "";
+
+// this controller provides basic functionality: search, pagination and sorting
+function BaseBlobsViewPageController($scope, PredefinedBlobs, AlertsService, BlobsSearchService) {
+    $scope.search = {
+        searchText: ""
+    };
+    // pre-load blobs
     var resp = PredefinedBlobs.all(function() {
         $scope.totalItems = resp.total
         $scope.blobs = resp.blobs
     }, function() { // on failure
         AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
     });
-
-    $scope.showEditControllers = function(index) {
-        return !$scope.blobs[index].immutable; // if not immutable than show edit controllers
-    }
-
-    $scope.editBlob = function(index) {
-        var id = $scope.blobs[index].id
-        $location.path("/blobs/edit/" + id);
-    };
-
-    $scope.deleteBlob = function(index) {
-        bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
-            function(removeApproved) {
-                if (removeApproved) {
-                    var id = $scope.blobs[index].id
-                    // DELETE blob
-                    PredefinedBlobs.delete({blob_id: id}, function() {
-                        $scope.blobs.splice(index, 1);
-                        AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
-                    }, function() {
-                        AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
-                    });
-                }});
-    };
-
-    $scope.cloneBlob = function(index) {
-        var id = $scope.blobs[index].id
-        $location.path("/blobs/clone/" + id);
-    }
-
     /*
      * Sorting
      */
@@ -223,17 +197,17 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
      * Search functionality
      */
     $scope.searchAll = function() {
-        BlobsSearchService.search($scope.searchText, $scope.itemsPerPage, function(response) {
+        BlobsSearchService.search($scope.search.searchText, $scope.itemsPerPage, function(response) {
             $scope.totalItems = response.total
             $scope.blobs = response.blobs
             if ($scope.totalItems == 0) {
-                AlertsService.addWarn({msg: "No result find for query " + $scope.searchText + "."})
+                AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
             }
         });
     }
 
     $scope.resetSearch = function() {
-        $scope.searchText = "";
+        $scope.search.searchText = "";
         BlobsSearchService.resetSearch(function(response) {
             $scope.totalItems = response.total
             $scope.blobs = response.blobs
@@ -241,7 +215,46 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
             $scope.sort.column = '';
         });
     }
+}
 
+
+// controller extends BaseBlobsViewPageController with additional actions like edit, remove and clone blob
+function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
+    angular.extend(this, new BaseBlobsViewPageController(
+            $scope,
+            PredefinedBlobs,
+            AlertsService,
+            BlobsSearchService
+        ));
+
+    $scope.showEditControllers = function(index) {
+        return !$scope.blobs[index].immutable; // if not immutable than show edit controllers
+    }
+
+    $scope.editBlob = function(index) {
+        var id = $scope.blobs[index].id
+        $location.path("/blobs/edit/" + id);
+    };
+
+    $scope.deleteBlob = function(index) {
+        bootbox.confirm("Do You really want to remove predefined blob " + $scope.blobs[index].title + " ?",
+            function(removeApproved) {
+                if (removeApproved) {
+                    var id = $scope.blobs[index].id
+                    // DELETE blob
+                    PredefinedBlobs.delete({blob_id: id}, function() {
+                        $scope.blobs.splice(index, 1);
+                        AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
+                    }, function() {
+                        AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
+                    });
+                }});
+    };
+
+    $scope.cloneBlob = function(index) {
+        var id = $scope.blobs[index].id
+        $location.path("/blobs/clone/" + id);
+    }
 }
 
 relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
@@ -355,6 +368,81 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
                 AlertsService.addError("Server Error. Failed to update predefined blob.");
             });
         };
+    }]);
+
+
+// Steps controllers
+relvalControllers.controller('StepsCtrl', ['$scope',
+    function($scope) {
+        // data fetch
+    }]);
+
+var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
+    angular.extend(this, new BaseBlobsViewPageController(
+        $scope,
+        PredefinedBlobs,
+        AlertsService,
+        BlobsSearchService
+    ));
+
+    $scope.selectBlob = function(index) {
+        $modalInstance.close($scope.blobs[index]);
+    }
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    }
+};
+
+relvalControllers.controller('NewStepCtrl', ['$scope', '$modal',
+    function($scope, $modal) {
+        // prepare
+        $scope.actionName = "Save";
+        $scope.currentStep = {};
+        $scope.currentStep.parameters = [{
+            "flag": "",
+            "value": ""
+        }];
+        $scope.currentStep.blobs = [];
+        $scope.showMonteCarlo = true;
+
+
+        $scope.addParametersRow = function() {
+            $scope.currentStep.parameters.push({
+                "flag": "",
+                "value": ""
+            });
+        };
+
+        $scope.removeParametersRow = function(index) {
+            $scope.currentStep.parameters.splice(index, 1);
+        };
+
+        $scope.showBlobDetails = function(index) {
+            // TODO
+        };
+
+        $scope.removeBlob = function(index) {
+            var title = $scope.currentStep.blobs[index].title;
+            console.log(index)
+            bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
+                if (removeApproved) {
+                    $scope.currentStep.blobs.splice(index, 1);
+                    $scope.$apply();
+                }
+            });
+        };
+
+        $scope.addBlob = function() {
+            var modal = $modal.open({
+                templateUrl: 'static/partials/modal/select-blob.html',
+                windowClass: 'blobs-select-dialog',
+                controller: BlobSelectModalCtrl
+            });
+            modal.result.then(function(selected) {
+                $scope.currentStep.blobs.push(selected);
+            });
+        }
     }]);
 
 

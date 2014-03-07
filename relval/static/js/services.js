@@ -87,7 +87,7 @@ relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(Predef
             searchingMode = true;
             query = search_query;
             var resp = PredefinedBlobs.all({search: query, page_num: 1, items_per_page: items_per_page}, function() {
-                callback(resp)
+                callback(resp);
             });
             return resp;
         },
