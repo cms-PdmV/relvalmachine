@@ -322,3 +322,48 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(len(result.items), 2)
         self.assertEqual(result.items[0].title, "aa-search")
         self.assertEqual(result.items[1].title, "search-aa-smt")
+
+    def test_monte_carlo_step_update(self):
+        utils.prepare_step(title="step-title", parameters_count=3, is_monte_carlo=False, data_set="data_set")
+        utils.prepare_blob()
+        blob_id = PredefinedBlob.query.one().id
+        id = Steps.query.one().id
+
+        new_title = "new-step-title"
+        new_parameters = factory.parameters(5)
+
+        self.steps_dao.update(id=id, title=new_title, parameters=new_parameters,
+                              is_monte_carlo=True, blobs=[{"id": blob_id}])
+
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Steps, 1)
+        self.assertModelCount(Parameters, 6)  # 5 from updated step and 1 from blob
+
+        new_step = Steps.query.one()
+        self.assertEqual(new_step.title, new_title)
+        self.assertEqual(new_step.data_set, None)
+        self.assertEqual(new_step.run_lumi, None)
+        self.assertTrue(new_step.is_monte_carlo)
+        self.assertEqual(len(new_step.predefined_blobs), 1)
+        self.assertEqual(len(new_step.parameters), 5)
+
+    def test_data_step_update(self):
+        utils.prepare_step(title="step-title", parameters_count=3, is_monte_carlo=True)
+        utils.prepare_blob()
+        blob_id = PredefinedBlob.query.one().id
+        id = Steps.query.one().id
+
+        new_title = "new-step-title"
+
+        self.steps_dao.update(id=id, title=new_title, data_set="data_set", run_lumi="run_lumi",
+                              is_monte_carlo=False, blobs=[{"id": blob_id}])
+
+        self.assertModelCount(PredefinedBlob, 1)
+        self.assertModelCount(Steps, 1)
+
+        new_step = Steps.query.one()
+        self.assertEqual(new_step.title, new_title)
+        self.assertEqual(new_step.data_set, "data_set")
+        self.assertEqual(new_step.run_lumi, "run_lumi")
+        self.assertEqual(len(new_step.predefined_blobs), 0)
+        self.assertEqual(len(new_step.parameters), 0)

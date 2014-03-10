@@ -210,11 +210,17 @@ class StepApi(Resource):
 
     @marshal_with(marshallers.step_marshaller)
     def get(self, blob_id):
-        """ Retrieves predefined blob with id=blob_id
+        """ Retrieves step with id=blob_id
         """
         step = self.steps_dao.get(blob_id)
         step.parameters  # load all parameters from blob
         step.predefined_blobs # load all blobs
         return step
+
+    def put(self, blob_id):
+        """ Updates step with id=blob_id
+        """
+        data = convert_keys_to_string(request.json)
+        self.steps_dao.update(blob_id, **data)
 
 

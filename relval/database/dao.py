@@ -73,6 +73,36 @@ class StepsDao(object):
         db.session.add(step)
         db.session.commit()
 
+    def update(self, id, title=None, immutable=False, data_set=None,
+               run_lumi=None, is_monte_carlo=True, parameters=[], blobs=[]):
+        step = self.get(id)
+        if step.immutable:
+            raise Exception("Cannot edit entity that is immutable.")
+        if title is not None:
+            step.title = title
+        step.immutable = immutable
+        for parameter in step.parameters:
+            db.session.delete(parameter)
+        step.is_monte_carlo = is_monte_carlo
+        if is_monte_carlo:
+            # make sure data values setted to none
+            step.data_set = None
+            step.run_lumi = None
+
+            step.parameters = [
+                Parameters(flag=param['flag'], value=param['value']) for param in parameters
+            ]
+            step.predefined_blobs = [
+                self.blobs_dao.get(blob['id']) for blob in blobs
+            ]
+        else:
+            step.data_set = data_set
+            step.run_lumi = run_lumi
+
+            step.parameters = []
+            step.blobs = []
+        db.session.commit()
+
     def get_paginated(self, page_num=1, items_per_page=10):
         return Steps.query \
             .paginate(page_num, items_per_page, False)

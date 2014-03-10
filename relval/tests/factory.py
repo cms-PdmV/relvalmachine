@@ -128,3 +128,19 @@ class JSONRequests(object):
             "blobs": [{"id": 1}],
             "is_monte_carlo": True
         }
+
+    @staticmethod
+    def update_step():
+        return {
+            "title": JSONRequests.new_blob_title,
+            "immutable": True,
+            "parameters": [
+                {"flag": "flag1", "value": "value1"},
+                {"flag": "flag2", "value": "value2"},
+                {"flag": "flag3", "value": "value3"}
+            ],
+            "blobs": [{"id": 1}],
+            "is_monte_carlo": True,
+            "data_set": "test-data-set",
+            "run_lumi": "test_lumi"
+        }

@@ -178,3 +178,22 @@ class StepsRestTests(BaseTestsCase):
             self.assertEqual(len(data['steps']), 1)
             self.assertEqual(data['total'], "1")
             mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=10)
+
+    def test_blob_update(self):
+        with patch.object(StepsDao, "update") as mock_method:
+            request = factory.JSONRequests.update_step()
+            response = self.app.put(
+                "/api/steps/3",
+                data=json.dumps(request),
+                content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                3,
+                title=request["title"],
+                immutable=request["immutable"],
+                parameters=request["parameters"],
+                blobs=request["blobs"],
+                data_set=request["data_set"],
+                run_lumi=request["run_lumi"],
+                is_monte_carlo=request["is_monte_carlo"])

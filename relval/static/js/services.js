@@ -5,10 +5,6 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
             all: {
                 method: 'GET'
             },
-            search: {
-                method: 'GET',
-                isArray: true
-            },
             get: {
                 method: 'GET'
             },
@@ -34,8 +30,10 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
             },
             get: {
                 method: 'GET'
+            },
+            update: {
+                method: 'PUT'
             }
-
         });
 }]);
 
