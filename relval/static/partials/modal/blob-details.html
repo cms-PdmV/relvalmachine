@@ -1,0 +1,33 @@
+<div class="modal-header"><h4 class="modal-title">{{ blob.title }}</h4></div>
+<div class="modal-body">
+  <div>
+    {{ blob.title }} is
+    <span ng-show="blob.immutable">frozen</span>
+    <span ng-hide="blob.immutable">editable</span>
+    predefined blob.
+  </div>
+  <br>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Parameters</div>
+    <table class="table">
+      <thead>
+        <th>Flag</th>
+        <th>Value</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="parameter in blob.parameters">
+          <td>{{ parameter.flag }}</td>
+          <td>{{ parameter.value }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>
+<div class="modal-footer">
+  <div class="pull-right">
+    <button class="btn btn-success" ng-click="back()">Back</button>
+  </div>
+</div>

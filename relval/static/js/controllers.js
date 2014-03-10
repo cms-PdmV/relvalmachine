@@ -423,6 +423,19 @@ var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, Aler
     }
 };
 
+var BlobViewDetailsCtrl = function($scope, $modalInstance, PredefinedBlobs, blobId) {
+    var blob = PredefinedBlobs.get({blob_id: blobId}, function() {
+        $scope.blob = {};
+        $scope.blob.title = blob.title;
+        $scope.blob.immutable = blob.immutable;
+        $scope.blob.parameters = blob.parameters;
+    });
+
+    $scope.back = function() {
+        $modalInstance.dismiss('cancel');
+    }
+}
+
 var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
     $scope.addParametersRow = function() {
         $scope.currentStep.parameters.push({
@@ -436,7 +449,15 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 
     $scope.showBlobDetails = function(index) {
-        // TODO
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/blob-details.html',
+            controller: BlobViewDetailsCtrl,
+            resolve: {
+                blobId: function() {
+                    return $scope.currentStep.blobs[index].id
+                }
+            }
+        });
     };
 
     $scope.removeBlob = function(index) {
