@@ -195,6 +195,12 @@ class StepsApi(Resource):
         total = result.total
         return steps, total
 
+    def __search(self, query, page_num=1, items_per_page=None):
+        return self.__paginated_result(
+            self.steps_dao.search_all,
+            page_num=page_num,
+            items_per_page=items_per_page,
+            query=query)
 
 
 class StepApi(Resource):

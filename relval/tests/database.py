@@ -291,7 +291,7 @@ class StepsDaoTest(BaseTestsCase):
         # assert that we not changed model
         self.assertModelCount(Steps, 3)
 
-    def test_blob_paginated_fetch_multiple(self):
+    def test_steps_paginated_fetch_multiple(self):
         for i in range(10):
             utils.prepare_step(title="title%d" % i)
 
@@ -301,3 +301,24 @@ class StepsDaoTest(BaseTestsCase):
         for i in range(3):
             # "title3", "title4", "title5"
             self.assertEqual(result.items[i].title, "title%d" % (i+3))
+
+    def test_step_search_single_result(self):
+        utils.prepare_step(title="aa-search")
+        utils.prepare_blob(title="title")
+
+        result = self.steps_dao.search_all("search", 1, 10)
+
+        self.assertEqual(len(result.items), 1)
+        self.assertEqual(result.items[0].title, "aa-search")
+
+    def test_search_search_multiple_result(self):
+        utils.prepare_step()
+        utils.prepare_step(title="search-aa-smt")
+        utils.prepare_step(title="aa-search")
+
+        result = self.steps_dao.search_all("search", 1, 10)
+
+        result.items.sort(key=lambda step: step.title)
+        self.assertEqual(len(result.items), 2)
+        self.assertEqual(result.items[0].title, "aa-search")
+        self.assertEqual(result.items[1].title, "search-aa-smt")

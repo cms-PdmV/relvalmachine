@@ -80,6 +80,11 @@ class StepsDao(object):
     def get(self, id):
         return Steps.query.get(id)
 
+    def search_all(self, query, page_num, items_per_page):
+        return Steps.query \
+            .filter(Steps.title.ilike("%{0}%".format(query))) \
+            .paginate(page_num, items_per_page, False)
+
 
 class PredefinedBlobsDao(object):
 

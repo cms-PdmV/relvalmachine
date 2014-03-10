@@ -164,3 +164,17 @@ class StepsRestTests(BaseTestsCase):
             self.assertEqual(len(data['steps']), 2)
             self.assertEqual(data['total'], "3")
             mock_method.assert_called_once_with(page_num=1, items_per_page=2)
+
+    def test_step_search(self):
+        step = [factory.step(3)]
+        page = Pagination(None, None, None, 1, step)
+
+        with patch.object(StepsDao, "search_all") as mock_method:
+            mock_method.return_value = page
+            response = self.app.get("/api/steps?search=query&pagu_num=1&items_per_page=10")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+            self.assertEqual(len(data['steps']), 1)
+            self.assertEqual(data['total'], "1")
+            mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=10)

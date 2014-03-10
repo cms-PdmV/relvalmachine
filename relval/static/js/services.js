@@ -91,8 +91,8 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
 }]);
 
 
-// blobs services
-relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(PredefinedBlobs) {
+// abstract search service
+var AbstractSearchService = function(resource) {
     var searchingMode = false;
     var query = "";
 
@@ -100,15 +100,14 @@ relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(Predef
 
         search: function(search_query, items_per_page, callback) {
             searchingMode = true;
-            query = search_query;
-            var resp = PredefinedBlobs.all({search: query, page_num: 1, items_per_page: items_per_page}, function() {
+            var resp = resource.all({search: search_query, page_num: 1, items_per_page: items_per_page}, function() {
                 callback(resp);
             });
             return resp;
         },
 
         changePage: function(page, itemsPerPage, callback) {
-            var resp = PredefinedBlobs.all({search: query, page_num: page, items_per_page: itemsPerPage},
+            var resp = resource.all({search: query, page_num: page, items_per_page: itemsPerPage},
                 function() {
                     callback(resp)
                 });
@@ -118,7 +117,7 @@ relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(Predef
         resetSearch: function(callback) {
             searchingMode = false;
             query = "";
-            var resp = PredefinedBlobs.all(function() {
+            var resp = resource.all(function() {
                 callback(resp)
             });
             return resp;
@@ -128,6 +127,21 @@ relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(Predef
             return searchingMode;
         }
     };
+
+    return searchService;
+}
+
+
+// blobs services
+relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(PredefinedBlobs) {
+    var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs));
+
+    return searchService;
+}]);
+
+// steps services
+relvalServices.factory('StepsSearchService', ['Steps', function(Steps) {
+    var searchService = angular.extend(this, new AbstractSearchService(Steps));
 
     return searchService;
 }]);

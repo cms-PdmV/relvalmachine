@@ -146,6 +146,7 @@ function BaseBlobsViewPageController($scope, PredefinedBlobs, AlertsService, Blo
     }, function() { // on failure
         AlertsService.addError({msg: "Server error. Failed to fetch predefined blobs"});
     });
+
     /*
      * Sorting
      */
@@ -372,8 +373,12 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
 
 
 // Steps controllers
-relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'AlertsService',
-    function($scope, $location, Steps, AlertsService) {
+relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'AlertsService', 'StepsSearchService',
+    function($scope, $location, Steps, AlertsService, StepsSearchService) {
+        $scope.search = {
+            searchText: ""
+        };
+
          // pre-load steps
         var resp = Steps.all({page_num: 1, items_per_page: $scope.itemsPerPage}, function() {
             $scope.totalItems = resp.total
@@ -387,6 +392,29 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
             $location.path("/steps/clone/" + id);
         }
 
+        /*
+         * Search functionality
+         */
+        $scope.searchAll = function() {
+            StepsSearchService.search($scope.search.searchText, $scope.itemsPerPage, function(response) {
+                $scope.totalItems = response.total
+                $scope.steps = response.steps
+                if ($scope.totalItems == 0) {
+                    AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
+                }
+            });
+        }
+
+        $scope.resetSearch = function() {
+            $scope.search.searchText = "";
+            StepsSearchService.resetSearch(function(response) {
+                $scope.totalItems = response.total
+                $scope.steps = response.steps
+                $scope.currentPage = 1;
+                $scope.sort.column = '';
+            });
+        }
+
 
         /*
          * Pagination
@@ -396,11 +424,18 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         $scope.maxSize = 10;       // how many pages display
 
         $scope.setPage = function(pageNo) {
-            var resp = Steps.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                $scope.totalItems = resp.total;
-                $scope.steps = resp.steps;
-            });
-            $scope.currentPage = pageNo;
+            if (StepsSearchService.isSearchingMode()) { // if in search mode then change page with same search query
+                StepsSearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
+                    $scope.totalItems = response.total;
+                    $scope.steps = response.steps;
+                });
+            } else {
+                var resp = StepsSearchService.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                    $scope.totalItems = resp.total;
+                    $scope.steps = resp.steps;
+                });
+            }
+        $scope.currentPage = pageNo;
     };
 
 
