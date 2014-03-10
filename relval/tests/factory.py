@@ -8,7 +8,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval.database.models import \
-    Users, Requests, Revisions, Steps, PredefinedBlob, Parameters
+    Users, Requests, Revisions, Steps, PredefinedBlob, Parameters, StepType
 from datetime import datetime
 
 def user():
@@ -63,11 +63,11 @@ def predefined_blob(params_count=1):
         ])
 
 def step(title="test-title", parameters_count=1, blobs_count=1,
-                 immutable=False, is_monte_carlo=True, data_set="", run_lumi=""):
+                 immutable=False, type=StepType.MonteCarlo, data_set="", run_lumi=""):
     return Steps(
         title=title,
         immutable=immutable,
-        is_monte_carlo=is_monte_carlo,
+        type=type,
         data_set=data_set,
         run_lumi=run_lumi,
         parameters=[

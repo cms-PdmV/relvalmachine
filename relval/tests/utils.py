@@ -8,6 +8,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from relval.tests import factory
 from relval.database.dao import PredefinedBlobsDao, StepsDao
+from relval.database.models import StepType
 
 blobs_dao = PredefinedBlobsDao()
 steps_dao = StepsDao()
@@ -23,17 +24,17 @@ def prepare_blob(title=None, parameters_count=1, immutable=False):
     return blob
 
 def prepare_step(title=None, parameters_count=1, blobs_count=1,
-                 immutable=False, is_monte_carlo=True, data_set="", run_lumi=""):
+                 immutable=False, type=StepType.MonteCarlo, data_set="", run_lumi=""):
 
     step = factory.step(title=title, parameters_count=parameters_count, blobs_count=blobs_count,
-                        immutable=immutable, is_monte_carlo=is_monte_carlo, data_set=data_set,
+                        immutable=immutable, type=type, data_set=data_set,
                         run_lumi=run_lumi)
 
     parameters = factory.parameters(parameters_count)
 
     steps_dao.add(title=step.title,
                   immutable=immutable,
-                  is_monte_carlo=is_monte_carlo,
+                  type=type,
                   data_set=data_set,
                   run_lumi=run_lumi,
                   parameters=parameters)

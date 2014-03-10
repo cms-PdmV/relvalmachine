@@ -73,6 +73,15 @@ predefined_blobs_association = db.Table(
     db.Column('predefined_blob_id', db.Integer, db.ForeignKey('predefined_blob.id'))
 )
 
+class StepType(object):
+    MonteCarlo = "Monte Carlo"
+    Step1MC = "Step 1 MC"
+    Data = "Data"
+
+    @classmethod
+    def types(cls):
+        return [StepType.MonteCarlo, StepType.Step1MC, StepType.Data]
+
 
 class Steps(db.Model):
     __tablename__ = "steps"
@@ -82,7 +91,8 @@ class Steps(db.Model):
     data_set = db.Column("data_set", db.String(1024))
     run_lumi = db.Column("run_lumi", db.Text)
     immutable = db.Column("immutable", db.Boolean, default=False)
-    is_monte_carlo = db.Column("is_monte_carlo", db.Boolean)
+    type = db.Column("type", db.Enum(
+        *StepType.types()))
 
     revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=True)
 

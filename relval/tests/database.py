@@ -10,7 +10,7 @@ from relval.tests import factory
 from relval.tests import utils
 from relval.tests.base import BaseTestsCase
 from relval.database.dao import UsersDao, RequestsDao, RevisionsDao, PredefinedBlobsDao, StepsDao
-from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps
+from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType
 
 
 class UsersDaoTests(BaseTestsCase):
@@ -213,7 +213,8 @@ class StepsDaoTest(BaseTestsCase):
         self.assertModelEmpty(PredefinedBlob)
         self.assertModelEmpty(Steps)
 
-        self.steps_dao.add(title="step", immutable=False, is_monte_carlo=True, parameters=factory.parameters(2))
+        self.steps_dao.add(title="step", immutable=False, type=StepType.MonteCarlo,
+                           parameters=factory.parameters(2))
 
         self.assertModelCount(PredefinedBlob, 0)
         self.assertModelCount(Steps, 1)
@@ -223,13 +224,13 @@ class StepsDaoTest(BaseTestsCase):
 
         self.assertEqual(step.title, "step")
         self.assertEqual(step.immutable, False)
-        self.assertEqual(step.is_monte_carlo, True)
+        self.assertEqual(step.type, StepType.MonteCarlo)
         self.assertEqual(step.predefined_blobs, [])
 
     def test_step_montecarlo_step_insertion(self):
         self.steps_dao.add(title="step",
                            immutable=False,
-                           is_monte_carlo=True,
+                           type=StepType.MonteCarlo,
                            parameters=factory.parameters(2),
                            data_set="data_set",
                            run_lumi="run_lumi")
@@ -239,20 +240,20 @@ class StepsDaoTest(BaseTestsCase):
 
         step = Steps.query.one()
         self.assertEqual(step.title, "step")
-        self.assertEqual(step.is_monte_carlo, True)
+        self.assertEqual(step.type, StepType.MonteCarlo)
         self.assertEqual(len(step.parameters), 2)
         # should not insert those fields because is_monte_carlo = true
         self.assertEqual(step.data_set, None)
         self.assertEqual(step.run_lumi, None)
 
-    def test_step_montecarlo_step_insertion(self):
-        blob1 = utils.prepare_blob()
-        blob2 = utils.prepare_blob()
+    def test_step_step1_mc_insertion(self):
+        utils.prepare_blob()
+        blob = PredefinedBlob.query.one()
         self.steps_dao.add(title="step",
                            immutable=False,
-                           is_monte_carlo=False,
+                           type=StepType.Step1MC,
                            parameters=factory.parameters(2),
-                           blobs=[blob1, blob2],
+                           blobs=[{"id": blob.id}],
                            data_set="data_set",
                            run_lumi="run_lumi")
 
@@ -260,17 +261,17 @@ class StepsDaoTest(BaseTestsCase):
 
         step = Steps.query.one()
         self.assertEqual(step.title, "step")
-        self.assertEqual(step.is_monte_carlo, False)
-        self.assertEqual(len(step.parameters), 0)
+        self.assertEqual(step.type, StepType.Step1MC)
+        self.assertEqual(len(step.parameters), 2)
+        self.assertEqual(len(step.predefined_blobs), 1)
         # should not insert those fields because is_monte_carlo = true
         self.assertEqual(step.data_set, "data_set")
-        self.assertEqual(step.run_lumi, "run_lumi")
 
     def test_step_insertion_without_parameters(self):
         utils.prepare_blob()
         id = PredefinedBlob.query.one().id
 
-        self.steps_dao.add(title="step", immutable=False, is_monte_carlo=True, blobs=[{"id": id}])
+        self.steps_dao.add(title="step", immutable=False, type=StepType.MonteCarlo, blobs=[{"id": id}])
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Steps, 1)
@@ -324,7 +325,8 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(result.items[1].title, "search-aa-smt")
 
     def test_monte_carlo_step_update(self):
-        utils.prepare_step(title="step-title", parameters_count=3, is_monte_carlo=False, data_set="data_set")
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Step1MC,
+                           data_set="data_set")
         utils.prepare_blob()
         blob_id = PredefinedBlob.query.one().id
         id = Steps.query.one().id
@@ -333,7 +335,7 @@ class StepsDaoTest(BaseTestsCase):
         new_parameters = factory.parameters(5)
 
         self.steps_dao.update(id=id, title=new_title, parameters=new_parameters,
-                              is_monte_carlo=True, blobs=[{"id": blob_id}])
+                              type=StepType.MonteCarlo, blobs=[{"id": blob_id}])
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Steps, 1)
@@ -341,29 +343,29 @@ class StepsDaoTest(BaseTestsCase):
 
         new_step = Steps.query.one()
         self.assertEqual(new_step.title, new_title)
-        self.assertEqual(new_step.data_set, None)
-        self.assertEqual(new_step.run_lumi, None)
-        self.assertTrue(new_step.is_monte_carlo)
+        self.assertEqual(new_step.type, StepType.MonteCarlo)
         self.assertEqual(len(new_step.predefined_blobs), 1)
         self.assertEqual(len(new_step.parameters), 5)
 
-    def test_data_step_update(self):
-        utils.prepare_step(title="step-title", parameters_count=3, is_monte_carlo=True)
+    def test_step_1_mc_step_update(self):
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.MonteCarlo)
         utils.prepare_blob()
         blob_id = PredefinedBlob.query.one().id
         id = Steps.query.one().id
 
         new_title = "new-step-title"
+        new_parameters = factory.parameters(4)
 
-        self.steps_dao.update(id=id, title=new_title, data_set="data_set", run_lumi="run_lumi",
-                              is_monte_carlo=False, blobs=[{"id": blob_id}])
+        self.steps_dao.update(id=id, title=new_title, data_set="data_set", parameters=new_parameters,
+                              type=StepType.Step1MC, blobs=[{"id": blob_id}])
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Steps, 1)
+        self.assertModelCount(Parameters, 5)  # 4 from updated step and 1 from blob
 
         new_step = Steps.query.one()
         self.assertEqual(new_step.title, new_title)
         self.assertEqual(new_step.data_set, "data_set")
-        self.assertEqual(new_step.run_lumi, "run_lumi")
-        self.assertEqual(len(new_step.predefined_blobs), 0)
-        self.assertEqual(len(new_step.parameters), 0)
+        self.assertEqual(new_step.type, StepType.Step1MC)
+        self.assertEqual(len(new_step.predefined_blobs), 1)
+        self.assertEqual(len(new_step.parameters), 4)

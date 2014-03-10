@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType
 
 from datetime import datetime
 
@@ -54,27 +54,29 @@ class StepsDao(object):
     def __init__(self):
         self.blobs_dao = PredefinedBlobsDao()
 
-    def add(self, title="", immutable=False, data_set="", run_lumi="", is_monte_carlo=True, parameters=[], blobs=[]):
+    def add(self, title="", immutable=False, data_set="", run_lumi="",
+            type=StepType.MonteCarlo, parameters=[], blobs=[]):
         step = Steps(
             title=title,
             immutable=immutable,
-            is_monte_carlo=is_monte_carlo,
+            type=type,
         )
-        if is_monte_carlo:
+        if type == StepType.MonteCarlo or type == StepType.Step1MC:
             step.parameters = [
                 Parameters(flag=param['flag'], value=param['value']) for param in parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        else:
+        if type == StepType.Step1MC:
             step.data_set = data_set
-            step.run_lumi = run_lumi
+
+        # TODO handle data case
         db.session.add(step)
         db.session.commit()
 
     def update(self, id, title=None, immutable=False, data_set=None,
-               run_lumi=None, is_monte_carlo=True, parameters=[], blobs=[]):
+               run_lumi=None, type=StepType.MonteCarlo, parameters=[], blobs=[]):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")
@@ -83,24 +85,19 @@ class StepsDao(object):
         step.immutable = immutable
         for parameter in step.parameters:
             db.session.delete(parameter)
-        step.is_monte_carlo = is_monte_carlo
-        if is_monte_carlo:
-            # make sure data values setted to none
-            step.data_set = None
-            step.run_lumi = None
-
+        step.type = type
+        if type == StepType.MonteCarlo or type == StepType.Step1MC:
             step.parameters = [
                 Parameters(flag=param['flag'], value=param['value']) for param in parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        else:
+        if type == StepType.Step1MC:
             step.data_set = data_set
-            step.run_lumi = run_lumi
 
-            step.parameters = []
-            step.blobs = []
+        # TODO: handle data case
+
         db.session.commit()
 
     def get_paginated(self, page_num=1, items_per_page=10):

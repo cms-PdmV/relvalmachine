@@ -45,12 +45,7 @@
           </div>
         </td>
         <td>
-          <div ng-show="step.is_monte_carlo">
-            <span>Monte Carlo</span>
-          </div>
-          <div ng-hide="step.is_monte_carlo">
-            <span>Data</span>
-          </div>
+          <span>{{step.type}}</span>
         </td>
         <td>
           <div ng-show="showEditControllers($index)">

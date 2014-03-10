@@ -480,6 +480,10 @@ var BlobViewDetailsCtrl = function($scope, $modalInstance, PredefinedBlobs, blob
 }
 
 var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
+    $scope.isActiveForm = function(type) {
+        return type == $scope.currentStep.type;
+    }
+
     $scope.addParametersRow = function() {
         $scope.currentStep.parameters.push({
             "flag": "",
@@ -530,23 +534,23 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
 }
 
 var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Steps) {
+    $scope.currentStep = {};
     angular.extend(this, new BaseStepEditPageCtrl(
         $scope,
         $modal,
         $rootScope
     ));
-
     // load blob data
     $scope.id = $routeParams.stepId;
     console.log($scope.id)
     var step = Steps.get({step_id: $scope.id}, function() {
-        $scope.currentStep = {};
         $scope.currentStep.title = step.title;
         $scope.currentStep.immutable = step.immutable;
         $scope.currentStep.parameters = step.parameters;
         $scope.currentStep.blobs = step.blobs;
-        $scope.showMonteCarlo = step.is_monte_carlo;
+        $scope.currentStep.type = step.type;
         $scope.currentStep.dataSet = step.data_set;
+        console.log(step.data_set);
         $scope.currentStep.runLumi = step.run_lumi;
     });
 
@@ -570,7 +574,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         }];
         $scope.currentStep.blobs = [];
         $scope.currentStep.immutable = false;
-        $scope.showMonteCarlo = true;
+        $scope.currentStep.type = "Monte Carlo";
         $scope.currentStep.title = "";
         $scope.currentStep.dataSet = "";
         $scope.currentStep.runLumi = "";
@@ -578,17 +582,14 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.saveStep = function() {
             var step = new Steps({
                 title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable
+                immutable: $scope.currentStep.immutable,
+                type: $scope.currentStep.type
             });
-            if ($scope.showMonteCarlo) { // monte carlo step
-                step.is_monte_carlo = true;
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-            } else {  // data step
-                step.is_monte_carlo = false;
-                step.data_set = $scope.currentStep.dataSet;
-                step.run_lumi = $scope.currentStep.runLumi;
-            }
+            step.parameters = $scope.currentStep.parameters;
+            step.blobs = $scope.currentStep.blobs;
+            console.log($scope.currentStep.dataSet);
+            step.data_set = $scope.currentStep.dataSet;
+            step.run_lumi = $scope.currentStep.runLumi;
             // POST to create step
             step.$create(function() {
                 $rootScope.back();
@@ -608,17 +609,13 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
         $scope.saveStep = function() {
             var step = new Steps({
                 title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable
+                immutable: $scope.currentStep.immutable,
+                type: $scope.currentStep.type
             });
-            if ($scope.showMonteCarlo) { // monte carlo step
-                step.is_monte_carlo = true;
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-            } else {  // data step
-                step.is_monte_carlo = false;
-                step.data_set = $scope.currentStep.dataSet;
-                step.run_lumi = $scope.currentStep.runLumi;
-            }
+            step.parameters = $scope.currentStep.parameters;
+            step.blobs = $scope.currentStep.blobs;
+            step.data_set = $scope.currentStep.dataSet;
+            step.run_lumi = $scope.currentStep.runLumi;
             // POST to create step
             step.$create(function() {
                 $rootScope.back();
@@ -639,17 +636,13 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.saveStep = function() {
             var step = new Steps({
                 title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable
+                immutable: $scope.currentStep.immutable,
+                type: $scope.currentStep.type
             });
-            if ($scope.showMonteCarlo) { // monte carlo step
-                step.is_monte_carlo = true;
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-            } else {  // data step
-                step.is_monte_carlo = false;
-                step.data_set = $scope.currentStep.dataSet;
-                step.run_lumi = $scope.currentStep.runLumi;
-            }
+            step.parameters = $scope.currentStep.parameters;
+            step.blobs = $scope.currentStep.blobs;
+            step.data_set = $scope.currentStep.dataSet;
+            step.run_lumi = $scope.currentStep.runLumi;
             // PUT to update step
             step.$update({step_id: $scope.id}, function() {
                 $rootScope.back();

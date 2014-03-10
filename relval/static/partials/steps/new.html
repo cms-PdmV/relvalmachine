@@ -10,42 +10,37 @@
     </div>
 
     <div class="form-group">
-      <div class="btn-group col-sm-offset-8 col-sm-2">
-        <button ng-class="{'btn-primary': showMonteCarlo}" class="btn" ng-click="showMonteCarlo = true">Monte Carlo
+      <div class="btn-group col-sm-8 col-sm-offset-4">
+        <button ng-class="{'btn-primary': isActiveForm('Monte Carlo')}" class="btn"
+                ng-click="currentStep.type = 'Monte Carlo'">Monte Carlo
         </button>
-        <button ng-class="{'btn-primary': !showMonteCarlo}" class="btn" ng-click="showMonteCarlo = false">Data</button>
+        <button ng-class="{'btn-primary': isActiveForm('Step 1 MC')}" class="btn"
+                ng-click="currentStep.type = 'Step 1 MC'">Step 1 MC
+        </button>
+        <button ng-class="{'btn-primary': isActiveForm('Data')}" class="btn" ng-click="currentStep.type = 'Data'">Data
+        </button>
       </div>
     </div>
 
-    <div ng-show="showMonteCarlo">
+    <div ng-show="isActiveForm('Monte Carlo')">
+      <div ng-include="'static/partials/reusable/mc-step-edit.html'"></div>
+    </div>
 
-      <div class="form-group">
-        <button class="btn btn-info col-sm-2 " ng-click="addBlob()"><i class="fa fa-plus-square-o fa-lg"></i> Add blob
-        </button>
+    <div ng-show="isActiveForm('Step 1 MC')">
+      <div ng-include="'static/partials/reusable/mc-step-edit.html'"></div>
+      <div class="clearfix"></div>
+      <br>
 
-        <div ng-model="currentStep.blobs"
-             id="added-steps-list"
-             ng-show="currentStep.blobs.length"
-             class="list-group col-sm-offset-4 col-sm-4">
-          <a class="list-group-item active">Predefined blobs added</a>
-
-          <div drag-and-drop-list="currentStep.blobs">
-            <div ng-repeat="blob in currentStep.blobs" class="list-group-item step">
-              <span>{{$index+1}}. {{ blob.title}}</span>
-
-              <div class="pull-right">
-                <i ng-click="showBlobDetails($index)" class="fa fa-list-alt fa-lg"></i>
-                <i ng-click="removeBlob($index)" class="fa fa-times fa-lg"></i>
-              </div>
-            </div>
-          </div>
+      <div class="col-sm-10">
+        <div class="form-group">
+          <label for="mcDataSetInput">Data Set</label>
+          <textarea ng-model="currentStep.dataSet" class="form-control" id="mcDataSetInput"
+                    placeholder="Data Set"></textarea>
         </div>
-
       </div>
-      <div ng-include="'static/partials/reusable/parameters-form.html'"></div>
     </div>
 
-    <div ng-hide="showMonteCarlo" class="col-sm-10">
+    <div ng-show="isActiveForm('Data')" class="col-sm-10">
       <div class="form-group">
         <label for="dataSetInput">Data Set</label>
         <textarea ng-model="currentStep.dataSet" class="form-control" id="dataSetInput"

@@ -51,7 +51,7 @@ steps_marshaller = {
     'id': fields.String,
     'title': fields.String,
     'immutable': fields.Boolean,
-    'is_monte_carlo': fields.Boolean
+    'type': fields.String
 }
 
 steps_marshaller_paginated = {
@@ -63,7 +63,8 @@ step_marshaller = {
     'id': fields.String,
     'title': fields.String,
     'immutable': fields.Boolean,
-    'is_monte_carlo': fields.Boolean,
+    'type': fields.String,
     'parameters': fields.Nested(parameter_marshaller),
+    'data_set': fields.String,
     'blobs': fields.Nested(blob_tight_marshaller, attribute="predefined_blobs")
 }
