@@ -396,8 +396,12 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         $scope.maxSize = 10;       // how many pages display
 
         $scope.setPage = function(pageNo) {
-
-        }
+            var resp = Steps.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                $scope.totalItems = resp.total;
+                $scope.steps = resp.steps;
+            });
+            $scope.currentPage = pageNo;
+    };
 
 
 }]);

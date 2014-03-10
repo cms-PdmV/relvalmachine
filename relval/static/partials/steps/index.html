@@ -14,8 +14,7 @@
       <th>#</th>
       <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
       <th>Frozen</th>
-      <th>Monte Carlo</th>
-      <th>Data</th>
+      <th>Type</th>
       <th>Actions</th>
       <th></th>
       </thead>
@@ -30,12 +29,10 @@
         </td>
         <td>
           <div ng-show="step.is_monte_carlo">
-            <i class="fa fa-check fa-lg"></i>
+            <span>Monte Carlo</span>
           </div>
-        </td>
-        <td>
           <div ng-hide="step.is_monte_carlo">
-            <i class="fa fa-check fa-lg"></i>
+            <span>Data</span>
           </div>
         </td>
         <td>
