@@ -558,7 +558,6 @@ var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $rout
         $scope.currentStep.type = step.type;
         $scope.currentStep.dataSet = step.data_set;
         console.log(step.data_set);
-        $scope.currentStep.runLumi = step.run_lumi;
     });
 
 
@@ -596,7 +595,6 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
             step.blobs = $scope.currentStep.blobs;
             console.log($scope.currentStep.dataSet);
             step.data_set = $scope.currentStep.dataSet;
-            step.run_lumi = $scope.currentStep.runLumi;
             // POST to create step
             step.$create(function() {
                 $rootScope.back();
@@ -622,7 +620,6 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
             step.parameters = $scope.currentStep.parameters;
             step.blobs = $scope.currentStep.blobs;
             step.data_set = $scope.currentStep.dataSet;
-            step.run_lumi = $scope.currentStep.runLumi;
             // POST to create step
             step.$create(function() {
                 $rootScope.back();
@@ -649,7 +646,6 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
             step.parameters = $scope.currentStep.parameters;
             step.blobs = $scope.currentStep.blobs;
             step.data_set = $scope.currentStep.dataSet;
-            step.run_lumi = $scope.currentStep.runLumi;
             // PUT to update step
             step.$update({step_id: $scope.id}, function() {
                 $rootScope.back();

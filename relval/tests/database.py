@@ -232,8 +232,7 @@ class StepsDaoTest(BaseTestsCase):
                            immutable=False,
                            type=StepType.Default,
                            parameters=factory.parameters(2),
-                           data_set="data_set",
-                           run_lumi="run_lumi")
+                           data_set="data_set")
 
         self.assertModelCount(Steps, 1)
         self.assertModelCount(Parameters, 2)
@@ -244,7 +243,6 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(len(step.parameters), 2)
         # should not insert those fields because is_monte_carlo = true
         self.assertEqual(step.data_set, None)
-        self.assertEqual(step.run_lumi, None)
 
     def test_step_step1_mc_insertion(self):
         utils.prepare_blob()
@@ -254,8 +252,7 @@ class StepsDaoTest(BaseTestsCase):
                            type=StepType.FirstMc,
                            parameters=factory.parameters(2),
                            blobs=[{"id": blob.id}],
-                           data_set="data_set",
-                           run_lumi="run_lumi")
+                           data_set="data_set")
 
         self.assertModelCount(Steps, 1)
 

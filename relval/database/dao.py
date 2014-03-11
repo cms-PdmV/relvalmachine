@@ -54,7 +54,7 @@ class StepsDao(object):
     def __init__(self):
         self.blobs_dao = PredefinedBlobsDao()
 
-    def add(self, title="", immutable=False, data_set="", run_lumi="",
+    def add(self, title="", immutable=False, data_set="",
             type=StepType.Default, parameters=[], blobs=[]):
         step = Steps(
             title=title,
@@ -76,7 +76,7 @@ class StepsDao(object):
         db.session.commit()
 
     def update(self, id, title=None, immutable=False, data_set=None,
-               run_lumi=None, type=StepType.Default, parameters=[], blobs=[]):
+               type=StepType.Default, parameters=[], blobs=[]):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")

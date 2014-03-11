@@ -63,13 +63,12 @@ def predefined_blob(params_count=1):
         ])
 
 def step(title="test-title", parameters_count=1, blobs_count=1,
-                 immutable=False, type=StepType.Default, data_set="", run_lumi=""):
+                 immutable=False, type=StepType.Default, data_set=""):
     return Steps(
         title=title,
         immutable=immutable,
         type=type,
         data_set=data_set,
-        run_lumi=run_lumi,
         parameters=[
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(parameters_count)
         ],
@@ -121,7 +120,6 @@ class JSONRequests(object):
             "title": "test-title",
             "immutable": True,
             "data_set": "test-data-set",
-            "run_lumi": "test_lumi",
             "parameters": [
                 {"flag": "flag1", "value": "value1"}
             ],
@@ -141,6 +139,5 @@ class JSONRequests(object):
             ],
             "blobs": [{"id": 1}],
             "is_monte_carlo": True,
-            "data_set": "test-data-set",
-            "run_lumi": "test_lumi"
+            "data_set": "test-data-set"
         }

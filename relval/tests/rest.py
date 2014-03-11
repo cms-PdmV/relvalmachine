@@ -145,8 +145,7 @@ class StepsRestTests(BaseTestsCase):
                 parameters=request["parameters"],
                 blobs=request["blobs"],
                 is_monte_carlo=True,
-                data_set="test-data-set",
-                run_lumi="test_lumi")
+                data_set="test-data-set")
 
     def test_step_fetch_paginating(self):
         steps = []
@@ -195,5 +194,4 @@ class StepsRestTests(BaseTestsCase):
                 parameters=request["parameters"],
                 blobs=request["blobs"],
                 data_set=request["data_set"],
-                run_lumi=request["run_lumi"],
                 is_monte_carlo=request["is_monte_carlo"])

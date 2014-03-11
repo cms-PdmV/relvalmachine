@@ -84,13 +84,17 @@ class StepType(object):
         return [StepType.Default, StepType.FirstMc, StepType.FirstData]
 
 
+class DataStep(db.Model):
+    __tablename__ = "data_step"
+    id = db.Column("id", db.Integer, db.Sequence("data_step_id_seq"), primary_key=True)
+
+
 class Steps(db.Model):
     __tablename__ = "steps"
     id = db.Column("id", db.Integer, db.Sequence("step_id_seq"), primary_key=True)
     sequence_number = db.Column("sequence_number", db.Integer)
     title = db.Column("title", db.String(256))
     data_set = db.Column("data_set", db.String(1024))
-    run_lumi = db.Column("run_lumi", db.Text)
     immutable = db.Column("immutable", db.Boolean, default=False)
     type = db.Column("type", db.Enum(
         *StepType.types()))
