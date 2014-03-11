@@ -415,7 +415,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
 
         $scope.resetSearch = function() {
             $scope.search.searchText = "";
-            Steps.resetSearch(function(response) {
+            StepsSearchService.resetSearch(function(response) {
                 $scope.totalItems = response.total
                 $scope.steps = response.steps
                 $scope.currentPage = 1;
@@ -438,7 +438,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
                     $scope.steps = response.steps;
                 });
             } else {
-                var resp = StepsSearchService.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                var resp = Steps.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
                     $scope.totalItems = resp.total;
                     $scope.steps = resp.steps;
                 });
