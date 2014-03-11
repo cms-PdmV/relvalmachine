@@ -11,22 +11,23 @@
 
     <div class="form-group">
       <div class="btn-group col-sm-8 col-sm-offset-4">
-        <button ng-class="{'btn-primary': isActiveForm('Monte Carlo')}" class="btn"
-                ng-click="currentStep.type = 'Monte Carlo'">Monte Carlo
+        <button ng-class="{'btn-primary': isActiveForm('default')}" class="btn"
+                ng-click="currentStep.type = 'default'">Default step
         </button>
-        <button ng-class="{'btn-primary': isActiveForm('Step 1 MC')}" class="btn"
-                ng-click="currentStep.type = 'Step 1 MC'">Step 1 MC
+        <button ng-class="{'btn-primary': isActiveForm('first_mc')}" class="btn"
+                ng-click="currentStep.type = 'first_mc'">Step 1 MC
         </button>
-        <button ng-class="{'btn-primary': isActiveForm('Data')}" class="btn" ng-click="currentStep.type = 'Data'">Data
+        <button ng-class="{'btn-primary': isActiveForm('first_data')}" class="btn"
+                ng-click="currentStep.type = 'first_data'">Step 1 Data
         </button>
       </div>
     </div>
 
-    <div ng-show="isActiveForm('Monte Carlo')">
+    <div ng-show="isActiveForm('default')">
       <div ng-include="'static/partials/reusable/mc-step-edit.html'"></div>
     </div>
 
-    <div ng-show="isActiveForm('Step 1 MC')">
+    <div ng-show="isActiveForm('first_mc')">
       <div ng-include="'static/partials/reusable/mc-step-edit.html'"></div>
       <div class="clearfix"></div>
       <br>
@@ -40,7 +41,7 @@
       </div>
     </div>
 
-    <div ng-show="isActiveForm('Data')" class="col-sm-10">
+    <div ng-show="isActiveForm('first_data')" class="col-sm-10">
       <div class="form-group">
         <label for="dataSetInput">Data Set</label>
         <textarea ng-model="currentStep.dataSet" class="form-control" id="dataSetInput"

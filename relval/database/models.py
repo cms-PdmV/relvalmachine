@@ -73,14 +73,15 @@ predefined_blobs_association = db.Table(
     db.Column('predefined_blob_id', db.Integer, db.ForeignKey('predefined_blob.id'))
 )
 
+
 class StepType(object):
-    MonteCarlo = "Monte Carlo"
-    Step1MC = "Step 1 MC"
-    Data = "Data"
+    Default = "default"
+    FirstMc = "first_mc"
+    FirstData = "first_data"
 
     @classmethod
     def types(cls):
-        return [StepType.MonteCarlo, StepType.Step1MC, StepType.Data]
+        return [StepType.Default, StepType.FirstMc, StepType.FirstData]
 
 
 class Steps(db.Model):

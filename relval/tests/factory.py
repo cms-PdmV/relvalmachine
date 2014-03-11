@@ -63,7 +63,7 @@ def predefined_blob(params_count=1):
         ])
 
 def step(title="test-title", parameters_count=1, blobs_count=1,
-                 immutable=False, type=StepType.MonteCarlo, data_set="", run_lumi=""):
+                 immutable=False, type=StepType.Default, data_set="", run_lumi=""):
     return Steps(
         title=title,
         immutable=immutable,

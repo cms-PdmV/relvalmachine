@@ -387,6 +387,13 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
             AlertsService.addError({msg: "Server error. Failed to fetch steps"});
         });
 
+        $scope.getType = function(index) {
+            var type = $scope.steps[index].type;
+            if (type == "default") return "Default";
+            if (type == "first_mc") return "First MC"
+            if (type == "first_data") return "First Data"
+        }
+
         $scope.showEditControllers = function(index) {
             return !$scope.steps[index].immutable
         }
@@ -574,7 +581,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         }];
         $scope.currentStep.blobs = [];
         $scope.currentStep.immutable = false;
-        $scope.currentStep.type = "Monte Carlo";
+        $scope.currentStep.type = "default";
         $scope.currentStep.title = "";
         $scope.currentStep.dataSet = "";
         $scope.currentStep.runLumi = "";

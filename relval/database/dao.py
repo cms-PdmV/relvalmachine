@@ -55,20 +55,20 @@ class StepsDao(object):
         self.blobs_dao = PredefinedBlobsDao()
 
     def add(self, title="", immutable=False, data_set="", run_lumi="",
-            type=StepType.MonteCarlo, parameters=[], blobs=[]):
+            type=StepType.Default, parameters=[], blobs=[]):
         step = Steps(
             title=title,
             immutable=immutable,
             type=type,
         )
-        if type == StepType.MonteCarlo or type == StepType.Step1MC:
+        if type == StepType.Default or type == StepType.FirstMc:
             step.parameters = [
                 Parameters(flag=param['flag'], value=param['value']) for param in parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        if type == StepType.Step1MC:
+        if type == StepType.FirstMc:
             step.data_set = data_set
 
         # TODO handle data case
@@ -76,7 +76,7 @@ class StepsDao(object):
         db.session.commit()
 
     def update(self, id, title=None, immutable=False, data_set=None,
-               run_lumi=None, type=StepType.MonteCarlo, parameters=[], blobs=[]):
+               run_lumi=None, type=StepType.Default, parameters=[], blobs=[]):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")
@@ -86,14 +86,14 @@ class StepsDao(object):
         for parameter in step.parameters:
             db.session.delete(parameter)
         step.type = type
-        if type == StepType.MonteCarlo or type == StepType.Step1MC:
+        if type == StepType.Default or type == StepType.FirstMc:
             step.parameters = [
                 Parameters(flag=param['flag'], value=param['value']) for param in parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        if type == StepType.Step1MC:
+        if type == StepType.FirstMc:
             step.data_set = data_set
 
         # TODO: handle data case

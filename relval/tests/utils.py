@@ -24,7 +24,7 @@ def prepare_blob(title=None, parameters_count=1, immutable=False):
     return blob
 
 def prepare_step(title=None, parameters_count=1, blobs_count=1,
-                 immutable=False, type=StepType.MonteCarlo, data_set="", run_lumi=""):
+                 immutable=False, type=StepType.Default, data_set="", run_lumi=""):
 
     step = factory.step(title=title, parameters_count=parameters_count, blobs_count=blobs_count,
                         immutable=immutable, type=type, data_set=data_set,
