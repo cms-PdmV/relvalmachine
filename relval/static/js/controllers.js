@@ -415,7 +415,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
 
         $scope.resetSearch = function() {
             $scope.search.searchText = "";
-            StepsSearchService.resetSearch(function(response) {
+            Steps.resetSearch(function(response) {
                 $scope.totalItems = response.total
                 $scope.steps = response.steps
                 $scope.currentPage = 1;
