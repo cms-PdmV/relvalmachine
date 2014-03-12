@@ -36,18 +36,18 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
     $scope.showAdvancedDataStepParams = false;
 
     $scope.isActiveForm = function(type) {
-        return type == $scope.currentStep.type;
+        return type == $scope.currentItem.type;
     }
 
     $scope.addParametersRow = function() {
-        $scope.currentStep.parameters.push({
+        $scope.currentItem.parameters.push({
             "flag": "",
             "value": ""
         });
     };
 
     $scope.removeParametersRow = function(index) {
-        $scope.currentStep.parameters.splice(index, 1);
+        $scope.currentItem.parameters.splice(index, 1);
     };
 
     $scope.showBlobDetails = function(index) {
@@ -56,17 +56,17 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
             controller: BlobViewDetailsCtrl,
             resolve: {
                 blobId: function() {
-                    return $scope.currentStep.blobs[index].id
+                    return $scope.currentItem.blobs[index].id
                 }
             }
         });
     };
 
     $scope.removeBlob = function(index) {
-        var title = $scope.currentStep.blobs[index].title;
+        var title = $scope.currentItem.blobs[index].title;
         bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
             if (removeApproved) {
-                $scope.currentStep.blobs.splice(index, 1);
+                $scope.currentItem.blobs.splice(index, 1);
                 $scope.$apply();
             }
         });
@@ -79,7 +79,7 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
             controller: BlobSelectModalCtrl
         });
         modal.result.then(function(selected) {
-            $scope.currentStep.blobs.push(selected);
+            $scope.currentItem.blobs.push(selected);
         });
     };
 
@@ -89,7 +89,7 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
 }
 
 var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Steps) {
-    $scope.currentStep = {};
+    $scope.currentItem = {};
     angular.extend(this, new BaseStepEditPageCtrl(
         $scope,
         $modal,
@@ -98,28 +98,28 @@ var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $rout
     // load blob data
     $scope.id = $routeParams.stepId;
     var step = Steps.get({step_id: $scope.id}, function() {
-        $scope.currentStep.title = step.title;
-        $scope.currentStep.immutable = step.immutable;
-        $scope.currentStep.parameters = step.parameters;
-        $scope.currentStep.blobs = step.blobs;
-        $scope.currentStep.type = step.type;
-        $scope.currentStep.dataSet = step.data_set;
-        $scope.currentStep.dataStep = step.data_step;
+        $scope.currentItem.title = step.title;
+        $scope.currentItem.immutable = step.immutable;
+        $scope.currentItem.parameters = step.parameters;
+        $scope.currentItem.blobs = step.blobs;
+        $scope.currentItem.type = step.type;
+        $scope.currentItem.dataSet = step.data_set;
+        $scope.currentItem.dataStep = step.data_step;
     });
 }
 
 function constructStep(scope, Steps) {
     var step = new Steps({
-        title: scope.currentStep.title,
-        immutable: scope.currentStep.immutable,
-        type: scope.currentStep.type
+        title: scope.currentItem.title,
+        immutable: scope.currentItem.immutable,
+        type: scope.currentItem.type
     });
-    if (scope.currentStep.type != "first_data") {
-        step.parameters = scope.currentStep.parameters;
-        step.blobs = scope.currentStep.blobs;
-        step.data_set = scope.currentStep.dataSet;
+    if (scope.currentItem.type != "first_data") {
+        step.parameters = scope.currentItem.parameters;
+        step.blobs = scope.currentItem.blobs;
+        step.data_set = scope.currentItem.dataSet;
     } else {
-        step.data_step = scope.currentStep.dataStep;
+        step.data_step = scope.currentItem.dataStep;
     }
     return step;
 }
@@ -134,17 +134,17 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
 
         // prepare
         $scope.actionName = "Save";
-        $scope.currentStep = {};
-        $scope.currentStep.parameters = [{
+        $scope.currentItem = {};
+        $scope.currentItem.parameters = [{
             "flag": "",
             "value": ""
         }];
-        $scope.currentStep.blobs = [];
-        $scope.currentStep.immutable = false;
-        $scope.currentStep.type = "default";
-        $scope.currentStep.title = "";
-        $scope.currentStep.dataSet = "";
-        $scope.currentStep.dataStep = {};
+        $scope.currentItem.blobs = [];
+        $scope.currentItem.immutable = false;
+        $scope.currentItem.type = "default";
+        $scope.currentItem.title = "";
+        $scope.currentItem.dataSet = "";
+        $scope.currentItem.dataStep = {};
 
         $scope.saveStep = function() {
             var step = constructStep($scope, Steps);

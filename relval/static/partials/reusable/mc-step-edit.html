@@ -2,14 +2,14 @@
   <button class="btn btn-info col-sm-2 " ng-click="addBlob()"><i class="fa fa-plus-square-o fa-lg"></i> Add blob
   </button>
 
-  <div ng-model="currentStep.blobs"
+  <div ng-model="currentItem.blobs"
        id="added-steps-list"
-       ng-show="currentStep.blobs.length"
+       ng-show="currentItem.blobs.length"
        class="list-group col-sm-offset-4 col-sm-4">
     <a class="list-group-item active">Predefined blobs added</a>
 
-    <div drag-and-drop-list="currentStep.blobs">
-      <div ng-repeat="blob in currentStep.blobs" class="list-group-item step">
+    <div drag-and-drop-list="currentItem.blobs">
+      <div ng-repeat="blob in currentItem.blobs" class="list-group-item step">
         <span>{{$index+1}}. {{ blob.title}}</span>
 
         <div class="pull-right">

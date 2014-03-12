@@ -53,21 +53,21 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
 ]);
 
 function BaseBlobEditPageController($scope, $rootScope) {
-    $scope.currentStep = {};
-    $scope.currentStep.parameters = [{
+    $scope.currentItem = {};
+    $scope.currentItem.parameters = [{
         "flag": "",
         "value": ""
     }];
 
     $scope.addParametersRow = function() {
-        $scope.currentStep.parameters.push({
+        $scope.currentItem.parameters.push({
             "flag": "",
             "value": ""
         });
     };
 
     $scope.removeParametersRow = function(index) {
-        $scope.currentStep.parameters.splice(index, 1);
+        $scope.currentItem.parameters.splice(index, 1);
     };
 
     $scope.discardStepCreation = function() {
@@ -81,10 +81,10 @@ function BaseBlobEditPageControllerWithInitialLoad($scope, $rootScope, $routePar
     // load blob data
     $scope.id = $routeParams.blobId;
     var blob = PredefinedBlobs.get({blob_id: $scope.id}, function() {
-        $scope.currentStep = {};
-        $scope.currentStep.title = blob.title;
-        $scope.currentStep.immutable = blob.immutable;
-        $scope.currentStep.parameters = blob.parameters;
+        $scope.currentItem = {};
+        $scope.currentItem.title = blob.title;
+        $scope.currentItem.immutable = blob.immutable;
+        $scope.currentItem.parameters = blob.parameters;
     });
 }
 
@@ -95,9 +95,9 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'Predefined
 
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                parameters: $scope.currentStep.parameters
+                title: $scope.currentItem.title,
+                immutable: $scope.currentItem.immutable,
+                parameters: $scope.currentItem.parameters
             });
 
             // POST to create new blob
@@ -117,9 +117,9 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
         $scope.actionName = "Update";
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                parameters: $scope.currentStep.parameters
+                title: $scope.currentItem.title,
+                immutable: $scope.currentItem.immutable,
+                parameters: $scope.currentItem.parameters
             });
 
             // PUT to update blob
@@ -139,9 +139,9 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
 
         $scope.saveStep = function() {
             var blob = new PredefinedBlobs({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                parameters: $scope.currentStep.parameters
+                title: $scope.currentItem.title,
+                immutable: $scope.currentItem.immutable,
+                parameters: $scope.currentItem.parameters
             });
 
             // POST to create new blob

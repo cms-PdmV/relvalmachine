@@ -5,20 +5,20 @@
       <label for="stepTitle" class="col-sm-1 control-label">Title</label>
 
       <div class="col-sm-9">
-        <input ng-model="currentStep.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
+        <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
       </div>
     </div>
 
     <div class="form-group">
       <div class="btn-group col-sm-8 col-sm-offset-4">
         <button ng-class="{'btn-primary': isActiveForm('default')}" class="btn"
-                ng-click="currentStep.type = 'default'">Default step
+                ng-click="currentItem.type = 'default'">Default step
         </button>
         <button ng-class="{'btn-primary': isActiveForm('first_mc')}" class="btn"
-                ng-click="currentStep.type = 'first_mc'">Step 1 MC
+                ng-click="currentItem.type = 'first_mc'">Step 1 MC
         </button>
         <button ng-class="{'btn-primary': isActiveForm('first_data')}" class="btn"
-                ng-click="currentStep.type = 'first_data'">Step 1 Data
+                ng-click="currentItem.type = 'first_data'">Step 1 Data
         </button>
       </div>
     </div>
@@ -37,7 +37,7 @@
         <hr>
         <div class="form-group">
           <label for="mcDataSetInput">Input GEN-SIM dataset</label>
-          <textarea ng-model="currentStep.dataSet" class="form-control" id="mcDataSetInput"
+          <textarea ng-model="currentItem.dataSet" class="form-control" id="mcDataSetInput"
                     placeholder="Input GEN-SIM dataset"></textarea>
         </div>
       </div>
@@ -46,17 +46,17 @@
     <div ng-show="isActiveForm('first_data')" class="col-sm-10">
       <div class="form-group">
         <label for="dataSetInput">Data Set</label>
-        <textarea ng-model="currentStep.dataStep.data_set" class="form-control" id="dataSetInput"
+        <textarea ng-model="currentItem.dataStep.data_set" class="form-control" id="dataSetInput"
                   placeholder="Data Set"></textarea>
       </div>
       <div class="form-group">
         <label for="labelInput">Label</label>
-        <textarea ng-model="currentStep.dataStep.label" class="form-control" id="labelInput"
+        <textarea ng-model="currentItem.dataStep.label" class="form-control" id="labelInput"
                   placeholder="Label"></textarea>
       </div>
       <div class="form-group">
         <label for="runInput">Run</label>
-        <textarea ng-model="currentStep.dataStep.run" class="form-control" id="runInput"
+        <textarea ng-model="currentItem.dataStep.run" class="form-control" id="runInput"
                   placeholder="Run"></textarea>
       </div>
 
@@ -70,23 +70,23 @@
 
         <div class="form-group">
           <label for="ib_blockInput">IB block</label>
-          <input ng-model="currentStep.dataStep.ib_block" class="form-control" id="ib_blockInput"
+          <input ng-model="currentItem.dataStep.ib_block" class="form-control" id="ib_blockInput"
                  placeholder="IB block"/>
         </div>
         <div class="form-group">
           <label for="ib_blacklistInput">IB black list</label>
-          <input ng-model="currentStep.dataStep.ib_blacklist" class="form-control" id="ib_blacklistInput"
+          <input ng-model="currentItem.dataStep.ib_blacklist" class="form-control" id="ib_blacklistInput"
                  placeholder="IB black list"/>
         </div>
         <div class="form-group">
           <label for="locationInput">Location</label>
-          <input ng-model="currentStep.dataStep.location" class="form-control" id="locationInput"
+          <input ng-model="currentItem.dataStep.location" class="form-control" id="locationInput"
                  placeholder="Location"/>
         </div>
         <div class="form-group">
           <div class="col-sm-3">
             <label for="filesInput">Files</label>
-            <input type="number" ng-model="currentStep.dataStep.files" class="form-control"
+            <input type="number" ng-model="currentItem.dataStep.files" class="form-control"
                    id="filesInput" name="files" placeholder="Files" proxy-validity/>
             <div class="error" ng-show="stepForm.files.$invalid">
               <small class="error">Files must me natural number</small>
@@ -94,7 +94,7 @@
           </div>
           <div class="col-sm-offset-1 col-sm-3">
             <label for="eventsInput">Events</label>
-            <input type="number" ng-model="currentStep.dataStep.events" class="form-control" id="eventsInput"
+            <input type="number" ng-model="currentItem.dataStep.events" class="form-control" id="eventsInput"
                    name="events" placeholder="Events" proxy-validity/>
             <div class="error" ng-show="stepForm.events.$invalid">
               <small class="error">Events must me natural number</small>
@@ -102,7 +102,7 @@
           </div>
           <div class="col-sm-offset-1 col-sm-3">
             <label for="splitInput">Split</label>
-            <input type="number" ng-model="currentStep.dataStep.split" class="form-control" id="splitInput"
+            <input type="number" ng-model="currentItem.dataStep.split" class="form-control" id="splitInput"
                    name="split" placeholder="Split" proxy-validity/>
             <div class="error" ng-show="stepForm.split.$invalid">
               <small class="error">Split must me natural number</small>
@@ -115,7 +115,7 @@
     <div class="checkbox col-sm-4" data-toggle="tooltip" data-placement="top" data-delay="0"
          title="When you mark step as frozen you cannot edit it, only clone will be possible.">
       <label>
-        <input type="checkbox" ng-model="currentStep.immutable"> Mark as frozen step
+        <input type="checkbox" ng-model="currentItem.immutable"> Mark as frozen step
       </label>
     </div>
 

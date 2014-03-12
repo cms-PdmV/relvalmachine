@@ -5,7 +5,7 @@
       <label for="stepTitle" class="col-sm-1 control-label">Title</label>
 
       <div class="col-sm-9">
-        <input ng-model="currentStep.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
+        <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
       </div>
     </div>
 
@@ -14,7 +14,7 @@
     <div class="checkbox col-sm-4" data-toggle="tooltip" data-placement="top" data-delay="0"
          title="When you mark predefined blob as frozen you cannot edit it, only clone will be possible.">
       <label>
-        <input type="checkbox" ng-model="currentStep.immutable"> Mark as frozen blob
+        <input type="checkbox" ng-model="currentItem.immutable"> Mark as frozen blob
       </label>
     </div>
 

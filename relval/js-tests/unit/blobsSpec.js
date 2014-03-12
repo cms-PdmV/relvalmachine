@@ -240,19 +240,19 @@ describe('Blobs page', function() {
         });
 
         it('should has empty current step at first', function() {
-            expect(scope.currentStep).toEqual({parameters: [{flag: "", value: ""}]})
+            expect(scope.currentItem).toEqual({parameters: [{flag: "", value: ""}]})
         });
 
         it('should add parameters row on addParametersrow()', function() {
-            expect(scope.currentStep.parameters.length).toBe(1);
+            expect(scope.currentItem.parameters.length).toBe(1);
             scope.addParametersRow();
-            expect(scope.currentStep.parameters.length).toBe(2);
+            expect(scope.currentItem.parameters.length).toBe(2);
         });
 
         it('should remove parameters row on removeParametersrow()', function() {
-            expect(scope.currentStep.parameters.length).toBe(1);
+            expect(scope.currentItem.parameters.length).toBe(1);
             scope.removeParametersRow(0);
-            expect(scope.currentStep.parameters.length).toBe(0);
+            expect(scope.currentItem.parameters.length).toBe(0);
         });
 
         it('should redirect to blobs index page when creation discarded', function() {
@@ -263,7 +263,7 @@ describe('Blobs page', function() {
         describe('when creating new blob', function() {
 
             beforeEach(function() {
-                scope.currentStep = {
+                scope.currentItem = {
                     title: "test-title",
                     parameters: [
                         {flag: "1st flag", value: "1st value"},
@@ -274,7 +274,7 @@ describe('Blobs page', function() {
 
 
             it('should call HTTP POST with new blob data and redirect to index when success', function() {
-                var postData = scope.currentStep;
+                var postData = scope.currentItem;
                 $httpBackend.expectPOST('api/predefined_blob', postData).respond(200);
 
                 scope.saveStep();
@@ -285,7 +285,7 @@ describe('Blobs page', function() {
 
             it('should call HTTP POST with new blob data and show error alert when server failed', function() {
                 alertService.addError = jasmine.createSpy('addError');
-                var postData = scope.currentStep;
+                var postData = scope.currentItem;
 
                 $httpBackend.expectPOST('api/predefined_blob', postData).respond(500);
                 scope.saveStep();
@@ -340,9 +340,9 @@ describe('Blobs page', function() {
             var updatedBlob;
 
             beforeEach(function() {
-                scope.currentStep.title = "new-title";
+                scope.currentItem.title = "new-title";
                 scope.addParametersRow();
-                scope.currentStep.parameters[2] = {flag: "3rd flag", value: "3rd value"}
+                scope.currentItem.parameters[2] = {flag: "3rd flag", value: "3rd value"}
 
                 updatedBlob = {
                     title: "new-title",
@@ -414,10 +414,10 @@ describe('Blobs page', function() {
                     {flag: "3rd flag", value: "3rd value"}
                 ]
             }
-            scope.currentStep.title = "new-title";
+            scope.currentItem.title = "new-title";
             scope.addParametersRow();
-            scope.currentStep.parameters[2] = {flag: "3rd flag", value: "3rd value"};
-            scope.currentStep.immutable = true;
+            scope.currentItem.parameters[2] = {flag: "3rd flag", value: "3rd value"};
+            scope.currentItem.immutable = true;
             scope.saveStep();
             $httpBackend.expectPOST('api/predefined_blob', updatedBlob).respond(200);
             $httpBackend.flush();
