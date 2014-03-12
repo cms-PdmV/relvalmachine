@@ -87,6 +87,19 @@ class StepType(object):
 class DataStep(db.Model):
     __tablename__ = "data_step"
     id = db.Column("id", db.Integer, db.Sequence("data_step_id_seq"), primary_key=True)
+    data_set = db.Column("data_set", db.String(1024))
+    label = db.Column("label", db.String(1024))
+    run = db.Column("run", db.String(1024))
+    ib_block = db.Column("ib_block", db.String(1024))
+    ib_blacklist = db.Column("ib_blacklist", db.String(1024))
+    files = db.Column("files", db.Integer, default=1000)
+    events = db.Column("events", db.Integer, default=2000000)
+    split = db.Column("split", db.Integer, default=10)
+    location = db.Column("location", db.String(1024))
+
+    step_id = db.Column("step_id", db.Integer, db.ForeignKey("steps.id"), nullable=False)
+
+    #TODO: add __repr__
 
 
 class Steps(db.Model):
@@ -96,11 +109,11 @@ class Steps(db.Model):
     title = db.Column("title", db.String(256))
     data_set = db.Column("data_set", db.String(1024))
     immutable = db.Column("immutable", db.Boolean, default=False)
-    type = db.Column("type", db.Enum(
-        *StepType.types()))
+    type = db.Column("type", db.Enum(*StepType.types()))
 
     revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=True)
 
+    data_step = db.relationship("DataStep", uselist=False, backref="step")
     parameters = db.relationship("Parameters", backref="step")
     predefined_blobs = db.relationship(
         'PredefinedBlob',

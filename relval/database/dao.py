@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType, DataStep
 
 from datetime import datetime
 
@@ -55,7 +55,7 @@ class StepsDao(object):
         self.blobs_dao = PredefinedBlobsDao()
 
     def add(self, title="", immutable=False, data_set="",
-            type=StepType.Default, parameters=[], blobs=[]):
+            type=StepType.Default, parameters=[], blobs=[], data_step={}):
         step = Steps(
             title=title,
             immutable=immutable,
@@ -70,13 +70,14 @@ class StepsDao(object):
             ]
         if type == StepType.FirstMc:
             step.data_set = data_set
+        if type == StepType.FirstData:
+            step.data_step = self.construct_data_step(data_step)
 
-        # TODO handle data case
         db.session.add(step)
         db.session.commit()
 
     def update(self, id, title=None, immutable=False, data_set=None,
-               type=StepType.Default, parameters=[], blobs=[]):
+               type=StepType.Default, parameters=[], blobs=[], data_step={}):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")
@@ -95,8 +96,10 @@ class StepsDao(object):
             ]
         if type == StepType.FirstMc:
             step.data_set = data_set
-
-        # TODO: handle data case
+        if type == StepType.FirstData:
+            if step.data_step is not None:
+                db.session.delete(step.data_step)
+            step.data_step = self.construct_data_step(data_step)
 
         db.session.commit()
 
@@ -111,6 +114,22 @@ class StepsDao(object):
         return Steps.query \
             .filter(Steps.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
+
+    def construct_data_step(self, data_step):
+        return DataStep(
+            data_set=data_step["data_set"],
+            label=data_step["label"],
+            run=data_step["run"],
+            ib_block=data_step["ib_block"],
+            ib_blacklist=data_step["ib_blacklist"],
+            location=data_step["location"],
+            files=self.to_int(data_step["files"]),
+            events=self.to_int(data_step["events"]),
+            split=self.to_int(data_step["split"]),
+        )
+
+    def to_int(self, item):
+        return int(item) if item and item.isdigit() else None
 
 
 class PredefinedBlobsDao(object):

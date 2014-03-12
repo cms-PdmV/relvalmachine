@@ -10,7 +10,7 @@ from relval.tests import factory
 from relval.tests import utils
 from relval.tests.base import BaseTestsCase
 from relval.database.dao import UsersDao, RequestsDao, RevisionsDao, PredefinedBlobsDao, StepsDao
-from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType
+from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep
 
 
 class UsersDaoTests(BaseTestsCase):
@@ -264,6 +264,41 @@ class StepsDaoTest(BaseTestsCase):
         # should not insert those fields because is_monte_carlo = true
         self.assertEqual(step.data_set, "data_set")
 
+    def test_step_step1_data_insertion(self):
+        data_step = factory.data_step(data_set="test-data_set", files="100")
+        self.steps_dao.add(title="step",
+                           immutable=False,
+                           type=StepType.FirstData,
+                           data_step=data_step)
+
+        self.assertModelCount(Steps, 1)
+        self.assertModelCount(DataStep, 1)
+
+        step = Steps.query.one()
+        self.assertEqual(step.title, "step")
+        self.assertEqual(step.type, StepType.FirstData)
+        self.assertEqual(type(step.data_step), DataStep)
+        self.assertEqual(step.data_step.data_set, "test-data_set")
+        self.assertEqual(step.data_step.events, 1)
+        self.assertEqual(step.data_step.files, 100)
+
+    def test_step_step1_data_insertion_default_values_are_correct(self):
+        data_step = factory.data_step(events="", files=None, split="any")
+        self.steps_dao.add(title="step",
+                           immutable=False,
+                           type=StepType.FirstData,
+                           data_step=data_step)
+
+        self.assertModelCount(Steps, 1)
+        self.assertModelCount(DataStep, 1)
+
+        step = Steps.query.one()
+        self.assertEqual(step.type, StepType.FirstData)
+        self.assertEqual(step.data_step.events, 2000000)
+        self.assertEqual(step.data_step.files, 1000)
+        self.assertEqual(step.data_step.split, 10)
+
+
     def test_step_insertion_without_parameters(self):
         utils.prepare_blob()
         id = PredefinedBlob.query.one().id
@@ -366,3 +401,21 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(new_step.type, StepType.FirstMc)
         self.assertEqual(len(new_step.predefined_blobs), 1)
         self.assertEqual(len(new_step.parameters), 4)
+
+    def test_step_1_data_step_update(self):
+        data_step = factory.data_step(data_set="test-data_set", files="100")
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default)
+        id = Steps.query.one().id
+
+        new_title = "new-step-title"
+        self.steps_dao.update(id=id, title=new_title, type=StepType.FirstData, data_step=data_step)
+
+        self.assertModelCount(Steps, 1)
+        self.assertModelCount(Parameters, 0)
+        self.assertModelCount(DataStep, 1)
+
+        new_step = Steps.query.one()
+        self.assertEqual(new_step.title, new_title)
+        self.assertEqual(new_step.type, StepType.FirstData)
+        self.assertEqual(new_step.data_step.data_set, "test-data_set")
+        self.assertEqual(new_step.data_step.files, 100)

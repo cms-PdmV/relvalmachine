@@ -214,7 +214,8 @@ class StepApi(Resource):
         """
         step = self.steps_dao.get(blob_id)
         step.parameters  # load all parameters from blob
-        step.predefined_blobs # load all blobs
+        step.predefined_blobs  # load all blobs
+        step.data_step  # load data_step data
         return step
 
     def put(self, blob_id):

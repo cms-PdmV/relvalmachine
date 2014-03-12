@@ -62,6 +62,19 @@ def predefined_blob(params_count=1):
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(params_count)
         ])
 
+def data_step(data_set="test-data-set", files="1", events="1", split="1"):
+    return {
+        "data_set": data_set,
+        "label": "test-label",
+        "run": "test-run",
+        "ib_block": "test-ib-block",
+        "ib_blacklist": "test-ib-blacklist",
+        "location": "test-location",
+        "files": files,
+        "events": events,
+        "split": split
+    }
+
 def step(title="test-title", parameters_count=1, blobs_count=1,
                  immutable=False, type=StepType.Default, data_set=""):
     return Steps(
