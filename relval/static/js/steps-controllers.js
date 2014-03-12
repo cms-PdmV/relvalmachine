@@ -85,7 +85,7 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
 
     $scope.discard = function() {
         $rootScope.back();
-    }
+    };
 }
 
 var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Steps) {
@@ -106,8 +106,22 @@ var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $rout
         $scope.currentStep.dataSet = step.data_set;
         $scope.currentStep.dataStep = step.data_step;
     });
+}
 
-
+function constructStep(scope, Steps) {
+    var step = new Steps({
+        title: scope.currentStep.title,
+        immutable: scope.currentStep.immutable,
+        type: scope.currentStep.type
+    });
+    if (scope.currentStep.type != "first_data") {
+        step.parameters = scope.currentStep.parameters;
+        step.blobs = scope.currentStep.blobs;
+        step.data_set = scope.currentStep.dataSet;
+    } else {
+        step.data_step = scope.currentStep.dataStep;
+    }
+    return step;
 }
 
 relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
@@ -133,18 +147,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentStep.dataStep = {};
 
         $scope.saveStep = function() {
-            var step = new Steps({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                type: $scope.currentStep.type
-            });
-            if ($scope.currentStep.type != "first_data") {
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-                step.data_set = $scope.currentStep.dataSet;
-            } else {
-                step.data_step = $scope.currentStep.dataStep;
-            }
+            var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.stepForm.$valid) {
                 step.$create(function() {
@@ -166,18 +169,7 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
         $scope.actionName = "Clone";
 
         $scope.saveStep = function() {
-            var step = new Steps({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                type: $scope.currentStep.type
-            });
-            if ($scope.currentStep.type != "first_data") {
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-                step.data_set = $scope.currentStep.dataSet;
-            } else {
-                step.data_step = $scope.currentStep.dataStep;
-            }
+            var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.stepForm.$valid) {
                 step.$create(function() {
@@ -200,18 +192,7 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.actionName = "Update";
 
         $scope.saveStep = function() {
-            var step = new Steps({
-                title: $scope.currentStep.title,
-                immutable: $scope.currentStep.immutable,
-                type: $scope.currentStep.type
-            });
-            if ($scope.currentStep.type != "first_data") {
-                step.parameters = $scope.currentStep.parameters;
-                step.blobs = $scope.currentStep.blobs;
-                step.data_set = $scope.currentStep.dataSet;
-            } else {
-                step.data_step = $scope.currentStep.dataStep;
-            }
+            var step = constructStep($scope, Steps);
             // PUT to update step
             if ($scope.stepForm.$valid) {
                 step.$update({step_id: $scope.id}, function() {
@@ -223,5 +204,4 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
                 AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
             }
         }
-
     }]);
