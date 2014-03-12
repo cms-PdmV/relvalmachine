@@ -42,3 +42,11 @@ html, body {
     width :90%;
     min-width: 400px;
 }
+
+input.ng-invalid {
+  border: 1px solid red;
+}
+
+.error {
+    color: #A00000;
+}

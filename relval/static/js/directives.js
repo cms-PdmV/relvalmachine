@@ -41,3 +41,22 @@ relvalDirectives.directive('dragAndDropList', function() {
         })
     }
 });
+
+// workaround for angular chrome bug: https://github.com/angular/angular.js/issues/2144
+// source: http://plnkr.co/edit/q0HmACwbyYMioat0oRSv?p=preview
+relvalDirectives.directive('proxyValidity', function() {
+    return {
+      require: 'ngModel',
+      link: function($scope, $element, $attrs, modelCtrl) {
+        if (typeof $element.prop('validity') === 'undefined')
+          return;
+
+        $element.bind('input', function(e) {
+          var validity = $element.prop('validity');
+          $scope.$apply(function() {
+            modelCtrl.$setValidity('badInput', !validity.badInput);
+          });
+        });
+      }
+    };
+});

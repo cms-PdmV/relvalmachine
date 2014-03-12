@@ -487,6 +487,8 @@ var BlobViewDetailsCtrl = function($scope, $modalInstance, PredefinedBlobs, blob
 }
 
 var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
+    $scope.showAdvancedDataStepParams = false;
+
     $scope.isActiveForm = function(type) {
         return type == $scope.currentStep.type;
     }
@@ -557,7 +559,7 @@ var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $rout
         $scope.currentStep.blobs = step.blobs;
         $scope.currentStep.type = step.type;
         $scope.currentStep.dataSet = step.data_set;
-        console.log(step.data_set);
+        $scope.currentStep.dataStep = step.data_step;
     });
 
 
@@ -583,7 +585,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentStep.type = "default";
         $scope.currentStep.title = "";
         $scope.currentStep.dataSet = "";
-        $scope.currentStep.runLumi = "";
+        $scope.currentStep.dataStep = {};
 
         $scope.saveStep = function() {
             var step = new Steps({
@@ -591,16 +593,23 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
                 immutable: $scope.currentStep.immutable,
                 type: $scope.currentStep.type
             });
-            step.parameters = $scope.currentStep.parameters;
-            step.blobs = $scope.currentStep.blobs;
-            console.log($scope.currentStep.dataSet);
-            step.data_set = $scope.currentStep.dataSet;
+            if ($scope.currentStep.type != "first_data") {
+                step.parameters = $scope.currentStep.parameters;
+                step.blobs = $scope.currentStep.blobs;
+                step.data_set = $scope.currentStep.dataSet;
+            } else {
+                step.data_step = $scope.currentStep.dataStep;
+            }
             // POST to create step
-            step.$create(function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError({msg: "Server Error. Failed to create step."});
-            });
+            if ($scope.stepForm.$valid) {
+                step.$create(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to create step."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+            }
         }
     }]);
 
@@ -617,15 +626,23 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
                 immutable: $scope.currentStep.immutable,
                 type: $scope.currentStep.type
             });
-            step.parameters = $scope.currentStep.parameters;
-            step.blobs = $scope.currentStep.blobs;
-            step.data_set = $scope.currentStep.dataSet;
+            if ($scope.currentStep.type != "first_data") {
+                step.parameters = $scope.currentStep.parameters;
+                step.blobs = $scope.currentStep.blobs;
+                step.data_set = $scope.currentStep.dataSet;
+            } else {
+                step.data_step = $scope.currentStep.dataStep;
+            }
             // POST to create step
-            step.$create(function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError({msg: "Server Error. Failed to create step."});
-            });
+            if ($scope.stepForm.$valid) {
+                step.$create(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to create step."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+            }
         }
 
 }]);
@@ -643,15 +660,24 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
                 immutable: $scope.currentStep.immutable,
                 type: $scope.currentStep.type
             });
-            step.parameters = $scope.currentStep.parameters;
-            step.blobs = $scope.currentStep.blobs;
-            step.data_set = $scope.currentStep.dataSet;
+            if ($scope.currentStep.type != "first_data") {
+                step.parameters = $scope.currentStep.parameters;
+                step.blobs = $scope.currentStep.blobs;
+                step.data_set = $scope.currentStep.dataSet;
+            } else {
+                step.data_step = $scope.currentStep.dataStep;
+            }
             // PUT to update step
-            step.$update({step_id: $scope.id}, function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError({msg: "Server Error. Failed to update step."});
-            });
+            console.log($scope.stepForm)
+            if ($scope.stepForm.$valid) {
+                step.$update({step_id: $scope.id}, function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to update step."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+            }
         }
 
     }]);

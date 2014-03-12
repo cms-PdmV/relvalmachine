@@ -117,19 +117,24 @@ class StepsDao(object):
 
     def construct_data_step(self, data_step):
         return DataStep(
-            data_set=data_step["data_set"],
-            label=data_step["label"],
-            run=data_step["run"],
-            ib_block=data_step["ib_block"],
-            ib_blacklist=data_step["ib_blacklist"],
-            location=data_step["location"],
-            files=self.to_int(data_step["files"]),
-            events=self.to_int(data_step["events"]),
-            split=self.to_int(data_step["split"]),
+            data_set=data_step.get("data_set", None),
+            label=data_step.get("label", None),
+            run=data_step.get("run", None),
+            ib_block=data_step.get("ib_block", None),
+            ib_blacklist=data_step.get("ib_blacklist", None),
+            location=data_step.get("location", None),
+            files=self.to_int(data_step.get("files", None)),
+            events=self.to_int(data_step.get("events", None)),
+            split=self.to_int(data_step.get("split", None))
         )
 
     def to_int(self, item):
-        return int(item) if item and item.isdigit() else None
+        if item:
+            if isinstance(item, (int, long)):
+                return item
+            elif item.isdigit():
+                return int(item)
+        return None
 
 
 class PredefinedBlobsDao(object):

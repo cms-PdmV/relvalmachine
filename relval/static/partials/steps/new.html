@@ -1,6 +1,6 @@
 <div class="container">
   <!-- Form start -->
-  <form class="form-horizontal" role="form">
+  <form class="form-horizontal" role="form" name="stepForm" >
     <div class="form-group">
       <label for="stepTitle" class="col-sm-1 control-label">Title</label>
 
@@ -32,11 +32,13 @@
       <div class="clearfix"></div>
       <br>
 
+
       <div class="col-sm-10">
+        <hr>
         <div class="form-group">
-          <label for="mcDataSetInput">Data Set</label>
+          <label for="mcDataSetInput">Input GEN-SIM dataset</label>
           <textarea ng-model="currentStep.dataSet" class="form-control" id="mcDataSetInput"
-                    placeholder="Data Set"></textarea>
+                    placeholder="Input GEN-SIM dataset"></textarea>
         </div>
       </div>
     </div>
@@ -44,13 +46,69 @@
     <div ng-show="isActiveForm('first_data')" class="col-sm-10">
       <div class="form-group">
         <label for="dataSetInput">Data Set</label>
-        <textarea ng-model="currentStep.dataSet" class="form-control" id="dataSetInput"
+        <textarea ng-model="currentStep.dataStep.data_set" class="form-control" id="dataSetInput"
                   placeholder="Data Set"></textarea>
       </div>
       <div class="form-group">
-        <label for="runLumiInput">Run Lumi</label>
-        <textarea ng-model="currentStep.runLumi" class="form-control" id="runLumiInput"
-                  placeholder="Run Lumi"></textarea>
+        <label for="labelInput">Label</label>
+        <textarea ng-model="currentStep.dataStep.label" class="form-control" id="labelInput"
+                  placeholder="Label"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="runInput">Run</label>
+        <textarea ng-model="currentStep.dataStep.run" class="form-control" id="runInput"
+                  placeholder="Run"></textarea>
+      </div>
+
+      <button class="btn btn-primary btn-sm" ng-click="showAdvancedDataStepParams = !showAdvancedDataStepParams">
+        <span ng-hide="showAdvancedDataStepParams"><i class="fa fa-caret-square-o-down"></i> Show advanced</span>
+        <span ng-show="showAdvancedDataStepParams"><i class="fa fa-caret-square-o-up"></i> Hide advanced</span>
+      </button>
+
+      <div ng-show="showAdvancedDataStepParams">
+        <br>
+
+        <div class="form-group">
+          <label for="ib_blockInput">IB block</label>
+          <input ng-model="currentStep.dataStep.ib_block" class="form-control" id="ib_blockInput"
+                 placeholder="IB block"/>
+        </div>
+        <div class="form-group">
+          <label for="ib_blacklistInput">IB black list</label>
+          <input ng-model="currentStep.dataStep.ib_blacklist" class="form-control" id="ib_blacklistInput"
+                 placeholder="IB black list"/>
+        </div>
+        <div class="form-group">
+          <label for="locationInput">Location</label>
+          <input ng-model="currentStep.dataStep.location" class="form-control" id="locationInput"
+                 placeholder="Location"/>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-3">
+            <label for="filesInput">Files</label>
+            <input type="number" ng-model="currentStep.dataStep.files" class="form-control"
+                   id="filesInput" name="files" placeholder="Files" proxy-validity/>
+            <div class="error" ng-show="stepForm.files.$invalid">
+              <small class="error">Files must me natural number</small>
+            </div>
+          </div>
+          <div class="col-sm-offset-1 col-sm-3">
+            <label for="eventsInput">Events</label>
+            <input type="number" ng-model="currentStep.dataStep.events" class="form-control" id="eventsInput"
+                   name="events" placeholder="Events" proxy-validity/>
+            <div class="error" ng-show="stepForm.events.$invalid">
+              <small class="error">Events must me natural number</small>
+            </div>
+          </div>
+          <div class="col-sm-offset-1 col-sm-3">
+            <label for="splitInput">Split</label>
+            <input type="number" ng-model="currentStep.dataStep.split" class="form-control" id="splitInput"
+                   name="split" placeholder="Split" proxy-validity/>
+            <div class="error" ng-show="stepForm.split.$invalid">
+              <small class="error">Split must me natural number</small>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
