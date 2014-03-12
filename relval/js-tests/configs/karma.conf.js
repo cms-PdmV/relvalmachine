@@ -19,6 +19,7 @@ module.exports = function(config) {
         'relval/static/lib/jquery-*.js',
         'relval/static/lib/*.js',
         'relval/js-tests/lib/*.js',
+        'relval/static/js/controllers.js',
         'relval/static/js/*.js',
         'relval/js-tests/unit/*.js'
     ],

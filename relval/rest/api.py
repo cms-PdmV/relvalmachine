@@ -82,7 +82,7 @@ class PredefinedBlobsApi(Resource):
             blobs, total = self.__get_page()
 
         resp = {
-            'blobs': blobs,
+            'items': blobs,
             'total': total
         }
         return resp
@@ -175,7 +175,7 @@ class StepsApi(Resource):
             steps, total = self.__get_page()
 
         resp = {
-            'steps': steps,
+            'items': steps,
             'total': total
         }
         return resp

@@ -52,13 +52,13 @@ describe('Blobs page', function() {
                 }
                 $httpBackend.expectGET('api/predefined_blob').respond(200, {
                     total: 101,
-                    blobs: blobs
+                    items: blobs
                 });
                 $httpBackend.flush();
             });
 
             it('should fetch all predefined blobs', function() {
-                expect(scope.blobs.length).toBe(3);
+                expect(scope.items.length).toBe(3);
                 expect(scope.totalItems).toBe(101);
 
             });
@@ -69,12 +69,12 @@ describe('Blobs page', function() {
                 scope.setPage(2);
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=2').respond(200, {
                     total: 102,
-                    blobs: [blobs[2], blobs[3]]
+                    items: [blobs[2], blobs[3]]
                 });
                 $httpBackend.flush();
 
                 expect(scope.totalItems).toBe(102);
-                expect(scope.blobs).toEqual([blobs[2], blobs[3]])
+                expect(scope.items).toEqual([blobs[2], blobs[3]])
             });
 
             it('should be able to search and paginate through search results', function() {
@@ -84,23 +84,23 @@ describe('Blobs page', function() {
 
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
                     total: 4,
-                    blobs: [blobs[0], blobs[1]]
+                    items: [blobs[0], blobs[1]]
                 });
                 $httpBackend.flush();
                 expect(scope.totalItems).toBe(4);
-                expect(scope.blobs).toEqual([blobs[0], blobs[1]])
+                expect(scope.items).toEqual([blobs[0], blobs[1]])
                 expect(searchService.isSearchingMode()).toBe(true);
 
                 // change page
                 scope.setPage(2);
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=2&search=text').respond(200, {
                     total: 3,
-                    blobs: [blobs[3]]
+                    items: [blobs[3]]
                 });
                 $httpBackend.flush();
 
                 expect(scope.totalItems).toBe(3);
-                expect(scope.blobs).toEqual([blobs[3]]);
+                expect(scope.items).toEqual([blobs[3]]);
                 expect(searchService.isSearchingMode()).toBe(true);
             });
 
@@ -111,7 +111,7 @@ describe('Blobs page', function() {
 
                 $httpBackend.expectGET('api/predefined_blob?items_per_page=20&page_num=1&search=text').respond(200, {
                     total: 4,
-                    blobs: []
+                    items: []
                 });
                 $httpBackend.flush();
 
@@ -121,7 +121,7 @@ describe('Blobs page', function() {
                 expect(searchService.isSearchingMode()).toBe(false);
                 $httpBackend.expectGET('api/predefined_blob').respond(200, {
                     total: 4,
-                    blobs: [{id: 42}]
+                    items: [{id: 42}]
                 });
                 $httpBackend.flush();
             });
@@ -132,7 +132,7 @@ describe('Blobs page', function() {
             beforeEach(function() {
                 $httpBackend.expectGET('api/predefined_blob').respond(200, {
                     total: 1,
-                    blobs: [{id: 42}, {id: 43}]
+                    items: [{id: 42}, {id: 43}]
                 });
                 $httpBackend.flush();
             });

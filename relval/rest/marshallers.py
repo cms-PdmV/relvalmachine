@@ -26,7 +26,7 @@ blobs_marshaller = {
 
 blobs_marshaller_paginated = {
     'total': fields.String,
-    'blobs': fields.Nested(blobs_marshaller)
+    'items': fields.Nested(blobs_marshaller)
 }
 
 parameter_marshaller = {
@@ -56,7 +56,7 @@ steps_marshaller = {
 
 steps_marshaller_paginated = {
     'total': fields.String,
-    'steps': fields.Nested(steps_marshaller)
+    'items': fields.Nested(steps_marshaller)
 }
 
 data_step_marshaller = {

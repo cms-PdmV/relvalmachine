@@ -98,7 +98,8 @@ var AbstractSearchService = function(resource) {
 
         search: function(search_query, items_per_page, callback) {
             searchingMode = true;
-            var resp = resource.all({search: search_query, page_num: 1, items_per_page: items_per_page}, function() {
+            query = search_query;
+            var resp = resource.all({search: query, page_num: 1, items_per_page: items_per_page}, function() {
                 callback(resp);
             });
             return resp;
