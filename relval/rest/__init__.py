@@ -8,7 +8,9 @@ from relval.rest.api import \
     PredefinedBlobsApi,\
     PredefinedBlobApi,\
     StepsApi,\
-    StepApi
+    StepApi,\
+    RequestsApi, \
+    RequestApi
 
 from flask.ext.restful import Api
 
@@ -18,7 +20,9 @@ restful_api.add_resource(UsersListApi, "/api/users")
 restful_api.add_resource(PredefinedBlobsApi, "/api/predefined_blob")
 restful_api.add_resource(PredefinedBlobApi, "/api/predefined_blob/<int:blob_id>")
 restful_api.add_resource(StepsApi, "/api/steps")
-restful_api.add_resource(StepApi, "/api/steps/<int:blob_id>")
+restful_api.add_resource(StepApi, "/api/steps/<int:step_id>")
+restful_api.add_resource(RequestsApi, "/api/requests")
+restful_api.add_resource(RequestApi, "/api/requests/<int:request_id>")
 
 
 

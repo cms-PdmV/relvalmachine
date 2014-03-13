@@ -105,7 +105,7 @@ class JSONRequests(object):
                 {"flag": "flag1", "value": "value1"}
             ],
             "blobs": [{"id": 1}],
-            "is_monte_carlo": True
+            "type": StepType.Default
         }
 
     @staticmethod
@@ -119,6 +119,6 @@ class JSONRequests(object):
                 {"flag": "flag3", "value": "value3"}
             ],
             "blobs": [{"id": 1}],
-            "is_monte_carlo": True,
+            "type": StepType.Default,
             "data_set": "test-data-set"
         }

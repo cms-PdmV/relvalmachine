@@ -35,18 +35,23 @@ class UsersDao(object):
 
 class RequestsDao(object):
 
-    def insertRequestObject(self, request):
+    def add(self, title="", description="", immutable=False, type=None, cmssw_release=None,
+            run_the_matrix_conf=None, events=None, priority=1):
+        request = Requests(
+            title=title,
+            description=description,
+            immutable=immutable,
+            type=type,
+            cmssw_release=cmssw_release,
+            run_the_matrix_conf=run_the_matrix_conf,
+            events=events,
+            priority=priority,  # TODO check if user has rights to set priority
+            updated=datetime.utcnow()
+        )
+
+        #TODO: set status, test_status
         db.session.add(request)
         db.session.commit()
-
-
-class RevisionsDao(object):
-
-    def addRevisionToRequest(self, request_id, revision):
-        request = Requests.query.get(request_id)
-        last_revision = max([rev.revision_number for rev in request.revisions])
-        revision.revision_number = last_revision + 1
-        request.revisions.append(revision)
 
 
 class StepsDao(object):
@@ -141,7 +146,7 @@ class PredefinedBlobsDao(object):
 
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
         if not creation_date:
-            creation_date = datetime.utcnow();
+            creation_date = datetime.utcnow()
         predefined_blob = PredefinedBlob(
             title=title,
             creation_date=creation_date,

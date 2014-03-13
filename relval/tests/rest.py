@@ -9,8 +9,8 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from relval.tests.base import BaseTestsCase
 from relval.tests import factory
-from relval.database.dao import PredefinedBlobsDao, StepsDao
-from relval.database.models import PredefinedBlob, Parameters
+from relval.database.dao import PredefinedBlobsDao, StepsDao, RequestsDao
+from relval.database.models import StepType
 
 import json
 from flask_sqlalchemy import Pagination
@@ -128,7 +128,6 @@ class StepsRestTests(BaseTestsCase):
 
     def setUp(self):
         BaseTestsCase.setUp(self)
-        # self.steps_dao = StepsDao()
 
     def test_new_step_creation(self):
         with patch.object(StepsDao, "add") as mock_method:
@@ -144,7 +143,7 @@ class StepsRestTests(BaseTestsCase):
                 immutable=True,
                 parameters=request["parameters"],
                 blobs=request["blobs"],
-                is_monte_carlo=True,
+                type=StepType.Default,
                 data_set="test-data-set")
 
     def test_step_fetch_paginating(self):
@@ -178,7 +177,20 @@ class StepsRestTests(BaseTestsCase):
             self.assertEqual(data['total'], "1")
             mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=10)
 
-    def test_blob_update(self):
+    def test_single_step_fetch(self):
+        step = factory.step()
+        step.id = 1
+        with patch.object(StepsDao, "get") as mock_method:
+            mock_method.return_value = step
+            response = self.app.get("/api/steps/1")
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+
+            self.assertEqual(data['title'], step.title)
+            mock_method.assert_called_once_with(1)
+
+    def test_step_update(self):
         with patch.object(StepsDao, "update") as mock_method:
             request = factory.JSONRequests.update_step()
             response = self.app.put(
@@ -194,4 +206,26 @@ class StepsRestTests(BaseTestsCase):
                 parameters=request["parameters"],
                 blobs=request["blobs"],
                 data_set=request["data_set"],
-                is_monte_carlo=request["is_monte_carlo"])
+                type=request["type"])
+
+class RequestRestTests(BaseTestsCase):
+
+    def setUp(self):
+        BaseTestsCase.setUp(self)
+
+    def test_new_step_creation(self):
+        with patch.object(RequestsDao, "add") as mock_method:
+            request = factory.JSONRequests.new_step()
+            response = self.app.post(
+                "/api/steps",
+                data=json.dumps(request),
+                content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                title=request["title"],
+                immutable=True,
+                parameters=request["parameters"],
+                blobs=request["blobs"],
+                type=StepType.Default,
+                data_set="test-data-set")

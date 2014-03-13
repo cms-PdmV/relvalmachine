@@ -12,7 +12,7 @@ import collections
 
 from relval import app
 from relval.database.models import Users
-from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao
+from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao, RequestsDao
 from relval.rest import marshallers
 
 
@@ -164,7 +164,6 @@ class StepsApi(Resource, ListApi):
         self.dao = StepsDao()
         self.default_items_per_page = app.config['STEPS_PER_PAGE']
 
-
     def post(self):
         """ Creates new step
         """
@@ -186,19 +185,48 @@ class StepApi(Resource):
         self.steps_dao = StepsDao()
 
     @marshal_with(marshallers.step_marshaller)
-    def get(self, blob_id):
-        """ Retrieves step with id=blob_id
+    def get(self, step_id):
+        """ Retrieves step with id=step_id
         """
-        step = self.steps_dao.get(blob_id)
+        step = self.steps_dao.get(step_id)
         step.parameters  # load all parameters from blob
         step.predefined_blobs  # load all blobs
         step.data_step  # load data_step data
         return step
 
-    def put(self, blob_id):
-        """ Updates step with id=blob_id
+    def put(self, step_id):
+        """ Updates step with id=step_id
         """
         data = convert_keys_to_string(request.json)
-        self.steps_dao.update(blob_id, **data)
+        self.steps_dao.update(step_id, **data)
 
 
+class RequestsApi(Resource, ListApi):
+    """ Requests resource
+    """
+
+    def __init__(self):
+        ListApi.__init__(self)
+        self.dao = RequestsDao()
+        self.default_items_per_page = app.config['REQUESTS_PER_PAGE']
+
+
+    def post(self):
+        """ Creates new step
+        """
+        data = convert_keys_to_string(request.json)
+        print data
+        self.dao.add(**data)
+
+    @marshal_with(marshallers.steps_marshaller_paginated)
+    def get(self):
+        """ Returns all existing steps
+        """
+        return self.get_result()
+
+
+class RequestApi(Resource):
+    """ Request resource to work with single request
+    """
+    #TODO
+    pass

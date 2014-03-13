@@ -49,7 +49,7 @@ class Requests(db.Model):
     log_url = db.Column("log_url", db.String(1024))
     event = db.Column("events", db.Integer)
     run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
-    updated = db.Column("proposal_date", db.DateTime)
+    updated = db.Column("updated", db.DateTime)
     immutable = db.Column("immutable", db.Boolean, default=False)
 
     user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=True)
