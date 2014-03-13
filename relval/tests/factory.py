@@ -122,3 +122,19 @@ class JSONRequests(object):
             "type": StepType.Default,
             "data_set": "test-data-set"
         }
+
+    @staticmethod
+    def new_request():
+        return {
+            "title": "test-title",
+            "description": "test-description",
+            "immutable": True,
+            "cmssw_release": "7_0_0",
+            "steps": [
+                {"id": "1"}, {"id": "2"}
+            ],
+            "type": "test-type",
+            "run_the_matrix_conf": "-wm=init",
+            "events": 10,
+            "priority": 2
+        }

@@ -215,9 +215,9 @@ class RequestRestTests(BaseTestsCase):
 
     def test_new_step_creation(self):
         with patch.object(RequestsDao, "add") as mock_method:
-            request = factory.JSONRequests.new_step()
+            request = factory.JSONRequests.new_request()
             response = self.app.post(
-                "/api/steps",
+                "/api/requests",
                 data=json.dumps(request),
                 content_type='application/json')
 
@@ -225,7 +225,10 @@ class RequestRestTests(BaseTestsCase):
             mock_method.assert_called_once_with(
                 title=request["title"],
                 immutable=True,
-                parameters=request["parameters"],
-                blobs=request["blobs"],
-                type=StepType.Default,
-                data_set="test-data-set")
+                steps=request["steps"],
+                description=request["description"],
+                type=request["type"],
+                cmssw_release=request["cmssw_release"],
+                run_the_matrix_conf=request["run_the_matrix_conf"],
+                events=request["events"],
+                priority=request["priority"])

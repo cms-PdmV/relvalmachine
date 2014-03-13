@@ -47,7 +47,7 @@ class Requests(db.Model):
     type = db.Column("type", db.String(128))
     cmssw_release = db.Column("cmssw_release", db.String(128))
     log_url = db.Column("log_url", db.String(1024))
-    event = db.Column("events", db.Integer)
+    events = db.Column("events", db.Integer)
     run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
     updated = db.Column("updated", db.DateTime)
     immutable = db.Column("immutable", db.Boolean, default=False)

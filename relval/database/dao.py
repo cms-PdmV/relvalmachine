@@ -35,8 +35,11 @@ class UsersDao(object):
 
 class RequestsDao(object):
 
+    def __init__(self):
+        self.steps_dao = StepsDao()
+
     def add(self, title="", description="", immutable=False, type=None, cmssw_release=None,
-            run_the_matrix_conf=None, events=None, priority=1):
+            run_the_matrix_conf=None, events=None, priority=1, steps=[]):
         request = Requests(
             title=title,
             description=description,
@@ -48,6 +51,9 @@ class RequestsDao(object):
             priority=priority,  # TODO check if user has rights to set priority
             updated=datetime.utcnow()
         )
+        request.steps = [
+            self.steps_dao.get(step["id"]) for step in steps
+        ]
 
         #TODO: set status, test_status
         db.session.add(request)

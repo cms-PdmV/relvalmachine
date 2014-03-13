@@ -210,12 +210,10 @@ class RequestsApi(Resource, ListApi):
         self.dao = RequestsDao()
         self.default_items_per_page = app.config['REQUESTS_PER_PAGE']
 
-
     def post(self):
         """ Creates new step
         """
         data = convert_keys_to_string(request.json)
-        print data
         self.dao.add(**data)
 
     @marshal_with(marshallers.steps_marshaller_paginated)

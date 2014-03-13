@@ -9,7 +9,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 from relval.tests import factory
 from relval.tests import utils
 from relval.tests.base import BaseTestsCase
-from relval.database.dao import UsersDao, RequestsDao, RevisionsDao, PredefinedBlobsDao, StepsDao
+from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao
 from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep
 
 
@@ -52,6 +52,31 @@ class RequestsDaoTests(BaseTestsCase):
     def setUp(self):
         BaseTestsCase.setUp(self)
         self.request_dao = RequestsDao()
+
+    def test_request_insertion(self):
+        self.assertModelEmpty(Requests)
+        self.assertModelEmpty(Steps)
+
+        utils.prepare_step()
+        utils.prepare_step()
+        steps = [{"id": step.id} for step in Steps.query.all()]
+
+        self.request_dao.add(title="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
+                             run_the_matrix_conf="-l -i", events=20, priority=3, steps=steps)
+
+        self.assertModelCount(Steps, 2)
+        self.assertModelCount(Requests, 1)
+
+        request = Requests.query.one()
+
+        self.assertEqual(request.title, "test-title")
+        self.assertEqual(request.immutable, False)
+        self.assertEqual(request.description, "desc")
+        self.assertEqual(request.cmssw_release, "7_0_0")
+        self.assertEqual(request.events, 20)
+        self.assertEqual(request.priority, 3)
+        self.assertEqual(request.run_the_matrix_conf, "-l -i")
+        self.assertEqual(len(request.steps), 2)
 
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
