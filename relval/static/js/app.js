@@ -45,6 +45,15 @@ relval.config(['$routeProvider', function($routeProvider) {
     })
 }]);
 
+// Routes for requests
+relval.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+    .when('/requests/new', {
+        templateUrl: 'static/partials/requests/edit.html',
+        controller: 'NewRequestCtrl'
+    })
+}]);
+
 // routes for steps
 relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider

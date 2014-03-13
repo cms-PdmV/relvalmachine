@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="modal-header">
+    <h3>Select step</h3>
+  </div>
+  <div class="modal-body">
+    <div id="alerts" ng-include="'static/partials/alerts.html'"></div>
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h4 class="pull-left">Steps</h4>
+
+        <div class="col-sm-6 col-sm-offset-1">
+          <form class="form" role="search" method="get" id="search-form" name="search-form">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search" ng-model="search.searchText" name="query"/>
+
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-success" ng-click="searchAll()">
+                  <i class="fa fa-search fa-lg"></i> Search
+                </button>
+                <button class="btn btn-info" ng-click="resetSearch()">
+                  <i class="fa fa-refresh fa-lg"></i> Reset
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+        <th>#</th>
+        <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+        <th>Frozen</th>
+        <th>Type</th>
+        <th></th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="step in items | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+          <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
+          <td>{{step.title}}</td>
+          <td>
+            <div ng-show="step.immutable">
+              <i class="fa fa-check fa-lg"></i>
+            </div>
+          </td>
+          <td>
+            <span>{{getType($index)}}</span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-primary" ng-click="selectStep($index)">Select</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-offset-3 col-sm-8">
+      <pagination
+              boundary-links="true"
+              total-items="totalItems"
+              page="currentPage"
+              items-per-page="itemsPerPage"
+              max-size="maxSize"
+              rotate="false"
+              on-select-page="setPage(page)"
+              previous-text="&lsaquo;"
+              next-text="&rsaquo;"
+              first-text="&laquo;"
+              last-text="&raquo;">
+      </pagination>
+    </div>
+    <div class="pull-right">
+      <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>
+

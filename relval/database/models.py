@@ -39,12 +39,13 @@ class Batches(db.Model):
 class Requests(db.Model):
     __tablename__ = "requests"
     id = db.Column("id", db.Integer, db.Sequence("request_id_seq"), primary_key=True)
+    title = db.Column("title", db.String(256))
+    description = db.Column("description", db.String(2048))
     status = db.Column("status", db.String(64))
     test_status = db.Column("test_status", db.String(64))
     priority = db.Column("priority", db.Integer)
     type = db.Column("type", db.String(128))
     cmssw_release = db.Column("cmssw_release", db.String(128))
-    description = db.Column("description", db.String(2048))
     log_url = db.Column("log_url", db.String(1024))
     event = db.Column("events", db.Integer)
     run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))

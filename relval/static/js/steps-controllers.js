@@ -2,6 +2,15 @@
  * Created by Zygimantas Gatelis on 3/12/14.
  */
 
+var BaseStepCtrl = function($scope) {
+    $scope.getType = function(index) {
+        var type = $scope.items[index].type;
+        if (type == "default") return "Default";
+        if (type == "first_mc") return "First MC"
+        if (type == "first_data") return "First Data"
+    }
+}
+
 relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'AlertsService', 'StepsSearchService',
     function($scope, $location, Steps, AlertsService, StepsSearchService) {
         angular.extend(this, new BaseViewPageController(
@@ -10,13 +19,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
             AlertsService,
             StepsSearchService
         ));
-
-        $scope.getType = function(index) {
-            var type = $scope.items[index].type;
-            if (type == "default") return "Default";
-            if (type == "first_mc") return "First MC"
-            if (type == "first_data") return "First Data"
-        }
+        angular.extend(this, new BaseStepCtrl($scope));
 
         $scope.showEditControllers = function(index) {
             return !$scope.items[index].immutable
@@ -205,3 +208,22 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
             }
         }
     }]);
+
+var StepSelectModalCtrl = function($scope, $modalInstance, Steps, AlertsService, StepsSearchService) {
+    angular.extend(this, new BaseViewPageController(
+        $scope,
+        Steps,
+        AlertsService,
+        StepsSearchService
+    ));
+    angular.extend(this, new BaseStepCtrl($scope));
+
+
+    $scope.selectStep = function(index) {
+        $modalInstance.close($scope.items[index]);
+    }
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    }
+};
