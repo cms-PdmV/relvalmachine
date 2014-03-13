@@ -63,7 +63,6 @@ class RequestsDaoTests(BaseTestsCase):
 
         self.request_dao.add(title="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
                              run_the_matrix_conf="-l -i", events=20, priority=3, steps=steps)
-
         self.assertModelCount(Steps, 2)
         self.assertModelCount(Requests, 1)
 

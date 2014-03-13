@@ -29,8 +29,27 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 }
 
-relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
-    function($scope, $modal, $rootScope, AlertsService, Steps) {
+var constructRequest = function(scope, Requests) {
+    var request = new Requests({
+        title: scope.currentItem.title,
+        description: scope.currentItem.description,
+        immutable: scope.currentItem.immutable,
+        type: scope.currentItem.type,
+        cmssw_release: scope.currentItem.cmssw_release,
+        run_the_matrix_conf: scope.currentItem.run_the_matrix_conf,
+        run_the_matrix_conf: scope.currentItem.run_the_matrix_conf
+    });
+    var steps = [];
+    scope.currentItem.steps.forEach(function(step){
+        steps.push({id: step.id});
+    })
+    request.steps = steps;
+    return request;
+}
+
+
+relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Requests',
+    function($scope, $modal, $rootScope, AlertsService, Requests) {
         angular.extend(this, new BaseRequestEditPageCtrl(
             $scope,
             $modal,
@@ -51,7 +70,12 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.saveRequest = function() {
 
             if ($scope.requestForm.$valid) {
-
+                var request = constructRequest($scope, Requests);
+                request.$create(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to create step."});
+                });
             } else {
                 AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
             }

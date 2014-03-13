@@ -37,6 +37,23 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
         });
 }]);
 
+relvalServices.factory('Requests', ['$resource', function($resource) {
+        return $resource('api/requests/:request_id', {}, {
+            all: {
+                method: 'GET'
+            },
+            create: {
+                method: 'POST'
+            },
+            get: {
+                method: 'GET'
+            },
+            update: {
+                method: 'PUT'
+            }
+        });
+}]);
+
 relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
         var alerts = [];
         var time_out = 5000;
