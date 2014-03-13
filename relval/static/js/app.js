@@ -62,15 +62,15 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'StepsCtrl'
     })
     .when('/steps/new',  {
-        templateUrl: 'static/partials/steps/new.html',
+        templateUrl: 'static/partials/steps/edit.html',
         controller: 'NewStepCtrl'
     })
     .when('/steps/edit/:stepId',  {
-        templateUrl: 'static/partials/steps/new.html',
+        templateUrl: 'static/partials/steps/edit.html',
         controller: 'EditStepCtrl'
     })
     .when('/steps/clone/:stepId',  {
-        templateUrl: 'static/partials/steps/new.html',
+        templateUrl: 'static/partials/steps/edit.html',
         controller: 'CloneStepCtrl'
     })
 }]);
