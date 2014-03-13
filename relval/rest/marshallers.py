@@ -79,5 +79,5 @@ step_marshaller = {
     'parameters': fields.Nested(parameter_marshaller),
     'data_set': fields.String,
     'data_step': fields.Nested(data_step_marshaller),
-    'blobs': fields.Nested(blob_tight_marshaller, attribute="predefined_blobs")
+    'blobs': fields.Nested(blob_marshaller, attribute="predefined_blobs")
 }

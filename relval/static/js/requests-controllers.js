@@ -24,6 +24,18 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
         });
     };
 
+    $scope.showStepDetails = function(index) {
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/step-details.html',
+            controller: StepViewDetailsCtrl,
+            resolve: {
+                stepId: function() {
+                    return $scope.currentItem.steps[index].id
+                }
+            }
+        });
+    }
+
     $scope.discard = function() {
         $rootScope.back();
     };

@@ -1,0 +1,113 @@
+<div class="modal-header"><h4 class="modal-title">{{ step.title }}</h4></div>
+<div class="modal-body">
+  <div>
+    {{ step.title }} is
+    <span ng-show="step.immutable">frozen</span>
+    <span ng-hide="step.immutable">editable</span>
+    step.
+  </div>
+  <br>
+
+  <div ng-show="step.type=='default' || step.type=='first_mc'">
+    <div class="panel panel-primary">
+      <div class="panel-heading">Parameters</div>
+      <table class="table">
+        <thead>
+        <th>Flag</th>
+        <th>Value</th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="parameter in step.parameters">
+          <td>{{ parameter.flag }}</td>
+          <td>{{ parameter.value }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel panel-info" ng-repeat="blob in step.blobs">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Blob: {{blob.title}}</h3>
+        <span class="pull-right clickable" ng-click="blobToggle($index)">
+          <i ng-class="getBlobClass($index)" class="glyphicon glyphicon-plus"></i>
+        </span>
+      </div>
+      <div class="panel-body" ng-show="doShowBlob($index)">
+        <table class="table">
+          <thead>
+          <th>Flag</th>
+          <th>Value</th>
+          </thead>
+          <tbody>
+          <tr ng-repeat="parameter in blob.parameters">
+            <td>{{ parameter.flag }}</td>
+            <td>{{ parameter.value }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div ng-show="step.type=='first_mc'" class="form-group">
+      <label class="col-sm-5 control-label">Input GEN-SIM dataset:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_set}}</p>
+    </div>
+  </div>
+  <div ng-show="step.type=='first_data'">
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Data Set:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.data_set}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Label:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.label}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Run:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.run}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">IB block:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.ib_block}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">IB black list:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.ib_blacklist}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Location:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.location}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Files:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.files}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Events:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.events}}</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 control-label">Split:</label>
+
+      <p class="col-sm-7 form-control-static">{{step.data_step.split}}</p>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<div class="modal-footer">
+  <div class="pull-right">
+    <button class="btn btn-success" ng-click="back()">Back</button>
+  </div>
+</div>

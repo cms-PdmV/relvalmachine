@@ -227,3 +227,31 @@ var StepSelectModalCtrl = function($scope, $modalInstance, Steps, AlertsService,
         $modalInstance.dismiss('cancel');
     }
 };
+
+var StepViewDetailsCtrl = function($scope, $modalInstance, Steps, stepId) {
+    var step = Steps.get({step_id: stepId}, function() {
+        $scope.step = step;
+        $scope.step.blobs.forEach(function(item) {
+            item.show = false;
+        });
+    });
+
+
+    $scope.blobToggle = function(index) {
+        $scope.step.blobs[index].show =  !$scope.step.blobs[index].show;
+    };
+
+    $scope.getBlobClass = function(index) {
+        if (step.blobs[index].show) return "glyphicon-minus"
+        else return "glyphicon-plus";
+    }
+
+    $scope.doShowBlob = function(index) {
+        return $scope.step.blobs[index].show;
+    }
+
+
+    $scope.back = function() {
+        $modalInstance.dismiss('cancel');
+    }
+}
