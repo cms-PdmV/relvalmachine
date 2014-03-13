@@ -47,25 +47,17 @@ class Requests(db.Model):
     description = db.Column("description", db.String(2048))
     log_url = db.Column("log_url", db.String(1024))
     event = db.Column("events", db.Integer)
-    user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=False)
+    run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
+    updated = db.Column("proposal_date", db.DateTime)
+    immutable = db.Column("immutable", db.Boolean, default=False)
+
+    user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=True)
     batch_id = db.Column("batch_id", db.Integer, db.ForeignKey("batches.id"), nullable=True)
 
-    revisions = db.relationship("Revisions", backref="request")
+    steps = db.relationship("Steps", backref="request")
 
     #TODO: add __repr__
 
-
-class Revisions(db.Model):
-    __tablename__ = "revisions"
-    id = db.Column("id", db.Integer, db.Sequence("revision_id_seq"), primary_key=True)
-    proposal_date = db.Column("proposal_date", db.DateTime)
-    revision_number = db.Column("revision_number", db.Integer)
-    run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
-    request_id = db.Column("request_id", db.Integer, db.ForeignKey("requests.id"), nullable=False)
-
-    steps = db.relationship("Steps", backref="revision")
-
-    #TODO: add __repr__
 
 predefined_blobs_association = db.Table(
     'predefined_blobs_association',
@@ -111,7 +103,7 @@ class Steps(db.Model):
     immutable = db.Column("immutable", db.Boolean, default=False)
     type = db.Column("type", db.Enum(*StepType.types()))
 
-    revision_id = db.Column("revision_id", db.Integer, db.ForeignKey("revisions.id"), nullable=True)
+    request_id = db.Column("request_id", db.Integer, db.ForeignKey("requests.id"), nullable=True)
 
     data_step = db.relationship("DataStep", uselist=False, backref="step")
     parameters = db.relationship("Parameters", backref="step")
