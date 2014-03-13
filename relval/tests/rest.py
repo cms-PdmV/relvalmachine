@@ -36,7 +36,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
 
-            self.assertEqual(len(data['blobs']), 3)
+            self.assertEqual(len(data['items']), 3)
             self.assertEqual(data['total'], "3")
             mock_method.assert_called_once_with(page_num=1, items_per_page=3)  # default items per page
 
@@ -53,7 +53,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
 
-            self.assertEqual(len(data['blobs']), 2)
+            self.assertEqual(len(data['items']), 2)
             self.assertEqual(data['total'], "2")
             mock_method.assert_called_once_with(page_num=1, items_per_page=2)
 
@@ -67,7 +67,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
-            self.assertEqual(len(data['blobs']), 1)
+            self.assertEqual(len(data['items']), 1)
             self.assertEqual(data['total'], "1")
             mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=3)
 
@@ -83,7 +83,7 @@ class PredefinedBlobsRestTests(BaseTestsCase):
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
-            self.assertEqual(len(data['blobs']), 3)
+            self.assertEqual(len(data['items']), 3)
             self.assertEqual(data['total'], "6")
             mock_method.assert_called_once_with(query="query", page_num=2, items_per_page=3)
 
@@ -160,7 +160,7 @@ class StepsRestTests(BaseTestsCase):
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
 
-            self.assertEqual(len(data['steps']), 2)
+            self.assertEqual(len(data['items']), 2)
             self.assertEqual(data['total'], "3")
             mock_method.assert_called_once_with(page_num=1, items_per_page=2)
 
@@ -174,7 +174,7 @@ class StepsRestTests(BaseTestsCase):
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
-            self.assertEqual(len(data['steps']), 1)
+            self.assertEqual(len(data['items']), 1)
             self.assertEqual(data['total'], "1")
             mock_method.assert_called_once_with(query="query", page_num=1, items_per_page=10)
 

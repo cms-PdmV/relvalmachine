@@ -8,8 +8,9 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval.database.models import \
-    Users, Requests, Revisions, Steps, PredefinedBlob, Parameters, StepType
+    Users, Requests, Steps, PredefinedBlob, Parameters, StepType
 from datetime import datetime
+
 
 def user():
     return Users(
@@ -17,40 +18,6 @@ def user():
         email="test@mail",
         role="user",
         notifications=True)
-
-
-def create_revision(rev_num=1):
-    return Revisions(
-        revision_number=rev_num,
-        run_the_matrix_conf="-wm=init",
-        steps=[
-            Steps(
-                title="step1"
-            ),
-            Steps(
-                title="step2"
-            ),
-        ])
-
-
-def request():
-    return Requests(
-        status="NEW",
-        test_status="NOT-TESTED",
-        priority=1,
-        type="TYPE",
-        cmssw_release="7_0_0",
-        description="test description",
-        log_url="test-log-url",
-        event=100,
-        user=Users(
-            user_name="TestUsername",
-            email="test@mail",
-            role="user",
-            notifications=True),
-        revisions=[
-            create_revision(1)
-        ])
 
 
 def predefined_blob(params_count=1):
@@ -74,6 +41,7 @@ def data_step(data_set="test-data-set", files="1", events="1", split="1"):
         "events": events,
         "split": split
     }
+
 
 def step(title="test-title", parameters_count=1, blobs_count=1,
                  immutable=False, type=StepType.Default, data_set=""):
