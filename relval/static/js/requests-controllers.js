@@ -52,6 +52,7 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
 }
 
 var constructRequest = function(scope, Requests) {
+    console.log(scope.currentItem.type);
     var request = new Requests({
         label: scope.currentItem.label,
         description: scope.currentItem.description,
@@ -87,7 +88,7 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.currentItem.immutable = false;
         $scope.currentItem.label = "";
         $scope.currentItem.description = "";
-        $scope.currentItem.type = "";
+        $scope.currentItem.type = "MC";
 
         $scope.saveRequest = function() {
 

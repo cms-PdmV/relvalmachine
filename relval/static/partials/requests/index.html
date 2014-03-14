@@ -30,6 +30,8 @@
       <thead>
       <th>#</th>
       <th ng-click="changeSorting('label')" ng-class="selectedCls('label')"> Label</th>
+      <th ng-click="changeSorting('type')" ng-class="selectedCls('type')"> Type</th>
+      <th ng-click="changeSorting('status')" ng-class="selectedCls('status')"> Status</th>
       <th>Frozen</th>
       <th></th>
       </thead>
@@ -37,6 +39,8 @@
       <tr ng-repeat="request in items | filter: {label: searchText} | orderBy:sort.column:sort.descending">
         <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
         <td>{{request.label}}</td>
+        <td>{{request.type}}</td>
+        <td>{{request.status}}</td>
         <td>
           <div ng-show="request.immutable">
             <i class="fa fa-check fa-lg"></i>
