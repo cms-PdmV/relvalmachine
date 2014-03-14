@@ -36,13 +36,29 @@ class Batches(db.Model):
     #TODO: add __repr__
 
 
+class RequestStatus(object):
+    New = "new"
+    ReadyForTest = "readyForTest"
+    TestPassed = "testPassed"
+    TestFailed = "testFailed"
+    Approved = "approved"
+    Disapproved = "disapproved"
+    SubmittedSuccessful = "submittedSuccessful"
+    SubmittedFailed = "submittedFailed"
+
+    @staticmethod
+    def types():
+        return [RequestStatus.New, RequestStatus.ReadyForTest, RequestStatus.TestPassed,
+                RequestStatus.TestFailed, RequestStatus.Approved, RequestStatus.Disapproved,
+                RequestStatus.SubmittedSuccessful, RequestStatus.SubmittedFailed]
+
+
 class Requests(db.Model):
     __tablename__ = "requests"
     id = db.Column("id", db.Integer, db.Sequence("request_id_seq"), primary_key=True)
-    title = db.Column("title", db.String(256))
+    label = db.Column("label", db.String(256))
     description = db.Column("description", db.String(2048))
-    status = db.Column("status", db.String(64))
-    test_status = db.Column("test_status", db.String(64))
+    status = db.Column("status", db.Enum(*RequestStatus.types()))
     priority = db.Column("priority", db.Integer)
     type = db.Column("type", db.String(128))
     cmssw_release = db.Column("cmssw_release", db.String(128))
@@ -72,8 +88,8 @@ class StepType(object):
     FirstMc = "first_mc"
     FirstData = "first_data"
 
-    @classmethod
-    def types(cls):
+    @staticmethod
+    def types():
         return [StepType.Default, StepType.FirstMc, StepType.FirstData]
 
 

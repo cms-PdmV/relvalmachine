@@ -59,6 +59,23 @@ def step(title="test-title", parameters_count=1, blobs_count=1,
     )
 
 
+def request(label="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
+            run_the_matrix_conf="-l -i", events=20, priority=3, type="mc", steps_count=3):
+    return Requests(
+        label=label,
+        description=description,
+        immutable=immutable,
+        cmssw_release=cmssw_release,
+        run_the_matrix_conf=run_the_matrix_conf,
+        events=events,
+        priority=priority,
+        type=type,
+        steps=[
+            step() for _ in range(steps_count)
+        ]
+    )
+
+
 def parameters(params_count=1):
     return [
         {"flag": "F%d" % i, "value": "V%d" % i} for i in range(params_count)
@@ -126,7 +143,7 @@ class JSONRequests(object):
     @staticmethod
     def new_request():
         return {
-            "title": "test-title",
+            "label": "test-title",
             "description": "test-description",
             "immutable": True,
             "cmssw_release": "7_0_0",

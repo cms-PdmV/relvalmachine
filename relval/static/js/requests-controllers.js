@@ -25,8 +25,8 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 
     $scope.removeStep = function(index) {
-        var title = $scope.currentItem.steps[index].title;
-        bootbox.confirm("Do You really want to remove blob " + title + " ?", function(removeApproved) {
+        var label = $scope.currentItem.steps[index].label;
+        bootbox.confirm("Do You really want to remove blob " + label + " ?", function(removeApproved) {
             if (removeApproved) {
                 $scope.currentItem.steps.splice(index, 1);
                 $scope.$apply();
@@ -53,7 +53,7 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
 
 var constructRequest = function(scope, Requests) {
     var request = new Requests({
-        title: scope.currentItem.title,
+        label: scope.currentItem.label,
         description: scope.currentItem.description,
         immutable: scope.currentItem.immutable,
         type: scope.currentItem.type,
@@ -85,7 +85,7 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.currentItem.cmssw_release = "";
         $scope.currentItem.run_the_matrix_conf = "";
         $scope.currentItem.immutable = false;
-        $scope.currentItem.title = "";
+        $scope.currentItem.label = "";
         $scope.currentItem.description = "";
         $scope.currentItem.type = "";
 

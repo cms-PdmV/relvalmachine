@@ -223,7 +223,7 @@ class RequestRestTests(BaseTestsCase):
 
             self.assertEqual(response.status_code, 200)
             mock_method.assert_called_once_with(
-                title=request["title"],
+                label=request["label"],
                 immutable=True,
                 steps=request["steps"],
                 description=request["description"],

@@ -29,14 +29,14 @@
   <table class="table">
       <thead>
       <th>#</th>
-      <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+      <th ng-click="changeSorting('label')" ng-class="selectedCls('label')"> Label</th>
       <th>Frozen</th>
       <th></th>
       </thead>
       <tbody>
-      <tr ng-repeat="request in items | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+      <tr ng-repeat="request in items | filter: {label: searchText} | orderBy:sort.column:sort.descending">
         <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
-        <td>{{request.title}}</td>
+        <td>{{request.label}}</td>
         <td>
           <div ng-show="request.immutable">
             <i class="fa fa-check fa-lg"></i>

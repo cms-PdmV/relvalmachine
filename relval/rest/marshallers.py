@@ -84,7 +84,7 @@ step_marshaller = {
 
 requests_marshaller = {
     'id': fields.String,
-    'title': fields.String,
+    'label': fields.String,
     'immutable': fields.Boolean,
 }
 

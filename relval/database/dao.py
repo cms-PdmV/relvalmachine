@@ -11,7 +11,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType, DataStep
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType, DataStep, RequestStatus
 
 from datetime import datetime
 
@@ -38,10 +38,10 @@ class RequestsDao(object):
     def __init__(self):
         self.steps_dao = StepsDao()
 
-    def add(self, title="", description="", immutable=False, type=None, cmssw_release=None,
+    def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
             run_the_matrix_conf=None, events=None, priority=1, steps=[]):
         request = Requests(
-            title=title,
+            label=label,
             description=description,
             immutable=immutable,
             type=type,
@@ -49,7 +49,8 @@ class RequestsDao(object):
             run_the_matrix_conf=run_the_matrix_conf,
             events=events,
             priority=priority,  # TODO check if user has rights to set priority
-            updated=datetime.utcnow()
+            updated=datetime.utcnow(),
+            status=RequestStatus.New
         )
         request.steps = [
             self.steps_dao.get(step["id"]) for step in steps
@@ -58,6 +59,7 @@ class RequestsDao(object):
         #TODO: set status, test_status
         db.session.add(request)
         db.session.commit()
+        return request
 
     def get_paginated(self, page_num=1, items_per_page=10):
         return Requests.query \
@@ -68,7 +70,7 @@ class RequestsDao(object):
 
     def search_all(self, query, page_num, items_per_page):
         return Requests.query \
-            .filter(Requests.title.ilike("%{0}%".format(query))) \
+            .filter(Requests.label.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
 
 

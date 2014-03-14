@@ -7,11 +7,12 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval.tests import factory
-from relval.database.dao import PredefinedBlobsDao, StepsDao
-from relval.database.models import StepType
+from relval.database.dao import PredefinedBlobsDao, StepsDao, RequestsDao
+from relval.database.models import StepType, Steps
 
 blobs_dao = PredefinedBlobsDao()
 steps_dao = StepsDao()
+requests_dao = RequestsDao()
 
 
 def prepare_blob(title=None, parameters_count=1, immutable=False):
@@ -37,3 +38,18 @@ def prepare_step(title=None, parameters_count=1, blobs_count=1,
                   data_set=data_set,
                   parameters=parameters)
     return step
+
+
+def prepare_request(label="test-label", description="desc", immutable=False,
+                    cmssw_release="7_0_0", run_the_matrix_conf="-i -all",
+                    events=20, priority=3, type="mc", steps_count=1):
+
+    for _ in range(steps_count):
+        prepare_step()
+    steps = [{"id": step.id} for step in Steps.query.all()]
+
+    req = requests_dao.add(label=label, description=description, immutable=immutable,
+                           cmssw_release=cmssw_release, run_the_matrix_conf=run_the_matrix_conf,
+                           events=events, priority=priority, type=type, steps=steps)
+
+    return req

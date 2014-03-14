@@ -61,14 +61,14 @@ class RequestsDaoTests(BaseTestsCase):
         utils.prepare_step()
         steps = [{"id": step.id} for step in Steps.query.all()]
 
-        self.request_dao.add(title="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
+        self.request_dao.add(label="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
                              run_the_matrix_conf="-l -i", events=20, priority=3, steps=steps)
         self.assertModelCount(Steps, 2)
         self.assertModelCount(Requests, 1)
 
         request = Requests.query.one()
 
-        self.assertEqual(request.title, "test-title")
+        self.assertEqual(request.label, "test-title")
         self.assertEqual(request.immutable, False)
         self.assertEqual(request.description, "desc")
         self.assertEqual(request.cmssw_release, "7_0_0")
@@ -76,6 +76,26 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(request.priority, 3)
         self.assertEqual(request.run_the_matrix_conf, "-l -i")
         self.assertEqual(len(request.steps), 2)
+
+    def test_request_search(self):
+        utils.prepare_request(label="label")
+        utils.prepare_request(label="search-label")
+
+        result = self.request_dao.search_all("search", 1, 10)
+
+        self.assertEqual(len(result.items), 1)
+        self.assertEqual(result.items[0].label, "search-label")
+
+    def test_request_paginated_fetch(self):
+        for i in range(3):
+            utils.prepare_request(label="title%d" % i)
+
+        result = self.request_dao.get_paginated(1, 1)
+
+        self.assertEqual(len(result.items), 1)
+        self.assertEqual(result.total, 3)
+        self.assertEqual(result.items[0].label, "title0")
+        self.assertModelCount(Requests, 3)
 
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
