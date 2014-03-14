@@ -68,7 +68,7 @@ class RequestsDao(object):
 
     def search_all(self, query, page_num, items_per_page):
         return Requests.query \
-            .filter(Steps.title.ilike("%{0}%".format(query))) \
+            .filter(Requests.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
 
 

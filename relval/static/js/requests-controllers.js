@@ -2,13 +2,13 @@
  * Created by Zygimantas Gatelis on 3/13/14.
  */
 
-relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'StepsSearchService',
-    function($scope, $location, Requests, AlertsService, StepsSearchService) {
+relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'RequestsSearchService',
+    function($scope, $location, Requests, AlertsService, RequestsSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
             Requests,
             AlertsService,
-            StepsSearchService
+            RequestsSearchService
         ));
 }]);
 
