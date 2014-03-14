@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix">
+      <h4 class="pull-left">Requests</h4>
+
+      <div class="col-sm-6 col-sm-offset-1">
+        <form class="form" role="search" method="get" id="search-form" name="search-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" ng-model="search.searchText" name="query"/>
+
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-success" ng-click="searchAll()">
+                <i class="fa fa-search fa-lg"></i> Search
+              </button>
+              <button class="btn btn-info" ng-click="resetSearch()">
+                <i class="fa fa-refresh fa-lg"></i> Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div type="button" class="btn btn-success pull-right ">
+        <a href="/#requests/new"><i class="fa fa-plus-square-o fa-lg"></i> Create new</a>
+      </div>
+    </div>
+  </div>
+
+  <table class="table">
+      <thead>
+      <th>#</th>
+      <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+      <th>Frozen</th>
+      <th></th>
+      </thead>
+      <tbody>
+      <tr ng-repeat="request in items | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+        <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
+        <td>{{request.title}}</td>
+        <td>
+          <div ng-show="request.immutable">
+            <i class="fa fa-check fa-lg"></i>
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary" ng-click="cloneStep($index)">Clone</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-offset-3 col-sm-8">
+    <pagination
+            boundary-links="true"
+            total-items="totalItems"
+            page="currentPage"
+            items-per-page="itemsPerPage"
+            max-size="maxSize"
+            rotate="false"
+            on-select-page="setPage(page)"
+            previous-text="&lsaquo;"
+            next-text="&rsaquo;"
+            first-text="&laquo;"
+            last-text="&raquo;">
+    </pagination>
+  </div>
+</div>

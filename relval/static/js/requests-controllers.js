@@ -2,6 +2,16 @@
  * Created by Zygimantas Gatelis on 3/13/14.
  */
 
+relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'StepsSearchService',
+    function($scope, $location, Requests, AlertsService, StepsSearchService) {
+        angular.extend(this, new BaseViewPageController(
+            $scope,
+            Requests,
+            AlertsService,
+            StepsSearchService
+        ));
+}]);
+
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
     $scope.addStep = function() {
         var modal = $modal.open({

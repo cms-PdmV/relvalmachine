@@ -81,3 +81,14 @@ step_marshaller = {
     'data_step': fields.Nested(data_step_marshaller),
     'blobs': fields.Nested(blob_marshaller, attribute="predefined_blobs")
 }
+
+requests_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'immutable': fields.Boolean,
+}
+
+requests_marshaller_paginated = {
+    'total': fields.String,
+    'items': fields.Nested(requests_marshaller)
+}

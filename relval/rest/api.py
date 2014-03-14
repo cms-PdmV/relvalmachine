@@ -218,7 +218,7 @@ class RequestsApi(Resource, ListApi):
         data = convert_keys_to_string(request.json)
         self.dao.add(**data)
 
-    @marshal_with(marshallers.steps_marshaller_paginated)
+    @marshal_with(marshallers.requests_marshaller_paginated)
     def get(self):
         """ Returns all existing steps
         """

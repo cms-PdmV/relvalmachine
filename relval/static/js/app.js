@@ -48,6 +48,10 @@ relval.config(['$routeProvider', function($routeProvider) {
 // Routes for requests
 relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider
+    .when('/requests/',  {
+        templateUrl: 'static/partials/requests/index.html',
+        controller: 'RequestsCtrl'
+    })
     .when('/requests/new', {
         templateUrl: 'static/partials/requests/edit.html',
         controller: 'NewRequestCtrl'
