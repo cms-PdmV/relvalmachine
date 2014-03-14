@@ -82,6 +82,11 @@ step_marshaller = {
     'blobs': fields.Nested(blob_marshaller, attribute="predefined_blobs")
 }
 
+step_tight_marshaller = {
+    'id': fields.String,
+    'title': fields.String
+}
+
 requests_marshaller = {
     'id': fields.String,
     'label': fields.String,
@@ -93,4 +98,17 @@ requests_marshaller = {
 requests_marshaller_paginated = {
     'total': fields.String,
     'items': fields.Nested(requests_marshaller)
+}
+
+request_marshaller = {
+    'id': fields.String,
+    'label': fields.String,
+    'description': fields.String,
+    'immutable': fields.Boolean,
+    'type': fields.String,
+    'cmssw_release': fields.String,
+    'run_the_matrix_conf': fields.String,
+    'events': fields.Integer,
+    'priority': fields.Integer,
+    'steps': fields.Nested(step_tight_marshaller)
 }

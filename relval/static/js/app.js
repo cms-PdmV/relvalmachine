@@ -56,6 +56,10 @@ relval.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'static/partials/requests/edit.html',
         controller: 'NewRequestCtrl'
     })
+    .when('/requests/clone/:requestId', {
+        templateUrl: 'static/partials/requests/edit.html',
+        controller: 'CloneRequestCtrl'
+    })
 }]);
 
 // routes for steps

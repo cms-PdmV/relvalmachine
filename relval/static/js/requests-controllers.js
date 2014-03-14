@@ -10,6 +10,11 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             AlertsService,
             RequestsSearchService
         ));
+
+        $scope.cloneStep = function(index) {
+            var id = $scope.items[index].id
+            $location.path("/requests/clone/" + id);
+        }
 }]);
 
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
@@ -60,7 +65,8 @@ var constructRequest = function(scope, Requests) {
         type: scope.currentItem.type,
         cmssw_release: scope.currentItem.cmssw_release,
         run_the_matrix_conf: scope.currentItem.run_the_matrix_conf,
-        run_the_matrix_conf: scope.currentItem.run_the_matrix_conf
+        events: scope.currentItem.events,
+        priority: scope.currentItem.priority
     });
     var steps = [];
     scope.currentItem.steps.forEach(function(step){
@@ -68,6 +74,19 @@ var constructRequest = function(scope, Requests) {
     })
     request.steps = steps;
     return request;
+}
+
+var saveRequest = function(scope, rootScope, Requests, AlertsService) {
+    if (scope.requestForm.$valid) {
+        var request = constructRequest(scope, Requests);
+        request.$create(function() {
+            rootScope.back();
+        }, function() {
+            AlertsService.addError({msg: "Server Error. Failed to save step."});
+        });
+    } else {
+        AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+    }
 }
 
 
@@ -91,16 +110,47 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.currentItem.type = "MC";
 
         $scope.saveRequest = function() {
-
-            if ($scope.requestForm.$valid) {
-                var request = constructRequest($scope, Requests);
-                request.$create(function() {
-                    $rootScope.back();
-                }, function() {
-                    AlertsService.addError({msg: "Server Error. Failed to create step."});
-                });
-            } else {
-                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
-            }
+            saveRequest($scope, $rootScope, Requests, AlertsService);
         }
+
+    }]);
+
+var BaseRequestEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Requests) {
+    $scope.currentItem = {};
+    angular.extend(this, new BaseRequestEditPageCtrl(
+            $scope,
+            $modal,
+            $rootScope
+    ));
+    // load request data
+    $scope.id = $routeParams.requestId;
+    var request = Requests.get({request_id: $scope.id}, function() {
+        $scope.currentItem.label = request.label;
+        $scope.currentItem.description = request.description;
+        $scope.currentItem.immutable = request.immutable;
+        $scope.currentItem.type = request.type;
+        $scope.currentItem.priority = request.priority;
+        $scope.currentItem.cmssw_release = request.cmssw_release;
+        $scope.currentItem.run_the_matrix_conf = request.run_the_matrix_conf;
+        $scope.currentItem.events = request.events;
+        $scope.currentItem.steps = request.steps
+    });
+}
+
+relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'AlertsService', 'Requests',
+    function($scope, $modal, $rootScope, $routeParams, AlertsService, Requests) {
+        angular.extend(this, new BaseRequestEditPageWithPreloadCtrl(
+            $scope,
+            $modal,
+            $rootScope,
+            $routeParams,
+            Requests
+        ));
+
+        $scope.actionName = "Clone";
+
+        $scope.saveRequest = function() {
+            saveRequest($scope, $rootScope, Requests, AlertsService);
+        }
+
     }]);

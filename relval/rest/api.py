@@ -228,5 +228,13 @@ class RequestsApi(Resource, ListApi):
 class RequestApi(Resource):
     """ Request resource to work with single request
     """
-    #TODO
-    pass
+    def __init__(self):
+        self.dao = RequestsDao()
+
+    @marshal_with(marshallers.request_marshaller)
+    def get(self, request_id):
+        """ Retrieves request with id=request_id
+        """
+        req = self.dao.get(request_id)
+        req.steps
+        return req
