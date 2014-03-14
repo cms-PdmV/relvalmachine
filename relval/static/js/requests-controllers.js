@@ -15,6 +15,19 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             var id = $scope.items[index].id
             $location.path("/requests/clone/" + id);
         }
+
+        $scope.showEditControllers = function(index) {
+            return !$scope.items[index].immutable
+        }
+
+        $scope.editRequest = function(index) {
+            var id = $scope.items[index].id
+            $location.path("/requests/edit/" + id);
+        }
+
+        $scope.deleteRequest = function(index) {
+            //TODO
+        }
 }]);
 
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
@@ -151,6 +164,32 @@ relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScop
 
         $scope.saveRequest = function() {
             saveRequest($scope, $rootScope, Requests, AlertsService);
+        }
+    }]);
+
+relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'AlertsService', 'Requests',
+    function($scope, $modal, $rootScope, $routeParams, AlertsService, Requests) {
+        angular.extend(this, new BaseRequestEditPageWithPreloadCtrl(
+            $scope,
+            $modal,
+            $rootScope,
+            $routeParams,
+            Requests
+        ));
+        $scope.actionName = "Update";
+
+        $scope.saveRequest = function() {
+            var request = constructRequest($scope, Requests);
+            // PUT to update step
+            if ($scope.requestForm.$valid) {
+                request.$update({request_id: $scope.id}, function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to update request."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in request form and then try to submit again."});
+            }
         }
 
     }]);

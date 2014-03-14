@@ -238,3 +238,9 @@ class RequestApi(Resource):
         req = self.dao.get(request_id)
         req.steps
         return req
+
+    def put(self, request_id):
+        """ Updates request with id=request_id
+        """
+        data = convert_keys_to_string(request.json)
+        self.dao.update(request_id, **data)

@@ -61,6 +61,9 @@ class RequestsDao(object):
         db.session.commit()
         return request
 
+    def update(self, id, **kwargs):
+        raise Exception("Not yet implemented")
+
     def get_paginated(self, page_num=1, items_per_page=10):
         return Requests.query \
             .paginate(page_num, items_per_page, False)
