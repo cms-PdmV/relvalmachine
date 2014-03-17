@@ -259,6 +259,10 @@ class BatchesApi(Resource, ListApi):
         self.dao = BatchesDao()
         self.default_items_per_page = app.config['BATCHES_PER_PAGE']
 
+    @marshal_with(marshallers.batches_marshaller_paginated)
+    def get(self):
+        return self.get_result()
+
     def post(self):
         """ Creates new batch
         """
@@ -269,4 +273,11 @@ class BatchesApi(Resource, ListApi):
 class BatchApi(Resource):
     """ Batch resource to work with single resource
     """
-    pass
+    def __init__(self):
+        self.dao = BatchesDao()
+
+    @marshal_with(marshallers.batch_marshaller)
+    def get(self, batch_id):
+        batch = self.dao.get(batch_id)
+        batch.requests
+        return batch

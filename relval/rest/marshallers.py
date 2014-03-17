@@ -112,3 +112,35 @@ request_marshaller = {
     'priority': fields.Integer,
     'steps': fields.Nested(step_tight_marshaller)
 }
+
+request_tight_marshaller = {
+    'id': fields.String,
+    'label': fields.String,
+}
+
+
+class ListLength(fields.Raw):
+    def format(self, value):
+        return len(value)
+
+batches_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'requests': ListLength,
+    'immutable': fields.Boolean,
+}
+
+batches_marshaller_paginated = {
+    'total': fields.String,
+    'items': fields.Nested(batches_marshaller)
+}
+
+batch_marshaller = {
+    'id': fields.String,
+    'title': fields.String,
+    'description': fields.String,
+    'immutable': fields.Boolean,
+    'run_the_matrix_conf': fields.String,
+    'priority': fields.Integer,
+    'requests': fields.Nested(request_tight_marshaller)
+}

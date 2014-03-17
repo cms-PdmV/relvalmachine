@@ -179,3 +179,10 @@ relvalServices.factory('RequestsSearchService', ['Requests', function(Requests) 
 
     return searchService;
 }]);
+
+// requests services
+relvalServices.factory('BatchesSearchService', ['Requests', function(Batches) {
+    var searchService = angular.extend(this, new AbstractSearchService(Batches));
+
+    return searchService;
+}]);

@@ -25,4 +25,53 @@
       </div>
     </div>
   </div>
+  <table class="table">
+    <thead>
+    <th>#</th>
+    <th ng-click="changeSorting('title')" ng-class="selectedCls('title')"> Title</th>
+    <th ng-click="changeSorting('requests')" ng-class="selectedCls('requests')"> Requests</th>
+    <th>Frozen</th>
+    <th>Actions</th>
+    <th></th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="batch in items | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+      <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
+      <td>{{batch.title}}</td>
+      <td>{{batch.requests}}</td>
+      <td>
+        <div ng-show="batch.immutable">
+          <i class="fa fa-check fa-lg"></i>
+        </div>
+      </td>
+      <td>
+        <div ng-show="showEditControllers($index)">
+          <button class="btn btn-sm btn-transparent" ng-click="edit($index)"><i
+                  class="fa fa-pencil-square-o fa-lg"></i></button>
+          <button class="btn btn-sm btn-transparent" ng-click="delete($index)"><i
+                  class="fa fa-times fa-lg"></i></button>
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-primary" ng-click="clone($index)">Clone</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="col-sm-offset-3 col-sm-8">
+  <pagination
+          boundary-links="true"
+          total-items="totalItems"
+          page="currentPage"
+          items-per-page="itemsPerPage"
+          max-size="maxSize"
+          rotate="false"
+          on-select-page="setPage(page)"
+          previous-text="&lsaquo;"
+          next-text="&rsaquo;"
+          first-text="&laquo;"
+          last-text="&raquo;">
+  </pagination>
+</div>
 </div>

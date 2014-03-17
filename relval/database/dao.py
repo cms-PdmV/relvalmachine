@@ -139,6 +139,18 @@ class BatchesDao(object):
             ]
         db.session.commit()
 
+    def get_paginated(self, page_num=1, items_per_page=10):
+        return Batches.query \
+            .paginate(page_num, items_per_page, False)
+
+    def get(self, id):
+        return Batches.query.get(id)
+
+    def search_all(self, query, page_num, items_per_page):
+        return Batches.query \
+            .filter(Batches.title.ilike("%{0}%".format(query))) \
+            .paginate(page_num, items_per_page, False)
+
 
 class StepsDao(object):
 

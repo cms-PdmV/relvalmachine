@@ -1,14 +1,24 @@
 /**
  * Created by Zygimantas Gatelis on 3/17/14.
  */
-relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'RequestsSearchService',
-    function ($scope, $location, Requests, AlertsService, RequestsSearchService) {
+relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', 'AlertsService', 'BatchesSearchService',
+    function ($scope, $location, Batches, AlertsService, BatchesSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
-            Requests,
+            Batches,
             AlertsService,
-            RequestsSearchService
+            BatchesSearchService
         ));
+
+        $scope.showEditControllers = function(index) {
+            return !$scope.items[index].immutable;
+        };
+
+        $scope.clone = function(index) {
+            var id = $scope.items[index].id
+            $location.path("/batches/clone/" + id);
+        }
+
     }]);
 
 var constructBatch = function(scope, Batches) {
@@ -58,6 +68,24 @@ var BaseBatchEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 }
 
+var BaseBatchEditWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Batches) {
+    angular.extend(this, new BaseBatchEditPageCtrl(
+        $scope,
+        $modal,
+        $rootScope
+    ));
+    $scope.currentItem = {};
+    $scope.id = $routeParams.batchId;
+    var batch = Batches.get({batch_id: $scope.id}, function() {
+        $scope.currentItem.title = batch.title;
+        $scope.currentItem.immutable = batch.immutable;
+        $scope.currentItem.description = batch.description;
+        $scope.currentItem.run_the_matrix_conf = batch.run_the_matrix_conf;
+        $scope.currentItem.priority = batch.priority;
+        $scope.currentItem.requests = batch.requests;
+    });
+}
+
 relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', '$location', 'Batches', 'AlertsService',
     function($scope, $modal, $rootScope, $location, Batches, AlertsService) {
         angular.extend(this, new BaseBatchEditPageCtrl(
@@ -75,6 +103,31 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.currentItem.run_the_matrix_conf = undefined;
         $scope.currentItem.priority = undefined;
 
+        $scope.submit = function() {
+            if ($scope.batchForm.$valid) {
+                var batch = constructBatch($scope, Batches);
+                batch.$save(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to save batch."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in batch creation form and then try to submit again."});
+            }
+        }
+    }]);
+
+relvalControllers.controller('CloneBatchCtrl', ['$scope', '$modal', '$rootScope', '$location', '$routeParams', 'Batches', 'AlertsService',
+    function($scope, $modal, $rootScope, $location, $routeParams, Batches, AlertsService) {
+        angular.extend(this, new BaseBatchEditWithPreloadCtrl(
+            $scope,
+            $modal,
+            $rootScope,
+            $routeParams,
+            Batches
+        ));
+
+        $scope.actionName = "Clone";
         $scope.submit = function() {
             if ($scope.batchForm.$valid) {
                 var batch = constructBatch($scope, Batches);
