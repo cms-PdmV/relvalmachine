@@ -232,3 +232,31 @@ class RequestRestTests(BaseTestsCase):
                 run_the_matrix_conf=request["run_the_matrix_conf"],
                 events=request["events"],
                 priority=request["priority"])
+
+    def test_request_update(self):
+        with patch.object(RequestsDao, "update") as mock_method:
+            request = factory.JSONRequests.new_request()
+            response = self.app.put(
+                "/api/requests/3",
+                data=json.dumps(request),
+                content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(
+                3,
+                label=request["label"],
+                immutable=True,
+                steps=request["steps"],
+                description=request["description"],
+                type=request["type"],
+                cmssw_release=request["cmssw_release"],
+                run_the_matrix_conf=request["run_the_matrix_conf"],
+                events=request["events"],
+                priority=request["priority"])
+
+    def test_request_delete(self):
+        with patch.object(RequestsDao, "delete") as mock_method:
+            response = self.app.delete("/api/requests/1")
+
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(1)

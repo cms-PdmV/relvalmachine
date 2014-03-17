@@ -244,3 +244,8 @@ class RequestApi(Resource):
         """
         data = convert_keys_to_string(request.json)
         self.dao.update(request_id, **data)
+
+    def delete(self, request_id):
+        """ Deletes request with id=request_id
+        """
+        self.dao.delete(request_id)

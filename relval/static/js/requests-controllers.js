@@ -14,20 +14,31 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
         $scope.cloneStep = function(index) {
             var id = $scope.items[index].id
             $location.path("/requests/clone/" + id);
-        }
+        };
 
         $scope.showEditControllers = function(index) {
             return !$scope.items[index].immutable
-        }
+        };
 
         $scope.editRequest = function(index) {
             var id = $scope.items[index].id
             $location.path("/requests/edit/" + id);
-        }
+        };
 
         $scope.deleteRequest = function(index) {
-            //TODO
-        }
+            bootbox.confirm("Do You really want to remove request " + $scope.items[index].label + " ?",
+            function(removeApproved) {
+                if (removeApproved) {
+                    var id = $scope.items[index].id
+                    // DELETE request
+                    Requests.delete({request_id: id}, function() {
+                        $scope.items.splice(index, 1);
+                        AlertsService.addSuccess({msg: "Request deleted successfully!"});
+                    }, function() {
+                        AlertsService.addError({msg: "Server error. Failed to remove request"});
+                    });
+                }});
+        };
 }]);
 
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {

@@ -77,6 +77,26 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(request.run_the_matrix_conf, "-l -i")
         self.assertEqual(len(request.steps), 2)
 
+    def test_request_update(self):
+        utils.prepare_request(label="label", description="desc", steps_count=2)
+        id = Requests.query.one().id
+
+        utils.prepare_step()
+        steps = [{"id": step.id} for step in Steps.query.all()]
+
+        new_label = "new-req-label"
+        new_desc = "new-description"
+
+        self.request_dao.update(id=id, label=new_label, description=new_desc, steps=steps)
+
+        self.assertModelCount(Requests, 1)
+        self.assertModelCount(Steps, 3)
+
+        new_request = Requests.query.one()
+        self.assertEqual(new_request.label, new_label)
+        self.assertEqual(new_request.description, new_desc)
+        self.assertEqual(len(new_request.steps), 3)
+
     def test_request_search(self):
         utils.prepare_request(label="label")
         utils.prepare_request(label="search-label")
@@ -96,6 +116,18 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(result.total, 3)
         self.assertEqual(result.items[0].label, "title0")
         self.assertModelCount(Requests, 3)
+
+    def test_request_delete(self):
+        utils.prepare_request(steps_count=2)
+
+        self.assertModelCount(Requests, 1)
+        self.assertModelCount(Steps, 2)
+        id = Requests.query.one().id
+
+        self.request_dao.delete(id)
+
+        self.assertModelEmpty(Requests)
+        self.assertModelCount(Steps, 2)
 
 
 class PredefinedBlobsDaoTest(BaseTestsCase):

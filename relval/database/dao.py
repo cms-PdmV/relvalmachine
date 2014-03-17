@@ -61,8 +61,22 @@ class RequestsDao(object):
         db.session.commit()
         return request
 
-    def update(self, id, **kwargs):
-        raise Exception("Not yet implemented")
+    def update(self, id, label="", description="", immutable=False, type=None, cmssw_release=None,
+               run_the_matrix_conf=None, events=None, priority=1, steps=[]):
+        request = self.get(id)
+        if label:
+            request.label = label
+        request.description = description
+        request.immutable = immutable
+        request.type = type
+        request.cmssw_release = cmssw_release
+        request.run_the_matrix_conf = run_the_matrix_conf
+        request.events = events
+        request.priority = priority
+        request.steps = [
+            self.steps_dao.get(step["id"]) for step in steps
+        ]
+        db.session.commit()
 
     def get_paginated(self, page_num=1, items_per_page=10):
         return Requests.query \
@@ -75,6 +89,11 @@ class RequestsDao(object):
         return Requests.query \
             .filter(Requests.label.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
+
+    def delete(self, id):
+        request = Requests.query.get(id)
+        db.session.delete(request)
+        db.session.commit()
 
 
 class StepsDao(object):
