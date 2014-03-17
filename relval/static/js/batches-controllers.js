@@ -70,16 +70,16 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.currentItem = {};
         $scope.currentItem.title = "";
         $scope.currentItem.description = "";
-        $scope.currentItem.run_the_matrix_conf = "";
         $scope.currentItem.immutable = false;
-        $scope.currentItem.priority = 1;
         $scope.currentItem.requests = [];
+        $scope.currentItem.run_the_matrix_conf = undefined;
+        $scope.currentItem.priority = undefined;
 
         $scope.submit = function() {
             if ($scope.batchForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$save(function() {
-                    rootScope.back();
+                    $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to save batch."});
                 });

@@ -129,6 +129,20 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertModelEmpty(Requests)
         self.assertModelCount(Steps, 2)
 
+    def test_request_clone(self):
+        req = utils.prepare_request(steps_count=2)
+        self.assertModelCount(Requests, 1)
+
+        new_req = self.request_dao.clone(req, "new-lbl", run_the_matrix_conf="new-conf", priority=1)
+
+        self.assertModelCount(Requests, 2)
+        self.assertEqual(new_req.label, "new-lbl")
+        self.assertEqual(new_req.run_the_matrix_conf, "new-conf")
+        self.assertEqual(new_req.priority, 1)
+        self.assertEqual(new_req.description, req.description)
+        self.assertEqual(new_req.cmssw_release, req.cmssw_release)
+        self.assertEqual(len(new_req.steps), len(req.steps))
+
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
 

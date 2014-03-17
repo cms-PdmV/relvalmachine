@@ -24,14 +24,26 @@ class Users(db.Model):
 
     #TODO: add __repr__
 
+requests_batches_association = db.Table(
+    'requests_batches_association',
+    db.Column('request_id', db.Integer, db.ForeignKey('requests.id')),
+    db.Column('batch_id', db.Integer, db.ForeignKey('batches.id'))
+)
+
 
 class Batches(db.Model):
     __tablename__ = "batches"
     id = db.Column("id", db.Integer, db.Sequence("batch_id_seq"), primary_key=True)
     title = db.Column("title", db.String(256))
     description = db.Column("description", db.String(2048))
+    immutable = db.Column("immutable", db.Boolean, default=False)
+    run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
+    priority = db.Column("priority", db.Integer, default=1)
 
-    requests = db.relationship("Requests", backref="batch")
+    requests = db.relationship(
+        'Requests',
+        secondary=requests_batches_association,
+        backref=db.backref("batches", lazy="dynamic"))
 
     #TODO: add __repr__
 
@@ -53,6 +65,13 @@ class RequestStatus(object):
                 RequestStatus.SubmittedSuccessful, RequestStatus.SubmittedFailed]
 
 
+steps_requests_association = db.Table(
+    'steps_requests_association',
+    db.Column('step_id', db.Integer, db.ForeignKey('steps.id')),
+    db.Column('request_id', db.Integer, db.ForeignKey('requests.id'))
+)
+
+
 class Requests(db.Model):
     __tablename__ = "requests"
     id = db.Column("id", db.Integer, db.Sequence("request_id_seq"), primary_key=True)
@@ -69,15 +88,17 @@ class Requests(db.Model):
     immutable = db.Column("immutable", db.Boolean, default=False)
 
     user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=True)
-    batch_id = db.Column("batch_id", db.Integer, db.ForeignKey("batches.id"), nullable=True)
 
-    steps = db.relationship("Steps", backref="request")
+    steps = db.relationship(
+        'Steps',
+        secondary=steps_requests_association,
+        backref=db.backref("requests", lazy="dynamic"))
 
     #TODO: add __repr__
 
 
-predefined_blobs_association = db.Table(
-    'predefined_blobs_association',
+blobs_steps_association = db.Table(
+    'blobs_steps_association',
     db.Column('step_id', db.Integer, db.ForeignKey('steps.id')),
     db.Column('predefined_blob_id', db.Integer, db.ForeignKey('predefined_blob.id'))
 )
@@ -126,7 +147,7 @@ class Steps(db.Model):
     parameters = db.relationship("Parameters", backref="step")
     predefined_blobs = db.relationship(
         'PredefinedBlob',
-        secondary=predefined_blobs_association,
+        secondary=blobs_steps_association,
         backref=db.backref("steps", lazy="dynamic"))
 
     #TODO: add __repr__

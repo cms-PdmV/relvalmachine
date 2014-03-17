@@ -12,7 +12,7 @@ import collections
 
 from relval import app
 from relval.database.models import Users
-from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao, RequestsDao
+from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao, RequestsDao, BatchesDao
 from relval.rest import marshallers
 
 
@@ -249,3 +249,24 @@ class RequestApi(Resource):
         """ Deletes request with id=request_id
         """
         self.dao.delete(request_id)
+
+
+class BatchesApi(Resource, ListApi):
+    """ Batches resource
+    """
+    def __init__(self):
+        ListApi.__init__(self)
+        self.dao = BatchesDao()
+        self.default_items_per_page = app.config['BATCHES_PER_PAGE']
+
+    def post(self):
+        """ Creates new batch
+        """
+        data = convert_keys_to_string(request.json)
+        self.dao.add(**data)
+
+
+class BatchApi(Resource):
+    """ Batch resource to work with single resource
+    """
+    pass

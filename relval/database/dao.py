@@ -11,7 +11,8 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from relval import db
-from relval.database.models import Users, Requests, PredefinedBlob, Parameters, Steps, StepType, DataStep, RequestStatus
+from relval.database.models import Users, Requests, PredefinedBlob, Parameters, \
+    Steps, StepType, DataStep, RequestStatus, Batches
 
 from datetime import datetime
 
@@ -49,7 +50,7 @@ class RequestsDao(object):
             run_the_matrix_conf=run_the_matrix_conf,
             events=events,
             priority=priority,  # TODO check if user has rights to set priority
-            updated=datetime.utcnow(),
+            updated=datetime.now(),
             status=RequestStatus.New
         )
         request.steps = [
@@ -93,6 +94,49 @@ class RequestsDao(object):
     def delete(self, id):
         request = Requests.query.get(id)
         db.session.delete(request)
+        db.session.commit()
+
+    def clone(self, req, new_label, run_the_matrix_conf, priority):
+        run_the_matrix = run_the_matrix_conf if run_the_matrix_conf else req.run_the_matrix_conf
+        priority_to_set = priority if priority else req.priority
+        steps = [
+            {"id": step.id} for step in req.steps
+        ]
+        return self.add(label=new_label, description=req.description, immutable=req.immutable,
+                        type=req.type, cmssw_release=req.cmssw_release, run_the_matrix_conf=run_the_matrix,
+                        events=req.events, priority=priority_to_set, steps=steps)
+
+
+class BatchesDao(object):
+
+    def __init__(self):
+        self.requests_dao = RequestsDao()
+
+    def add(self, title="", description="", immutable=False, run_the_matrix_conf=None,
+            priority=None, requests=[]):
+        batch = Batches(
+            title=title,
+            description=description,
+            immutable=immutable,
+            run_the_matrix_conf=run_the_matrix_conf,
+            priority=priority
+        )
+
+        # if run the matrix conf or priority are defined then we clone all requests
+        if run_the_matrix_conf or priority:
+            print "should clone all requests"
+            batch.requests = []
+            for request in requests:
+                req = self.requests_dao.get(request["id"])
+                new_label = "%s_%s_%s" % (
+                    req.label, title, datetime.now().strftime("%d-%m-%Y_%H:%M")
+                )
+                cloned_req = self.requests_dao.clone(req, new_label, run_the_matrix_conf, priority)
+                batch.requests.append(cloned_req)
+        else:
+            batch.requests = [
+                self.requests_dao.get(request["id"]) for request in requests
+            ]
         db.session.commit()
 
 
@@ -188,7 +232,7 @@ class PredefinedBlobsDao(object):
 
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
         if not creation_date:
-            creation_date = datetime.utcnow()
+            creation_date = datetime.now()
         predefined_blob = PredefinedBlob(
             title=title,
             creation_date=creation_date,
