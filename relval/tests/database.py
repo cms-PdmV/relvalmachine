@@ -9,8 +9,8 @@ __email__ = "zygimantas.gatelis@cern.ch"
 from relval.tests import factory
 from relval.tests import utils
 from relval.tests.base import BaseTestsCase
-from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao
-from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep
+from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao, BatchesDao
+from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep, Batches
 
 
 class UsersDaoTests(BaseTestsCase):
@@ -142,6 +142,50 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(new_req.description, req.description)
         self.assertEqual(new_req.cmssw_release, req.cmssw_release)
         self.assertEqual(len(new_req.steps), len(req.steps))
+
+
+class BatchesDaoTest(BaseTestsCase):
+
+    def setUp(self):
+        BaseTestsCase.setUp(self)
+        self.dao = BatchesDao()
+
+    def test_simple_batch_insert(self):
+        self.insert_batch()
+        self.assertModelCount(Requests, 2)
+        self.assertModelCount(Batches, 1)
+
+        batch = Batches.query.one()
+
+        self.assertEqual(batch.title, "test-title")
+        self.assertEqual(batch.immutable, False)
+        self.assertEqual(batch.description, "desc")
+        self.assertEqual(len(batch.requests), 2)
+
+    def test_batch_insert_with_request_clone(self):
+        run_the_matrix_conf = "-i -all"
+        self.insert_batch(run_the_matrix=run_the_matrix_conf)
+
+        self.assertModelCount(Requests, 4)
+        self.assertModelCount(Batches, 1)
+
+        batch = Batches.query.one()
+        self.assertEqual(batch.run_the_matrix_conf, run_the_matrix_conf)
+        self.assertEqual(len(batch.requests), 2)
+        for req in batch.requests:
+            self.assertEqual(req.run_the_matrix_conf, run_the_matrix_conf)
+
+    def insert_batch(self, run_the_matrix=None):
+        self.assertModelEmpty(Batches)
+        self.assertModelEmpty(Requests)
+
+        utils.prepare_request()
+        utils.prepare_request()
+        requests = [{"id": req.id} for req in Requests.query.all()]
+
+        self.dao.add(title="test-title", description="desc", immutable=False,
+                     run_the_matrix_conf=run_the_matrix, requests=requests)
+
 
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
