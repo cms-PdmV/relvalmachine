@@ -110,6 +110,7 @@ request_marshaller = {
     'run_the_matrix_conf': fields.String,
     'events': fields.Integer,
     'priority': fields.Integer,
+    'status': fields.String,
     'steps': fields.Nested(step_tight_marshaller)
 }
 

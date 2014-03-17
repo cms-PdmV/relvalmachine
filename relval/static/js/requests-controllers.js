@@ -220,3 +220,25 @@ var RequestSelectModalCtrl = function($scope, $modalInstance, Requests, AlertsSe
         $modalInstance.dismiss('cancel');
     }
 };
+
+var RequestViewDetailsCtrl = function($scope, $modalInstance, Requests, Steps, requestId, $modal) {
+    var request = Requests.get({request_id: requestId}, function() {
+        $scope.request = request;
+    });
+
+    $scope.showStep = function(index) {
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/step-details.html',
+            controller: StepViewDetailsCtrl,
+            resolve: {
+                stepId: function() {
+                    return $scope.request.steps[index].id
+                }
+            }
+        });
+    };
+
+    $scope.back = function() {
+        $modalInstance.dismiss('cancel');
+    }
+}

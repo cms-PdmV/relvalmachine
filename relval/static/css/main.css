@@ -43,6 +43,11 @@ html, body {
     min-width: 400px;
 }
 
+.wide-dialog .modal-dialog {
+    width :90%;
+    min-width: 400px;
+}
+
 input.ng-invalid {
   border: 1px solid red;
 }

@@ -242,7 +242,7 @@ var StepViewDetailsCtrl = function($scope, $modalInstance, Steps, stepId) {
     };
 
     $scope.getBlobClass = function(index) {
-        if (step.blobs[index].show) return "glyphicon-minus"
+        if ($scope.step.blobs[index].show) return "glyphicon-minus"
         else return "glyphicon-plus";
     }
 

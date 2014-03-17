@@ -41,7 +41,7 @@ var BaseBatchEditPageCtrl = function($scope, $modal, $rootScope) {
     $scope.addRequest = function() {
         var modal = $modal.open({
             templateUrl: 'static/partials/modal/select-request.html',
-            windowClass: 'blobs-select-dialog',
+            windowClass: 'wide-dialog',
             controller: RequestSelectModalCtrl
         });
         modal.result.then(function(selected) {
@@ -60,7 +60,15 @@ var BaseBatchEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 
     $scope.showRequestDetails = function(index) {
-        // TODO
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/request-details.html',
+            controller: RequestViewDetailsCtrl,
+            resolve: {
+                requestId: function() {
+                    return $scope.currentItem.requests[index].id
+                }
+            }
+        });
     }
 
     $scope.discard = function() {
