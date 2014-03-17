@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="modal-header">
+    <h3>Select request</h3>
+  </div>
+  <div class="modal-body">
+    <div id="alerts" ng-include="'static/partials/alerts.html'"></div>
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h4 class="pull-left">Requests</h4>
+
+        <div class="col-sm-6 col-sm-offset-1">
+          <form class="form" role="search" method="get" id="search-form" name="search-form">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search" ng-model="search.searchText" name="query"/>
+
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-success" ng-click="searchAll()">
+                  <i class="fa fa-search fa-lg"></i> Search
+                </button>
+                <button class="btn btn-info" ng-click="resetSearch()">
+                  <i class="fa fa-refresh fa-lg"></i> Reset
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+        <th>#</th>
+        <th ng-click="changeSorting('label')" ng-class="selectedCls('label')"> Label</th>
+        <th ng-click="changeSorting('type')" ng-class="selectedCls('type')"> Type</th>
+        <th ng-click="changeSorting('status')" ng-class="selectedCls('status')"> Status</th>
+        <th>Frozen</th>
+        <th></th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="request in items | filter: {label: searchText} | orderBy:sort.column:sort.descending">
+          <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
+          <td>{{request.label}}</td>
+          <td>{{request.type}}</td>
+          <td>{{request.status}}</td>
+          <td>
+            <div ng-show="request.immutable">
+              <i class="fa fa-check fa-lg"></i>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-primary" ng-click="selectRequest($index)">Select</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-offset-3 col-sm-8">
+      <pagination
+              boundary-links="true"
+              total-items="totalItems"
+              page="currentPage"
+              items-per-page="itemsPerPage"
+              max-size="maxSize"
+              rotate="false"
+              on-select-page="setPage(page)"
+              previous-text="&lsaquo;"
+              next-text="&rsaquo;"
+              first-text="&laquo;"
+              last-text="&raquo;">
+      </pagination>
+    </div>
+    <div class="pull-right">
+      <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>

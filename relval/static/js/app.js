@@ -108,6 +108,19 @@ relval.config(['$routeProvider', function($routeProvider) {
     })
 }]);
 
+// routes for batches
+relval.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+    .when('/batches',  {
+        templateUrl: 'static/partials/batches/index.html',
+        controller: 'BatchesCtrl'
+    })
+    .when('/batches/new', {
+        templateUrl: 'static/partials/batches/edit.html',
+        controller: 'NewBatchCtrl'
+    })
+}]);
+
 // routes for admin
 relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider

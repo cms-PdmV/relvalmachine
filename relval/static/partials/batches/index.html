@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix">
+      <h4 class="pull-left">Batches</h4>
+
+      <div class="col-sm-6 col-sm-offset-1">
+        <form class="form" role="search" method="get" id="search-form" name="search-form">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" ng-model="search.searchText" name="query"/>
+
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-success" ng-click="searchAll()">
+                <i class="fa fa-search fa-lg"></i> Search
+              </button>
+              <button class="btn btn-info" ng-click="resetSearch()">
+                <i class="fa fa-refresh fa-lg"></i> Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div type="button" class="btn btn-success pull-right ">
+        <a href="/#batches/new"><i class="fa fa-plus-square-o fa-lg"></i> Create new</a>
+      </div>
+    </div>
+  </div>
+</div>

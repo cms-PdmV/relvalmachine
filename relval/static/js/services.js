@@ -54,6 +54,17 @@ relvalServices.factory('Requests', ['$resource', function($resource) {
         });
 }]);
 
+relvalServices.factory('Batches', ['$resource', function($resource) {
+        return $resource('api/batches/:batch_id', {}, {
+            all: {
+                method: 'GET'
+            },
+            update: {
+                method: 'PUT'
+            }
+        });
+}]);
+
 relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
         var alerts = [];
         var time_out = 5000;

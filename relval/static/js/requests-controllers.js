@@ -54,8 +54,8 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 
     $scope.removeStep = function(index) {
-        var label = $scope.currentItem.steps[index].label;
-        bootbox.confirm("Do You really want to remove blob " + label + " ?", function(removeApproved) {
+        var title = $scope.currentItem.steps[index].title;
+        bootbox.confirm("Do You really want to remove step " + title + " ?", function(removeApproved) {
             if (removeApproved) {
                 $scope.currentItem.steps.splice(index, 1);
                 $scope.$apply();
@@ -81,7 +81,6 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
 }
 
 var constructRequest = function(scope, Requests) {
-    console.log(scope.currentItem.type);
     var request = new Requests({
         label: scope.currentItem.label,
         description: scope.currentItem.description,
@@ -106,10 +105,10 @@ var saveRequest = function(scope, rootScope, Requests, AlertsService) {
         request.$create(function() {
             rootScope.back();
         }, function() {
-            AlertsService.addError({msg: "Server Error. Failed to save step."});
+            AlertsService.addError({msg: "Server Error. Failed to save request."});
         });
     } else {
-        AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+        AlertsService.addError({msg: "Error! Fix errors in request creation form and then try to submit again."});
     }
 }
 
@@ -202,5 +201,22 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
                 AlertsService.addError({msg: "Error! Fix errors in request form and then try to submit again."});
             }
         }
-
     }]);
+
+var RequestSelectModalCtrl = function($scope, $modalInstance, Requests, AlertsService, RequestsSearchService) {
+    angular.extend(this, new BaseViewPageController(
+        $scope,
+        Requests,
+        AlertsService,
+        RequestsSearchService
+    ));
+
+
+    $scope.selectRequest = function(index) {
+        $modalInstance.close($scope.items[index]);
+    }
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    }
+};
