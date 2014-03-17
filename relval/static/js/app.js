@@ -123,6 +123,10 @@ relval.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'static/partials/batches/edit.html',
         controller: 'CloneBatchCtrl'
     })
+    .when('/batches/edit/:batchId', {
+        templateUrl: 'static/partials/batches/edit.html',
+        controller: 'EditBatchCtrl'
+    })
 }]);
 
 // routes for admin

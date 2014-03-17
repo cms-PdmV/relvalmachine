@@ -17,6 +17,11 @@ relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', '
         $scope.clone = function(index) {
             var id = $scope.items[index].id
             $location.path("/batches/clone/" + id);
+        };
+
+        $scope.edit = function(index) {
+            var id = $scope.items[index].id
+            $location.path("/batches/edit/" + id);
         }
 
     }]);
@@ -143,6 +148,31 @@ relvalControllers.controller('CloneBatchCtrl', ['$scope', '$modal', '$rootScope'
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to save batch."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in batch creation form and then try to submit again."});
+            }
+        }
+    }]);
+
+relvalControllers.controller('EditBatchCtrl', ['$scope', '$modal', '$rootScope', '$location', '$routeParams', 'Batches', 'AlertsService',
+    function($scope, $modal, $rootScope, $location, $routeParams, Batches, AlertsService) {
+        angular.extend(this, new BaseBatchEditWithPreloadCtrl(
+            $scope,
+            $modal,
+            $rootScope,
+            $routeParams,
+            Batches
+        ));
+
+        $scope.actionName = "Update";
+        $scope.submit = function() {
+            if ($scope.batchForm.$valid) {
+                var batch = constructBatch($scope, Batches);
+                batch.$update(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to update batch."});
                 });
             } else {
                 AlertsService.addError({msg: "Error! Fix errors in batch creation form and then try to submit again."});
