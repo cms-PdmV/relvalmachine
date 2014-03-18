@@ -258,6 +258,7 @@ class BatchesApi(Resource, ListApi):
         ListApi.__init__(self)
         self.dao = BatchesDao()
         self.default_items_per_page = app.config['BATCHES_PER_PAGE']
+        self.parser.add_argument('clone', type=bool)
 
     @marshal_with(marshallers.batches_marshaller_paginated)
     def get(self):
@@ -266,8 +267,12 @@ class BatchesApi(Resource, ListApi):
     def post(self):
         """ Creates new batch
         """
+        args = self.parser.parse_args()
         data = convert_keys_to_string(request.json)
-        self.dao.add(**data)
+        if args["clone"]:
+            self.dao.clone(**data)
+        else:
+            self.dao.add(**data)
 
 
 class BatchApi(Resource):

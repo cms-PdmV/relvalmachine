@@ -119,7 +119,7 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.submit = function() {
             if ($scope.batchForm.$valid) {
                 var batch = constructBatch($scope, Batches);
-                batch.$save(function() {
+                batch.$save({clone: false},function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to save batch."});
@@ -144,7 +144,7 @@ relvalControllers.controller('CloneBatchCtrl', ['$scope', '$modal', '$rootScope'
         $scope.submit = function() {
             if ($scope.batchForm.$valid) {
                 var batch = constructBatch($scope, Batches);
-                batch.$save(function() {
+                batch.$save({clone: true},function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to save batch."});

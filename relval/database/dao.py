@@ -18,7 +18,6 @@ from datetime import datetime
 
 
 class UsersDao(object):
-
     def get(self, id):
         user = Users.query.get(id)
         if not user:
@@ -35,12 +34,11 @@ class UsersDao(object):
 
 
 class RequestsDao(object):
-
     def __init__(self):
         self.steps_dao = StepsDao()
 
     def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
-            run_the_matrix_conf=None, events=None, priority=1, steps=[]):
+            run_the_matrix_conf=None, events=None, priority=1, ancestor_request=None, steps=[]):
         request = Requests(
             label=label,
             description=description,
@@ -51,7 +49,8 @@ class RequestsDao(object):
             events=events,
             priority=priority,  # TODO check if user has rights to set priority
             updated=datetime.now(),
-            status=RequestStatus.New
+            status=RequestStatus.New,
+            ancestor_request=ancestor_request
         )
         request.steps = [
             self.steps_dao.get(step["id"]) for step in steps
@@ -96,24 +95,37 @@ class RequestsDao(object):
         db.session.delete(request)
         db.session.commit()
 
+    def get_ancestor(self, request):
+        ancestor = request
+        while ancestor.ancestor_request is not None:
+            ancestor = ancestor.ancestor_request
+        return ancestor
+
     def clone(self, req, new_label, run_the_matrix_conf, priority):
         run_the_matrix = run_the_matrix_conf if run_the_matrix_conf else req.run_the_matrix_conf
         priority_to_set = priority if priority else req.priority
         steps = [
             {"id": step.id} for step in req.steps
         ]
+
+        ancestor = self.get_ancestor(req)
         return self.add(label=new_label, description=req.description, immutable=req.immutable,
                         type=req.type, cmssw_release=req.cmssw_release, run_the_matrix_conf=run_the_matrix,
-                        events=req.events, priority=priority_to_set, steps=steps)
+                        events=req.events, priority=priority_to_set, ancestor_request=ancestor, steps=steps)
 
 
 class BatchesDao(object):
-
     def __init__(self):
         self.requests_dao = RequestsDao()
 
-    def add(self, title="", description="", immutable=False, run_the_matrix_conf=None,
-            priority=None, requests=[]):
+    def add(self, **kwargs):
+        return self.insert_batch(is_cloning=False, **kwargs)
+
+    def clone(self, **kwargs):
+        return self.insert_batch(is_cloning=True, **kwargs)
+
+    def insert_batch(self, title="", description="", immutable=False, run_the_matrix_conf=None,
+                     priority=None, requests=[], is_cloning=False):
         batch = Batches(
             title=title,
             description=description,
@@ -122,8 +134,8 @@ class BatchesDao(object):
             priority=priority
         )
 
-        # if run the matrix conf or priority are defined then we clone all requests
-        if run_the_matrix_conf or priority:
+        # if request is cloning or run the matrix conf or priority are defined then we clone all requests
+        if is_cloning or run_the_matrix_conf or priority:
             batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
         else:
             batch.requests = [
@@ -140,9 +152,26 @@ class BatchesDao(object):
         batch.description = description
         batch.immutable = immutable
 
-        if batch.run_the_matrix_conf != run_the_matrix_conf or \
-                batch.priority != priority:
-            batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
+        if batch.run_the_matrix_conf != run_the_matrix_conf or batch.priority != priority:
+            new_requests = []
+            for req in requests:
+                req_object = self.requests_dao.get(req["id"])
+
+                # if request is frozen then clone it
+                if req_object.immutable:
+                    new_requests.append(self.__clone_request(req_object, title, run_the_matrix_conf, priority))
+
+                # if request don't belong to other batches then no cloning
+                elif len(req_object.batches) == 0 or \
+                        (len(req_object.batches) == 1 and req_object.batches[0].id == batch.id):
+                    req_object.run_the_matrix_conf = run_the_matrix_conf
+                    req_object.priority = priority
+                    new_requests.append(req_object)
+
+                else:
+                    new_requests.append(self.__clone_request(req_object, title, run_the_matrix_conf, priority))
+
+            batch.requests = new_requests
 
             batch.run_the_matrix_conf = run_the_matrix_conf
             batch.priority = priority
@@ -168,16 +197,25 @@ class BatchesDao(object):
         cloned = []
         for request in requests:
             req = self.requests_dao.get(request["id"])
-            new_label = "%s_%s_%s" % (
-                req.label, title, datetime.now().strftime("%d-%m-%Y_%H:%M")
-            )
-            cloned_req = self.requests_dao.clone(req, new_label, run_the_matrix_conf, priority)
+            cloned_req = self.__clone_request(req, title, run_the_matrix_conf, priority)
             cloned.append(cloned_req)
         return cloned
 
+    def __clone_request(self, request, title, run_the_matrix_conf, priority):
+        new_label = self.__resolve_request_label(request, title)
+        cloned_req = self.requests_dao.clone(request, new_label, run_the_matrix_conf, priority)
+        return cloned_req
+
+    def __resolve_request_label(self, old_request, batch_title):
+        """ Method cloned request label
+        """
+        ancestor = self.requests_dao.get_ancestor(old_request)
+        return "%s_%s_%s" % (
+            ancestor.label, batch_title, datetime.now().strftime("%d-%m-%Y_%H:%M")
+        )
+
 
 class StepsDao(object):
-
     def __init__(self):
         self.blobs_dao = PredefinedBlobsDao()
 
@@ -265,7 +303,6 @@ class StepsDao(object):
 
 
 class PredefinedBlobsDao(object):
-
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
         if not creation_date:
             creation_date = datetime.now()

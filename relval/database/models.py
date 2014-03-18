@@ -43,7 +43,7 @@ class Batches(db.Model):
     requests = db.relationship(
         'Requests',
         secondary=requests_batches_association,
-        backref=db.backref("batches", lazy="dynamic"))
+        backref=db.backref("batches"))
 
     #TODO: add __repr__
 
@@ -86,6 +86,9 @@ class Requests(db.Model):
     run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
     updated = db.Column("updated", db.DateTime)
     immutable = db.Column("immutable", db.Boolean, default=False)
+
+    ancestor_request_id = db.Column("ancestor_request_id", db.Integer, db.ForeignKey("requests.id"), nullable=True)
+    ancestor_request = db.relationship("Requests", remote_side=[id])
 
     user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=True)
 
