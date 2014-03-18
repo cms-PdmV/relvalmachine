@@ -37,8 +37,8 @@ class Batches(db.Model):
     title = db.Column("title", db.String(256))
     description = db.Column("description", db.String(2048))
     immutable = db.Column("immutable", db.Boolean, default=False)
-    run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048))
-    priority = db.Column("priority", db.Integer, default=1)
+    run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048), nullable=True, default=None)
+    priority = db.Column("priority", db.Integer, nullable=True, default=None)
 
     requests = db.relationship(
         'Requests',
@@ -140,8 +140,6 @@ class Steps(db.Model):
     data_set = db.Column("data_set", db.String(1024))
     immutable = db.Column("immutable", db.Boolean, default=False)
     type = db.Column("type", db.Enum(*StepType.types()))
-
-    request_id = db.Column("request_id", db.Integer, db.ForeignKey("requests.id"), nullable=True)
 
     data_step = db.relationship("DataStep", uselist=False, backref="step")
     parameters = db.relationship("Parameters", backref="step")

@@ -94,8 +94,8 @@ var BaseBatchEditWithPreloadCtrl = function($scope, $modal, $rootScope, $routePa
         $scope.currentItem.immutable = batch.immutable;
         $scope.currentItem.description = batch.description;
         $scope.currentItem.run_the_matrix_conf = batch.run_the_matrix_conf;
-        $scope.currentItem.priority = batch.priority;
         $scope.currentItem.requests = batch.requests;
+        $scope.currentItem.priority = (batch.priority == 0) ? undefined : batch.priority;
     });
 }
 
