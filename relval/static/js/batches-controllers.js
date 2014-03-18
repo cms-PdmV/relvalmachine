@@ -169,7 +169,7 @@ relvalControllers.controller('EditBatchCtrl', ['$scope', '$modal', '$rootScope',
         $scope.submit = function() {
             if ($scope.batchForm.$valid) {
                 var batch = constructBatch($scope, Batches);
-                batch.$update(function() {
+                batch.$update({batch_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update batch."});

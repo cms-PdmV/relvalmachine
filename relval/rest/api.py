@@ -281,3 +281,8 @@ class BatchApi(Resource):
         batch = self.dao.get(batch_id)
         batch.requests
         return batch
+
+    def put(self, batch_id):
+        data = convert_keys_to_string(request.json)
+        self.dao.update(batch_id, **data)
+

@@ -124,15 +124,28 @@ class BatchesDao(object):
 
         # if run the matrix conf or priority are defined then we clone all requests
         if run_the_matrix_conf or priority:
-            print "should clone all requests"
-            batch.requests = []
-            for request in requests:
-                req = self.requests_dao.get(request["id"])
-                new_label = "%s_%s_%s" % (
-                    req.label, title, datetime.now().strftime("%d-%m-%Y_%H:%M")
-                )
-                cloned_req = self.requests_dao.clone(req, new_label, run_the_matrix_conf, priority)
-                batch.requests.append(cloned_req)
+            batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
+        else:
+            batch.requests = [
+                self.requests_dao.get(request["id"]) for request in requests
+            ]
+        db.session.add(batch)
+        db.session.commit()
+        return batch
+
+    def update(self, id, title="", description="", immutable=False, run_the_matrix_conf=None,
+               priority=None, requests=[]):
+        batch = self.get(id)
+        batch.title = title
+        batch.description = description
+        batch.immutable = immutable
+
+        if batch.run_the_matrix_conf != run_the_matrix_conf or \
+                batch.priority != priority:
+            batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
+
+            batch.run_the_matrix_conf = run_the_matrix_conf
+            batch.priority = priority
         else:
             batch.requests = [
                 self.requests_dao.get(request["id"]) for request in requests
@@ -150,6 +163,17 @@ class BatchesDao(object):
         return Batches.query \
             .filter(Batches.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
+
+    def __clone_requests(self, requests, title, run_the_matrix_conf, priority):
+        cloned = []
+        for request in requests:
+            req = self.requests_dao.get(request["id"])
+            new_label = "%s_%s_%s" % (
+                req.label, title, datetime.now().strftime("%d-%m-%Y_%H:%M")
+            )
+            cloned_req = self.requests_dao.clone(req, new_label, run_the_matrix_conf, priority)
+            cloned.append(cloned_req)
+        return cloned
 
 
 class StepsDao(object):

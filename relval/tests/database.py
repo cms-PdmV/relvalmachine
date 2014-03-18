@@ -186,6 +186,41 @@ class BatchesDaoTest(BaseTestsCase):
         self.dao.add(title="test-title", description="desc", immutable=False,
                      run_the_matrix_conf=run_the_matrix, requests=requests)
 
+    def test_blob_update(self):
+        utils.prepare_batch(requests_count=2)
+        id = Batches.query.one().id
+
+        new_title = "new-blob-title"
+        utils.prepare_request()
+        requests = [{"id": req.id} for req in Requests.query.all()]
+
+        self.dao.update(id=id, title=new_title, requests=requests)
+
+        self.assertModelCount(Batches, 1)
+        self.assertModelCount(Requests, 3)
+
+        new_batch = Batches.query.one()
+        self.assertEqual(new_batch.title, new_title)
+        self.assertEqual(len(new_batch.requests), 3)
+
+    def test_blob_update_with_request_clone(self):
+        utils.prepare_batch(requests_count=2)
+        id = Batches.query.one().id
+
+        new_run_the_matrix = "--test"
+        requests = [{"id": req.id} for req in Requests.query.all()]
+
+        self.dao.update(id=id, title="new-title", run_the_matrix_conf=new_run_the_matrix,
+                        requests=requests)
+
+        self.assertModelCount(Batches, 1)
+        self.assertModelCount(Requests, 4)  # 2 old and two cloned
+        new_batch = Batches.query.one()
+        self.assertEqual(len(new_batch.requests), 2)
+        for req in new_batch.requests:
+            self.assertEqual(req.run_the_matrix_conf, "--test")
+            self.assertEqual(req.priority, None)
+
 
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
