@@ -23,6 +23,8 @@ class BaseValidationDao(object):
         self.entity = entity
 
     def validate_distinct_value(self, value_to_validate, column):
+        if not value_to_validate:
+            return False
         return self.entity.query.filter(column == value_to_validate).count() == 0
 
     def validate_distinct_title(self, title_to_validate):
@@ -129,8 +131,10 @@ class RequestsDao(BaseValidationDao):
                         events=req.events, priority=priority_to_set, ancestor_request=ancestor, steps=steps)
 
 
-class BatchesDao(object):
+class BatchesDao(BaseValidationDao):
+
     def __init__(self):
+        BaseValidationDao.__init__(self, Batches)
         self.requests_dao = RequestsDao()
 
     def add(self, **kwargs):
@@ -318,7 +322,11 @@ class StepsDao(BaseValidationDao):
         return None
 
 
-class PredefinedBlobsDao(object):
+class PredefinedBlobsDao(BaseValidationDao):
+
+    def __init__(self):
+        BaseValidationDao.__init__(self, PredefinedBlob)
+
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
         if not creation_date:
             creation_date = datetime.now()

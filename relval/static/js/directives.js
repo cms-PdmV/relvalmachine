@@ -64,6 +64,9 @@ relvalDirectives.directive('proxyValidity', function() {
 function AbstractValidationDirective($http, url, validity) {
     return {
         validateCall: function(ctrl, value) {
+            if (!value) {
+                ctrl.$setValidity(validity, false);
+            }
             $http({
                 method: 'POST',
                 url: url,
@@ -71,7 +74,7 @@ function AbstractValidationDirective($http, url, validity) {
             }).success(function(data) {
                 ctrl.$setValidity(validity, data.valid);
 
-            }).error(function(){
+            }).error(function() {
                 ctrl.$setValidity(validity, false);
             })
         },

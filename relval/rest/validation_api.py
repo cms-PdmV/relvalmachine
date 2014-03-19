@@ -1,5 +1,5 @@
 from functools import wraps
-from relval.database.dao import StepsDao, RequestsDao
+from relval.database.dao import StepsDao, RequestsDao, PredefinedBlobsDao, BatchesDao
 from relval.rest.utils import convert_keys_to_string
 
 __author__ = "Zygimantas Gatelis"
@@ -48,5 +48,32 @@ class RequestsValidationApi(Resource):
         result = False
         if field == "label":
             result = self.dao.validate_distinct_label(request.json["value"])
+
+        return result
+
+
+class BlobsValidationApi(Resource):
+
+    def __init__(self):
+        self.dao = PredefinedBlobsDao()
+
+    @validation
+    def post(self, field):
+        result = False
+        if field == "title":
+            result = self.dao.validate_distinct_title(request.json["value"])
+
+        return result
+
+class BatchesValidationApi(Resource):
+
+    def __init__(self):
+        self.dao = BatchesDao()
+
+    @validation
+    def post(self, field):
+        result = False
+        if field == "title":
+            result = self.dao.validate_distinct_title(request.json["value"])
 
         return result
