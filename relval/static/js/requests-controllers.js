@@ -42,6 +42,7 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
 }]);
 
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
+    angular.extend(this, new BaseEditPageController($scope));
     $scope.addStep = function() {
         var modal = $modal.open({
             templateUrl: 'static/partials/modal/select-step.html',
@@ -100,7 +101,7 @@ var constructRequest = function(scope, Requests) {
 }
 
 var saveRequest = function(scope, rootScope, Requests, AlertsService) {
-    if (scope.requestForm.$valid) {
+    if (scope.mainForm.$valid) {
         var request = constructRequest(scope, Requests);
         request.$create(function() {
             rootScope.back();
@@ -191,7 +192,7 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
         $scope.saveRequest = function() {
             var request = constructRequest($scope, Requests);
             // PUT to update step
-            if ($scope.requestForm.$valid) {
+            if ($scope.mainForm.$valid) {
                 request.$update({request_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {

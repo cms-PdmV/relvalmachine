@@ -37,7 +37,7 @@
     <th></th>
     </thead>
     <tbody>
-    <tr ng-repeat="request in items | filter: {label: searchText} | orderBy:sort.column:sort.descending">
+    <tr ng-repeat="request in items | filter: {label: search.searchText} | orderBy:sort.column:sort.descending">
       <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
       <td>{{request.label}}</td>
       <td>{{request.type}}</td>

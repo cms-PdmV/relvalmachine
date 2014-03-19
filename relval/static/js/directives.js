@@ -61,7 +61,7 @@ relvalDirectives.directive('proxyValidity', function() {
     };
 });
 
-relvalDirectives.directive('titleValidation',['$http', function($http) {
+function AbstractValidationDirective($http, url, validity) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -69,15 +69,25 @@ relvalDirectives.directive('titleValidation',['$http', function($http) {
                 ctrl.$parsers.unshift(function(value) {
                     $http({
                         method: 'POST',
-                        url: '/api/validate/step/title',
+                        url: url,
                         data: {value: value}
-                    }).success(function(data, status, header, cfg) {
-                        ctrl.$setValidity('unique', data.valid);
-                    }).error(function(data){
-                        ctrl.$setValidity('unique', false);
+                    }).success(function(data) {
+                        ctrl.$setValidity(validity, data.valid);
+                    }).error(function(){
+                        ctrl.$setValidity(validity, false);
                     })
                     return value;
                 });
         }
     }
+}
+
+relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
+    return angular.extend(this,
+        new AbstractValidationDirective($http, "/api/validate/step/title", "unique"));
+}]);
+
+relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
+    return angular.extend(this,
+        new AbstractValidationDirective($http, "/api/validate/request/label", "unique"));
 }]);

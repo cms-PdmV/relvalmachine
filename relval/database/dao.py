@@ -44,8 +44,9 @@ class UsersDao(object):
         db.session.commit()
 
 
-class RequestsDao(object):
+class RequestsDao(BaseValidationDao):
     def __init__(self):
+        BaseValidationDao.__init__(self, Requests)
         self.steps_dao = StepsDao()
 
     def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
@@ -95,6 +96,9 @@ class RequestsDao(object):
 
     def get(self, id):
         return Requests.query.get(id)
+
+    def validate_distinct_label(self, label_to_validate):
+        return self.validate_distinct_value(label_to_validate, Requests.label)
 
     def search_all(self, query, page_num, items_per_page):
         return Requests.query \

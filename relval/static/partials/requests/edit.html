@@ -1,12 +1,20 @@
 <div class="container">
   <!-- Form start -->
-  <form class="form-horizontal" role="form" name="requestForm">
-    <div class="form-group">
+  <form class="form-horizontal" role="form" name="mainForm">
+    <div class="form-group" ng-class="{'has-error': isTitleError()}">
       <label for="requestLabel" class="col-sm-1 control-label">Label</label>
 
       <div class="col-sm-9">
-        <input ng-model="currentItem.label" type="text" class="form-control" id="requestLabel" placeholder="Label">
+        <input ng-model="currentItem.label" type="text" class="form-control" id="requestLabel"
+               placeholder="Label" name="title" required request-label-validation>
+        <span class="help-block" ng-show="isTitleEmpty()">
+          Label field is required
+        </span>
+        <span class="help-block" ng-show="isTitleUnique()">
+          Label field must be unique. Change label.
+        </span>
       </div>
+
     </div>
 
     <div class="form-group">
@@ -78,7 +86,7 @@
         <input type="number" ng-model="currentItem.events" class="form-control" id="eventsInput"
                name="events" placeholder="Number of events" proxy-validity/>
 
-        <div class="error" ng-show="requestForm.events.$invalid">
+        <div class="error" ng-show="mainForm.events.$invalid">
           <small class="error">Events must me natural number</small>
         </div>
       </div>
@@ -87,7 +95,7 @@
         <input type="number" ng-model="currentItem.priority" class="form-control" id="priorityInput"
                name="priority" placeholder="Priority" min="1" max="10" proxy-validity/>
 
-        <div class="error" ng-show="requestForm.priority.$invalid">
+        <div class="error" ng-show="mainForm.priority.$invalid">
           <small class="error">Priority must me natural number from 1 to 10</small>
         </div>
       </div>
