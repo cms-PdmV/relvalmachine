@@ -48,7 +48,7 @@ html, body {
     min-width: 400px;
 }
 
-input.ng-invalid {
+input.ng-invalid.ng-dirty {
   border: 1px solid red;
 }
 

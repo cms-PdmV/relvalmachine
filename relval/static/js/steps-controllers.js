@@ -36,6 +36,8 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
 }]);
 
 var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
+    angular.extend(this, new BaseEditPageController($scope));
+
     $scope.showAdvancedDataStepParams = false;
 
     $scope.isActiveForm = function(type) {
@@ -149,10 +151,11 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentItem.dataSet = "";
         $scope.currentItem.dataStep = {};
 
-        $scope.saveStep = function() {
+        $scope.submit = function() {
+            $scope.submited = true;
             var step = constructStep($scope, Steps);
             // POST to create step
-            if ($scope.stepForm.$valid) {
+            if ($scope.mainForm.$valid) {
                 step.$create(function() {
                     $rootScope.back();
                 }, function() {
@@ -171,10 +174,11 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
 
         $scope.actionName = "Clone";
 
-        $scope.saveStep = function() {
+        $scope.submit = function() {
+            $scope.submited = true;
             var step = constructStep($scope, Steps);
             // POST to create step
-            if ($scope.stepForm.$valid) {
+            if ($scope.mainForm.$valid) {
                 step.$create(function() {
                     $rootScope.back();
                 }, function() {
@@ -194,10 +198,11 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
 
         $scope.actionName = "Update";
 
-        $scope.saveStep = function() {
+        $scope.submit = function() {
+            $scope.submited = true;
             var step = constructStep($scope, Steps);
             // PUT to update step
-            if ($scope.stepForm.$valid) {
+            if ($scope.mainForm.$valid) {
                 step.$update({step_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {

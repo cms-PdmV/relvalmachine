@@ -1,11 +1,18 @@
 <div class="container">
   <!-- Form start -->
-  <form class="form-horizontal" role="form" name="stepForm" >
-    <div class="form-group">
+  <form class="form-horizontal" role="form" name="mainForm" novalidate>
+    <div class="form-group" ng-class="{'has-error': isTitleError()}">
       <label for="stepTitle" class="col-sm-1 control-label">Title</label>
 
       <div class="col-sm-9">
-        <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
+        <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle"
+               placeholder="Title" name="title" required title-validation>
+        <span class="help-block" ng-show="isTitleEmpty()">
+          Title field is required
+        </span>
+        <span class="help-block" ng-show="isTitleUnique()">
+          Title field must be unique. Change title.
+        </span>
       </div>
     </div>
 
@@ -88,7 +95,8 @@
             <label for="filesInput">Files</label>
             <input type="number" ng-model="currentItem.dataStep.files" class="form-control"
                    id="filesInput" name="files" placeholder="Files" proxy-validity/>
-            <div class="error" ng-show="stepForm.files.$invalid">
+
+            <div class="error" ng-show="mainForm.files.$invalid">
               <small class="error">Files must me natural number</small>
             </div>
           </div>
@@ -96,7 +104,8 @@
             <label for="eventsInput">Events</label>
             <input type="number" ng-model="currentItem.dataStep.events" class="form-control" id="eventsInput"
                    name="events" placeholder="Events" proxy-validity/>
-            <div class="error" ng-show="stepForm.events.$invalid">
+
+            <div class="error" ng-show="mainForm.events.$invalid">
               <small class="error">Events must me natural number</small>
             </div>
           </div>
@@ -104,7 +113,8 @@
             <label for="splitInput">Split</label>
             <input type="number" ng-model="currentItem.dataStep.split" class="form-control" id="splitInput"
                    name="split" placeholder="Split" proxy-validity/>
-            <div class="error" ng-show="stepForm.split.$invalid">
+
+            <div class="error" ng-show="mainForm.split.$invalid">
               <small class="error">Split must me natural number</small>
             </div>
           </div>
@@ -121,7 +131,7 @@
 
     <div id="step-buttons" class="col-sm-4 pull-right">
       <button ng-click="discard()" type="button" class="btn btn-danger">Discard</button>
-      <button ng-click="saveStep()" type="button" class="btn btn-success">{{actionName}}</button>
+      <button ng-click="submit()" type="button" class="btn btn-success">{{actionName}}</button>
     </div>
 
   </form>

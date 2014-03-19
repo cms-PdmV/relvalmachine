@@ -60,3 +60,24 @@ relvalDirectives.directive('proxyValidity', function() {
       }
     };
 });
+
+relvalDirectives.directive('titleValidation',['$http', function($http) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attrs, ctrl) {
+                ctrl.$parsers.unshift(function(value) {
+                    $http({
+                        method: 'POST',
+                        url: '/api/validate/step',
+                        data: {value: value}
+                    }).success(function(data, status, header, cfg) {
+                        ctrl.$setValidity('unique', data.valid);
+                    }).error(function(data){
+                        ctrl.$setValidity('unique', false);
+                    })
+                    return value;
+                });
+        }
+    }
+}]);

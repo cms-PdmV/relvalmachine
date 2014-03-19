@@ -86,3 +86,21 @@ function BaseViewPageController($scope, Resource, AlertsService, SearchService) 
         });
     }
 }
+
+// this controller provides basic functionality for edit pages
+function BaseEditPageController($scope) {
+    $scope.submited = false;
+
+    $scope.isTitleError = function() {
+        return ($scope.mainForm.title.$dirty || $scope.submited) &&
+                $scope.mainForm.title.$invalid;
+    }
+
+    $scope.isTitleEmpty = function() {
+        return $scope.isTitleError() && $scope.mainForm.title.$error.required;
+    }
+
+    $scope.isTitleUnique = function() {
+        return $scope.isTitleError() && $scope.mainForm.title.$error.unique;
+    }
+}
