@@ -7,7 +7,7 @@ from relval.rest.api import \
     UsersListApi, PredefinedBlobsApi, PredefinedBlobApi,\
     StepsApi, StepApi, RequestsApi, \
     RequestApi, BatchesApi, BatchApi
-
+from relval.rest.validation_api import StepsValidationApi
 from flask.ext.restful import Api
 
 
@@ -21,6 +21,9 @@ restful_api.add_resource(RequestsApi, "/api/requests")
 restful_api.add_resource(RequestApi, "/api/requests/<int:request_id>")
 restful_api.add_resource(BatchesApi, "/api/batches")
 restful_api.add_resource(BatchApi, "/api/batches/<int:batch_id>")
+
+# validation
+restful_api.add_resource(StepsValidationApi, "/api/validate/step/<field>")
 
 
 

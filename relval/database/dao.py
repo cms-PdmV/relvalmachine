@@ -17,6 +17,17 @@ from relval.database.models import Users, Requests, PredefinedBlob, Parameters, 
 from datetime import datetime
 
 
+class BaseValidationDao(object):
+
+    def __init__(self, entity):
+        self.entity = entity
+
+    def validate_distinct_value(self, value_to_validate, column):
+        return self.entity.query.filter(column == value_to_validate).count() == 0
+
+    def validate_distinct_title(self, title_to_validate):
+        return self.validate_distinct_value(title_to_validate, self.entity.title)
+
 class UsersDao(object):
     def get(self, id):
         user = Users.query.get(id)
@@ -215,8 +226,9 @@ class BatchesDao(object):
         )
 
 
-class StepsDao(object):
+class StepsDao(BaseValidationDao):
     def __init__(self):
+        BaseValidationDao.__init__(self, Steps)
         self.blobs_dao = PredefinedBlobsDao()
 
     def add(self, title="", immutable=False, data_set="",

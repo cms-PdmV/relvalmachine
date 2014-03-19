@@ -8,27 +8,12 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from flask.ext.restful import Resource, marshal_with, reqparse
 from flask import request
-import collections
 
 from relval import app
 from relval.database.models import Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao, RequestsDao, BatchesDao
+from relval.rest.utils import convert_keys_to_string
 from relval.rest import marshallers
-
-
-def convert_keys_to_string(dictionary):
-    """ Recursively converts dictionary keys to strings.
-        Utility to help deal with unicode keys in dictionaries created from json requests.
-        In order to pass dict to function as **kwarg we should transform key/value to str.
-    """
-    if isinstance(dictionary, basestring):
-        return str(dictionary)
-    elif isinstance(dictionary, collections.Mapping):
-        return dict(map(convert_keys_to_string, dictionary.iteritems()))
-    elif isinstance(dictionary, collections.Iterable):
-        return type(dictionary)(map(convert_keys_to_string, dictionary))
-    else:
-        return dictionary
 
 
 class UsersListApi(Resource):
@@ -111,7 +96,6 @@ class PredefinedBlobsApi(Resource, ListApi):
 
     def __init__(self):
         ListApi.__init__(self)
-        super(ListApi, self).__init__()
         self.dao = PredefinedBlobsDao()
         self.default_items_per_page = app.config['BLOBS_PER_PAGE']
 
@@ -290,4 +274,5 @@ class BatchApi(Resource):
     def put(self, batch_id):
         data = convert_keys_to_string(request.json)
         self.dao.update(batch_id, **data)
+
 

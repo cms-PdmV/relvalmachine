@@ -69,7 +69,7 @@ relvalDirectives.directive('titleValidation',['$http', function($http) {
                 ctrl.$parsers.unshift(function(value) {
                     $http({
                         method: 'POST',
-                        url: '/api/validate/step',
+                        url: '/api/validate/step/title',
                         data: {value: value}
                     }).success(function(data, status, header, cfg) {
                         ctrl.$setValidity('unique', data.valid);
