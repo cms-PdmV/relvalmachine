@@ -134,6 +134,7 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.currentItem.type = "MC";
 
         $scope.saveRequest = function() {
+            $scope.submited = true;
             saveRequest($scope, $rootScope, Requests, AlertsService);
         }
 
@@ -174,6 +175,7 @@ relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScop
         $scope.actionName = "Clone";
 
         $scope.saveRequest = function() {
+            $scope.submited = true;
             saveRequest($scope, $rootScope, Requests, AlertsService);
         }
     }]);
@@ -190,6 +192,7 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
         $scope.actionName = "Update";
 
         $scope.saveRequest = function() {
+            $scope.submited = true;
             var request = constructRequest($scope, Requests);
             // PUT to update step
             if ($scope.mainForm.$valid) {

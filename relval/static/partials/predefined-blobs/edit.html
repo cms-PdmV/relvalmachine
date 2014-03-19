@@ -1,12 +1,20 @@
 <div class="container">
   <!-- Form start -->
-  <form class="form-horizontal" role="form">
-    <div class="form-group">
-      <label for="stepTitle" class="col-sm-1 control-label">Title</label>
+  <form class="form-horizontal" role="form" name="mainForm">
+    <div class="form-group" ng-class="{'has-error': isTitleError()}">
+      <label for="blobTitle" class="col-sm-1 control-label">Title</label>
 
       <div class="col-sm-9">
-        <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle" placeholder="Title">
+        <input ng-model="currentItem.title" type="text" class="form-control" id="blobTitle"
+               placeholder="Title" name="title" required blob-title-validation>
+        <span class="help-block" ng-show="isTitleEmpty()">
+          Title field is required
+        </span>
+        <span class="help-block" ng-show="isTitleUnique()">
+          Title field must be unique. Change title.
+        </span>
       </div>
+
     </div>
 
     <div ng-include="'static/partials/reusable/parameters-form.html'"></div>

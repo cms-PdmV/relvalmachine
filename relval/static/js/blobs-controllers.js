@@ -53,6 +53,7 @@ relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlo
 ]);
 
 function BaseBlobEditPageController($scope, $rootScope) {
+    angular.extend(this, new BaseEditPageController($scope));
     $scope.currentItem = {};
     $scope.currentItem.parameters = [{
         "flag": "",
@@ -94,18 +95,23 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'Predefined
         $scope.actionName = "Save";
 
         $scope.saveStep = function() {
+            $scope.submited = true;
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
                 parameters: $scope.currentItem.parameters
             });
 
-            // POST to create new blob
-            blob.$create(function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError("Server Error. Failed to create new predefined blob.");
-            });
+            if ($scope.mainForm.$valid) {
+                // POST to create new blob
+                blob.$create(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError({msg: "Server Error. Failed to create new predefined blob."});
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});
+            }
         };
     }
 ]);
@@ -116,18 +122,24 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
             $scope, $rootScope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Update";
         $scope.saveStep = function() {
+            $scope.submited = true;
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
                 parameters: $scope.currentItem.parameters
             });
 
-            // PUT to update blob
-            blob.$update({blob_id: $scope.id}, function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError("Server Error. Failed to update predefined blob.");
-            });
+            if ($scope.mainForm.$valid) {
+                // PUT to update blob
+                blob.$update({blob_id: $scope.id}, function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError("Server Error. Failed to update predefined blob.");
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});
+            }
+
         };
     }]);
 
@@ -138,18 +150,25 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
         $scope.actionName = "Clone";
 
         $scope.saveStep = function() {
+            $scope.submited = true;
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
                 parameters: $scope.currentItem.parameters
             });
 
-            // POST to create new blob
-            blob.$create(function() {
-                $rootScope.back();
-            }, function() {
-                AlertsService.addError("Server Error. Failed to update predefined blob.");
-            });
+            if ($scope.mainForm.$valid) {
+                $scope.submited = true;
+                // POST to create new blob
+                blob.$create(function() {
+                    $rootScope.back();
+                }, function() {
+                    AlertsService.addError("Server Error. Failed to update predefined blob.");
+                });
+            } else {
+                AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});
+            }
+
         };
     }]);
 

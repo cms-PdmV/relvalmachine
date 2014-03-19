@@ -104,5 +104,28 @@ relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
         });
     }
     return validation;
+}]);
 
+relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
+    var validation = angular.extend(this,
+        new AbstractValidationDirective($http, "/api/validate/blob/title", "unique"));
+    validation.link =  function(scope, element, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(value) {
+            this.validateCall(ctrl, value)
+            return value;
+        });
+    }
+    return validation;
+}]);
+
+relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
+    var validation = angular.extend(this,
+        new AbstractValidationDirective($http, "/api/validate/batch/title", "unique"));
+    validation.link =  function(scope, element, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(value) {
+            this.validateCall(ctrl, value)
+            return value;
+        });
+    }
+    return validation;
 }]);

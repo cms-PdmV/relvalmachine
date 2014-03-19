@@ -35,7 +35,7 @@
     <th></th>
     </thead>
     <tbody>
-    <tr ng-repeat="batch in items | filter: {title: searchText} | orderBy:sort.column:sort.descending">
+    <tr ng-repeat="batch in items | filter: {title: search.searchText} | orderBy:sort.column:sort.descending">
       <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
       <td>{{batch.title}}</td>
       <td>{{batch.requests}}</td>

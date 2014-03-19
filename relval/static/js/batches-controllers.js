@@ -43,6 +43,7 @@ var constructBatch = function(scope, Batches) {
 }
 
 var BaseBatchEditPageCtrl = function($scope, $modal, $rootScope) {
+    angular.extend(this, new BaseEditPageController($scope));
     $scope.addRequest = function() {
         var modal = $modal.open({
             templateUrl: 'static/partials/modal/select-request.html',
@@ -117,7 +118,8 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.currentItem.priority = undefined;
 
         $scope.submit = function() {
-            if ($scope.batchForm.$valid) {
+            $scope.submited = true;
+            if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$save({clone: false},function() {
                     $rootScope.back();
@@ -142,7 +144,8 @@ relvalControllers.controller('CloneBatchCtrl', ['$scope', '$modal', '$rootScope'
 
         $scope.actionName = "Clone";
         $scope.submit = function() {
-            if ($scope.batchForm.$valid) {
+            $scope.submited = true;
+            if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$save({clone: true},function() {
                     $rootScope.back();
@@ -167,7 +170,8 @@ relvalControllers.controller('EditBatchCtrl', ['$scope', '$modal', '$rootScope',
 
         $scope.actionName = "Update";
         $scope.submit = function() {
-            if ($scope.batchForm.$valid) {
+            $scope.submited = true;
+            if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$update({batch_id: $scope.id}, function() {
                     $rootScope.back();
