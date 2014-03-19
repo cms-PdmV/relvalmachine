@@ -63,31 +63,46 @@ relvalDirectives.directive('proxyValidity', function() {
 
 function AbstractValidationDirective($http, url, validity) {
     return {
+        validateCall: function(ctrl, value) {
+            $http({
+                method: 'POST',
+                url: url,
+                data: {value: value}
+            }).success(function(data) {
+                ctrl.$setValidity(validity, data.valid);
+
+            }).error(function(){
+                ctrl.$setValidity(validity, false);
+            })
+        },
         restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, element, attrs, ctrl) {
-                ctrl.$parsers.unshift(function(value) {
-                    $http({
-                        method: 'POST',
-                        url: url,
-                        data: {value: value}
-                    }).success(function(data) {
-                        ctrl.$setValidity(validity, data.valid);
-                    }).error(function(){
-                        ctrl.$setValidity(validity, false);
-                    })
-                    return value;
-                });
-        }
+        require: 'ngModel'
     }
 }
 
 relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
-    return angular.extend(this,
+    var validation = angular.extend(this,
         new AbstractValidationDirective($http, "/api/validate/step/title", "unique"));
+    // cannot move link to abstract validation cause it somehow cashes function params
+    // and without page reload always use same url for validation
+    validation.link =  function(scope, element, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(value) {
+            this.validateCall(ctrl, value)
+            return value;
+        });
+    }
+    return validation;
 }]);
 
 relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
-    return angular.extend(this,
+    var validation = angular.extend(this,
         new AbstractValidationDirective($http, "/api/validate/request/label", "unique"));
+    validation.link =  function(scope, element, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(value) {
+            this.validateCall(ctrl, value)
+            return value;
+        });
+    }
+    return validation;
+
 }]);
