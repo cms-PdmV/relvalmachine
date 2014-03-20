@@ -53,6 +53,8 @@ class RequestsDao(BaseValidationDao):
 
     def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
             run_the_matrix_conf=None, events=None, priority=1, ancestor_request=None, steps=[]):
+        if not self.validate_distinct_label(label):
+            raise Exception("Label must be unique")
         request = Requests(
             label=label,
             description=description,
@@ -145,6 +147,8 @@ class BatchesDao(BaseValidationDao):
 
     def insert_batch(self, title="", description="", immutable=False, run_the_matrix_conf=None,
                      priority=None, requests=[], is_cloning=False):
+        if not self.validate_distinct_title(title):
+            raise Exception("Title must be unique")
         batch = Batches(
             title=title,
             description=description,
@@ -241,6 +245,8 @@ class StepsDao(BaseValidationDao):
 
     def add(self, title="", immutable=False, data_set="",
             type=StepType.Default, parameters=[], blobs=[], data_step={}):
+        if not self.validate_distinct_title(title):
+            raise Exception("Title must be unique")
         step = Steps(
             title=title,
             immutable=immutable,
@@ -328,6 +334,8 @@ class PredefinedBlobsDao(BaseValidationDao):
         BaseValidationDao.__init__(self, PredefinedBlob)
 
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
+        if not self.validate_distinct_title(title):
+            raise Exception("Title must be unique")
         if not creation_date:
             creation_date = datetime.now()
         predefined_blob = PredefinedBlob(
