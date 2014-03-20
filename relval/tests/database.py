@@ -11,7 +11,14 @@ from relval.tests import utils
 from relval.tests.base import BaseTestsCase
 from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao, BatchesDao
 from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep, Batches
+from datetime import datetime
 import re
+import mock
+
+
+class DateTimeMock(datetime):
+    def __new__(cls, *args, **kwargs):
+        return datetime.__new__(datetime, *args, **kwargs)
 
 
 class UsersDaoTests(BaseTestsCase):
@@ -58,8 +65,8 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertModelEmpty(Requests)
         self.assertModelEmpty(Steps)
 
-        utils.prepare_step()
-        utils.prepare_step()
+        utils.prepare_step(title="first")
+        utils.prepare_step(title="second")
         steps = [{"id": step.id} for step in Steps.query.all()]
 
         self.request_dao.add(label="test-title", description="desc", immutable=False, cmssw_release="7_0_0",
@@ -82,7 +89,7 @@ class RequestsDaoTests(BaseTestsCase):
         utils.prepare_request(label="label", description="desc", steps_count=2)
         id = Requests.query.one().id
 
-        utils.prepare_step()
+        utils.prepare_step(title="another")
         steps = [{"id": step.id} for step in Steps.query.all()]
 
         new_label = "new-req-label"
@@ -99,8 +106,8 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(len(new_request.steps), 3)
 
     def test_request_search(self):
-        utils.prepare_request(label="label")
-        utils.prepare_request(label="search-label")
+        utils.prepare_request(label="label", step_title="second")
+        utils.prepare_request(label="search-label", step_title="first")
 
         result = self.request_dao.search_all("search", 1, 10)
 
@@ -109,7 +116,7 @@ class RequestsDaoTests(BaseTestsCase):
 
     def test_request_paginated_fetch(self):
         for i in range(3):
-            utils.prepare_request(label="title%d" % i)
+            utils.prepare_request(label="title%d" % i, step_title="step%d" % i)
 
         result = self.request_dao.get_paginated(1, 1)
 
@@ -178,8 +185,8 @@ class BatchesDaoTest(BaseTestsCase):
             self.assertTrue("test-title" in req.label)
 
     def test_batch_clone(self):
-        utils.prepare_request()
-        utils.prepare_request()
+        utils.prepare_request(label="first", step_title="first")
+        utils.prepare_request(label="second", step_title="second")
         requests = [{"id": req.id} for req in Requests.query.all()]
 
         batch = self.dao.clone(title="test-title", immutable=False, requests=requests)
@@ -188,14 +195,12 @@ class BatchesDaoTest(BaseTestsCase):
         self.assertModelCount(Batches, 1)
         self.assertEqual(batch.requests[0].run_the_matrix_conf, "-i -all")
 
-
-
     def insert_batch(self, run_the_matrix=None,):
         self.assertModelEmpty(Batches)
         self.assertModelEmpty(Requests)
 
-        utils.prepare_request()
-        utils.prepare_request()
+        utils.prepare_request(label="test-label-1", step_title="step1")
+        utils.prepare_request(label="test-label-2", step_title="step2")
         requests = [{"id": req.id} for req in Requests.query.all()]
 
         return self.dao.add(title="test-title", description="desc", immutable=False,
@@ -251,17 +256,19 @@ class BatchesDaoTest(BaseTestsCase):
         new_batch = Batches.query.one()
         self.assertEqual(len(new_batch.requests), 1)
 
+    @mock.patch('datetime.datetime', DateTimeMock)
     def test_batch_update_with_request_that_belongs_to_multiple_batches(self):
+        DateTimeMock.now = classmethod(lambda cls: datetime(2010, 1, 1, 1, 1, 1))
+
         utils.prepare_batch()
         id = Batches.query.one().id
         requests = [{"id": req.id} for req in Requests.query.all()]
-        self.dao.add(title="test-title", immutable=False, requests=requests)
+        self.dao.add(title="new-title", immutable=False, requests=requests)
 
         self.assertModelCount(Batches, 2)
         self.assertModelCount(Requests, 1)
 
-        self.dao.update(id=id, title="new-title", run_the_matrix_conf="--test",
-                                requests=requests)
+        self.dao.update(id=id, title="new-test-title", run_the_matrix_conf="--test", requests=requests)
         batch = Batches.query.get(id)
 
         self.assertModelCount(Requests, 2)
@@ -280,7 +287,7 @@ class BatchesDaoTest(BaseTestsCase):
 
         self.assertEqual(second_batch.title, "second")
         # check second batch requests naming
-        regexp = re.compile(r"^test-label_second_\d{2}-\d{2}-\d{4}_\d{2}:\d{2}$")
+        regexp = re.compile(r"^test-label-\d_second_\d{2}-\d{2}-\d{4}_\d{2}:\d{2}$")
         for req in second_batch.requests:
             self.assertTrue(regexp.match(req.label))
             self.assertEqual(req.run_the_matrix_conf, "--test")
@@ -550,7 +557,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(result.items[0].title, "aa-search")
 
     def test_search_search_multiple_result(self):
-        utils.prepare_step()
+        utils.prepare_step(title="test-title")
         utils.prepare_step(title="search-aa-smt")
         utils.prepare_step(title="aa-search")
 

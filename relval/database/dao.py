@@ -54,7 +54,6 @@ class RequestsDao(BaseValidationDao):
 
     def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
             run_the_matrix_conf=None, events=None, priority=1, ancestor_request=None, steps=[]):
-        print label
         self.validate_distinct_label(label)
         request = Requests(
             label=label,

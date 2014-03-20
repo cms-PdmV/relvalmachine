@@ -43,10 +43,10 @@ def prepare_step(title=None, parameters_count=1, blobs_count=1,
 
 def prepare_request(label="test-label", description="desc", immutable=False,
                     cmssw_release="7_0_0", run_the_matrix_conf="-i -all",
-                    events=20, priority=3, type="mc", steps_count=1):
+                    events=20, priority=3, type="mc", steps_count=1, step_title="title"):
 
-    for _ in range(steps_count):
-        prepare_step()
+    for i in range(steps_count):
+        prepare_step(title="%s-%d" % (step_title, i))
     steps = [{"id": step.id} for step in Steps.query.all()]
 
     req = requests_dao.add(label=label, description=description, immutable=immutable,
@@ -59,8 +59,8 @@ def prepare_request(label="test-label", description="desc", immutable=False,
 def prepare_batch(title="test-title", description="desc", immutable=False,
                   run_the_matrix_conf=None, priority=None, requests_count=1):
 
-    for _ in range(requests_count):
-        prepare_request(run_the_matrix_conf=run_the_matrix_conf, priority=priority)
+    for i in range(requests_count):
+        prepare_request(label="label-%d" % i, run_the_matrix_conf=run_the_matrix_conf, priority=priority, step_title="step-%d" % i)
     requests = [{"id": request.id} for request in Steps.query.all()]
 
     batch = batches_dao.add(title=title, description=description, immutable=immutable,
