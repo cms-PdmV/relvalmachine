@@ -118,10 +118,10 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.currentItem.priority = undefined;
 
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
-                batch.$save({clone: false},function() {
+                batch.$save(function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to save batch."});
@@ -144,7 +144,7 @@ relvalControllers.controller('CloneBatchCtrl', ['$scope', '$modal', '$rootScope'
 
         $scope.actionName = "Clone";
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$save({clone: true},function() {
@@ -170,7 +170,7 @@ relvalControllers.controller('EditBatchCtrl', ['$scope', '$modal', '$rootScope',
 
         $scope.actionName = "Update";
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
                 batch.$update({batch_id: $scope.id}, function() {

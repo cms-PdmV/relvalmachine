@@ -66,17 +66,18 @@ function AbstractValidationDirective($http, url, validity) {
         validateCall: function(ctrl, value) {
             if (!value) {
                 ctrl.$setValidity(validity, false);
-            }
-            $http({
-                method: 'POST',
-                url: url,
-                data: {value: value}
-            }).success(function(data) {
-                ctrl.$setValidity(validity, data.valid);
+            } else {
+                $http({
+                    method: 'POST',
+                    url: url,
+                    data: {value: value}
+                }).success(function(data) {
+                    ctrl.$setValidity(validity, data.valid);
 
-            }).error(function() {
-                ctrl.$setValidity(validity, false);
-            })
+                }).error(function() {
+                    ctrl.$setValidity(validity, false);
+                })
+            }
         },
         restrict: 'A',
         require: 'ngModel'
@@ -90,6 +91,7 @@ relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
     // and without page reload always use same url for validation
     validation.link =  function(scope, element, attrs, ctrl) {
         ctrl.$parsers.unshift(function(value) {
+            console.log("validating")
             this.validateCall(ctrl, value)
             return value;
         });
@@ -117,6 +119,7 @@ relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
             this.validateCall(ctrl, value)
             return value;
         });
+        
     }
     return validation;
 }]);

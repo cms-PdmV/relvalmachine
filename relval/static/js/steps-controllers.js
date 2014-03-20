@@ -152,7 +152,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentItem.dataStep = {};
 
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.mainForm.$valid) {
@@ -175,7 +175,7 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
         $scope.actionName = "Clone";
 
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.mainForm.$valid) {
@@ -199,7 +199,7 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.actionName = "Update";
 
         $scope.submit = function() {
-            $scope.submited = true;
+            $scope.preSubmit();
             var step = constructStep($scope, Steps);
             // PUT to update step
             if ($scope.mainForm.$valid) {

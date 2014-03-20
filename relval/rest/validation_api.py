@@ -16,10 +16,16 @@ def validation(func):
         data = convert_keys_to_string(request.json)
         if not data or "value" not in data:
             return {"error": "Bad request"}, 400
+        try:
+            func(*args, **kwargs)
+        except Exception, e:
+            return jsonify(
+                valid=False,
+                msg=e.message
+            )
 
-        result = func(*args, **kwargs)
         return jsonify(
-            valid=result
+            valid=True
         )
 
     return validation_boilerplate
@@ -32,10 +38,8 @@ class StepsValidationApi(Resource):
 
     @validation
     def post(self, field):
-        result = False
         if field == "title":
-            result = self.dao.validate_distinct_title(request.json["value"])
-        return result
+            self.dao.validate_distinct_title(request.json["value"])
 
 
 class RequestsValidationApi(Resource):
@@ -45,11 +49,8 @@ class RequestsValidationApi(Resource):
 
     @validation
     def post(self, field):
-        result = False
         if field == "label":
-            result = self.dao.validate_distinct_label(request.json["value"])
-
-        return result
+            self.dao.validate_distinct_label(request.json["value"])
 
 
 class BlobsValidationApi(Resource):
@@ -59,11 +60,8 @@ class BlobsValidationApi(Resource):
 
     @validation
     def post(self, field):
-        result = False
         if field == "title":
-            result = self.dao.validate_distinct_title(request.json["value"])
-
-        return result
+            self.dao.validate_distinct_title(request.json["value"])
 
 class BatchesValidationApi(Resource):
 
@@ -72,8 +70,5 @@ class BatchesValidationApi(Resource):
 
     @validation
     def post(self, field):
-        result = False
         if field == "title":
-            result = self.dao.validate_distinct_title(request.json["value"])
-
-        return result
+            self.dao.validate_distinct_title(request.json["value"])

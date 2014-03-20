@@ -101,6 +101,7 @@ var constructRequest = function(scope, Requests) {
 }
 
 var saveRequest = function(scope, rootScope, Requests, AlertsService) {
+    scope.preSubmit();
     if (scope.mainForm.$valid) {
         var request = constructRequest(scope, Requests);
         request.$create(function() {
@@ -133,8 +134,7 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
         $scope.currentItem.description = "";
         $scope.currentItem.type = "MC";
 
-        $scope.saveRequest = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
             saveRequest($scope, $rootScope, Requests, AlertsService);
         }
 
@@ -174,8 +174,7 @@ relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScop
 
         $scope.actionName = "Clone";
 
-        $scope.saveRequest = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
             saveRequest($scope, $rootScope, Requests, AlertsService);
         }
     }]);
@@ -191,8 +190,8 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
         ));
         $scope.actionName = "Update";
 
-        $scope.saveRequest = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
+            $scope.preSubmit();
             var request = constructRequest($scope, Requests);
             // PUT to update step
             if ($scope.mainForm.$valid) {

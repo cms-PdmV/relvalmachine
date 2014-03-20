@@ -94,8 +94,8 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'Predefined
         angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
         $scope.actionName = "Save";
 
-        $scope.saveStep = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
+            $scope.preSubmit();
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
@@ -121,8 +121,8 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
         angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
             $scope, $rootScope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Update";
-        $scope.saveStep = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
+            $scope.preSubmit();
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
@@ -134,7 +134,7 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
                 blob.$update({blob_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
-                    AlertsService.addError("Server Error. Failed to update predefined blob.");
+                    AlertsService.addError({msg: "Server Error. Failed to update predefined blob."});
                 });
             } else {
                 AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});
@@ -149,8 +149,8 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
             $scope, $rootScope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Clone";
 
-        $scope.saveStep = function() {
-            $scope.submited = true;
+        $scope.submit = function() {
+            $scope.preSubmit();
             var blob = new PredefinedBlobs({
                 title: $scope.currentItem.title,
                 immutable: $scope.currentItem.immutable,
@@ -163,7 +163,7 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
                 blob.$create(function() {
                     $rootScope.back();
                 }, function() {
-                    AlertsService.addError("Server Error. Failed to update predefined blob.");
+                    AlertsService.addError({msg: "Server Error. Failed to update predefined blob."});
                 });
             } else {
                 AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});

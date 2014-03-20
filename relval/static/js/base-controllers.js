@@ -91,6 +91,15 @@ function BaseViewPageController($scope, Resource, AlertsService, SearchService) 
 function BaseEditPageController($scope) {
     $scope.submited = false;
 
+    $scope.preSubmit = function() {
+        $scope.submited = true;
+        $scope.setFieldDirty($scope.mainForm.title);
+    }
+
+    $scope.setFieldDirty = function(field) {
+        field.$setViewValue(field.$viewValue);
+    }
+
     $scope.isTitleError = function() {
         return ($scope.mainForm.title.$dirty || $scope.submited) &&
                 $scope.mainForm.title.$invalid;

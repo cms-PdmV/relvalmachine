@@ -24,11 +24,12 @@ class BaseValidationDao(object):
 
     def validate_distinct_value(self, value_to_validate, column):
         if not value_to_validate:
-            return False
-        return self.entity.query.filter(column == value_to_validate).count() == 0
+            raise Exception("Validation failed")
+        if not self.entity.query.filter(column == value_to_validate).count() == 0:
+            raise Exception("Validation failed")
 
     def validate_distinct_title(self, title_to_validate):
-        return self.validate_distinct_value(title_to_validate, self.entity.title)
+        self.validate_distinct_value(title_to_validate, self.entity.title)
 
 class UsersDao(object):
     def get(self, id):
@@ -53,8 +54,8 @@ class RequestsDao(BaseValidationDao):
 
     def add(self, label="", description="", immutable=False, type=None, cmssw_release=None,
             run_the_matrix_conf=None, events=None, priority=1, ancestor_request=None, steps=[]):
-        if not self.validate_distinct_label(label):
-            raise Exception("Label must be unique")
+        print label
+        self.validate_distinct_label(label)
         request = Requests(
             label=label,
             description=description,
@@ -80,6 +81,8 @@ class RequestsDao(BaseValidationDao):
     def update(self, id, label="", description="", immutable=False, type=None, cmssw_release=None,
                run_the_matrix_conf=None, events=None, priority=1, steps=[]):
         request = self.get(id)
+        if label != request.label:
+            self.validate_distinct_label(label)
         if label:
             request.label = label
         request.description = description
@@ -102,7 +105,7 @@ class RequestsDao(BaseValidationDao):
         return Requests.query.get(id)
 
     def validate_distinct_label(self, label_to_validate):
-        return self.validate_distinct_value(label_to_validate, Requests.label)
+        self.validate_distinct_value(label_to_validate, Requests.label)
 
     def search_all(self, query, page_num, items_per_page):
         return Requests.query \
@@ -147,8 +150,7 @@ class BatchesDao(BaseValidationDao):
 
     def insert_batch(self, title="", description="", immutable=False, run_the_matrix_conf=None,
                      priority=None, requests=[], is_cloning=False):
-        if not self.validate_distinct_title(title):
-            raise Exception("Title must be unique")
+        self.validate_distinct_title(title)
         batch = Batches(
             title=title,
             description=description,
@@ -156,7 +158,6 @@ class BatchesDao(BaseValidationDao):
             run_the_matrix_conf=run_the_matrix_conf,
             priority=priority
         )
-
         # if request is cloning or run the matrix conf or priority are defined then we clone all requests
         if is_cloning or run_the_matrix_conf or priority:
             batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
@@ -164,6 +165,7 @@ class BatchesDao(BaseValidationDao):
             batch.requests = [
                 self.requests_dao.get(request["id"]) for request in requests
             ]
+
         db.session.add(batch)
         db.session.commit()
         return batch
@@ -171,6 +173,8 @@ class BatchesDao(BaseValidationDao):
     def update(self, id, title="", description="", immutable=False, run_the_matrix_conf=None,
                priority=None, requests=[]):
         batch = self.get(id)
+        if title != batch.title:
+            self.validate_distinct_title(title)
         batch.title = title
         batch.description = description
         batch.immutable = immutable
@@ -245,8 +249,7 @@ class StepsDao(BaseValidationDao):
 
     def add(self, title="", immutable=False, data_set="",
             type=StepType.Default, parameters=[], blobs=[], data_step={}):
-        if not self.validate_distinct_title(title):
-            raise Exception("Title must be unique")
+        self.validate_distinct_title(title)
         step = Steps(
             title=title,
             immutable=immutable,
@@ -272,6 +275,8 @@ class StepsDao(BaseValidationDao):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")
+        if title != step.title:
+            self.validate_distinct_title(title)
         if title is not None:
             step.title = title
         step.immutable = immutable
@@ -334,8 +339,7 @@ class PredefinedBlobsDao(BaseValidationDao):
         BaseValidationDao.__init__(self, PredefinedBlob)
 
     def add(self, title, creation_date=None, immutable=False, parameters=[]):
-        if not self.validate_distinct_title(title):
-            raise Exception("Title must be unique")
+        self.validate_distinct_title(title)
         if not creation_date:
             creation_date = datetime.now()
         predefined_blob = PredefinedBlob(
@@ -345,6 +349,7 @@ class PredefinedBlobsDao(BaseValidationDao):
         predefined_blob.parameters = [
             Parameters(flag=param['flag'], value=param['value']) for param in parameters
         ]
+
         db.session.add(predefined_blob)
         db.session.commit()
 
@@ -365,10 +370,16 @@ class PredefinedBlobsDao(BaseValidationDao):
     def get(self, id):
         return PredefinedBlob.query.get(id)
 
+    def validate(self, entity):
+        if not self.validate_distinct_title(entity.title):
+            raise Exception("Title must be unique")
+
     def update(self, id, title=None, immutable=False, parameters=[]):
         blob = self.get(id)
         if blob.immutable:
             raise Exception("Cannot edit entity that is immutable.")
+        if title != blob.title:
+            self.validate_distinct_title(title)
         if title is not None:
             blob.title = title
         for parameter in blob.parameters:
