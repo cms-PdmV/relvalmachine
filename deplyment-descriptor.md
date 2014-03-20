@@ -26,7 +26,7 @@ cd into directory where you want to store virtualenv files, then run following c
     virtualenv relvalmachine-virtualenv
     source relvalmachine-virtualenv/bin/activate
 
-Now your virtualenv is activated, you can deactivate it using command: `deactivate`
+Now your virtualenv is activated, you can deactivate it using command: `deactivate` (but don't do that at this stage)
 
 ## Install Oracle drivers
 
@@ -44,7 +44,7 @@ Then run following commands to install downloaded packages:
     rpm -ivh oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
     rpm -ivh oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 
-Configure `oracle-instalntclient`
+Configure `oracle-instalntclient` (make sure you are using virtualenv we created before)
 
     echo /usr/lib/oracle/11.2/client64/lib/ > /etc/ld.so.conf.d/oracle.con
     ldconfig
@@ -54,7 +54,7 @@ Configure `oracle-instalntclient`
 
 Install `cx_Oracle` library from source. Download [`cx_Oracle` source code](http://cx-oracle.sourceforge.net/) (select Source Code only section)
 
-Extract source code and install `cx_Oracle` with following commands
+Extract source code and install `cx_Oracle` with following commands (make sure you are using virtualenv)
 
     sudo bash
     python setup.py build && python setup.py install
@@ -88,7 +88,17 @@ After running command `iptables-save` you should see following line if port 80 i
 
     -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 
-Then you can deploy RelValMachine with command:
+If not then run command:
+
+    iptables-save > iptable.dump
+
+Then add line `-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT` to `iptable.dump` file
+and run command:
+
+    iptables-restore < iptable.dump
+
+
+After that you can deploy RelValMachine with command:
 
     sudo bash
     nohup python run.py &
