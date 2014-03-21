@@ -5,6 +5,7 @@
 function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseViewPageController(
             $scope,
+            $location,
             PredefinedBlobs,
             AlertsService,
             BlobsSearchService
@@ -172,7 +173,7 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
         };
     }]);
 
-var BlobSelectModalCtrl = function($scope, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
+var BlobSelectModalCtrl = function($scope,  $location, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
         PredefinedBlobs,

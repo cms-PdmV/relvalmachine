@@ -118,16 +118,16 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
 
 
 // abstract search service
-var AbstractSearchService = function(resource) {
+var AbstractSearchService = function(resource, $location) {
     var searchingMode = false;
     var query = "";
 
     var searchService = {
 
-        search: function(search_query, items_per_page, callback) {
+        search: function(search_query, items_per_page, page_num, callback) {
             searchingMode = true;
             query = search_query;
-            var resp = resource.all({search: query, page_num: 1, items_per_page: items_per_page}, function() {
+            var resp = resource.all({search: query, page_num: page_num, items_per_page: items_per_page}, function() {
                 callback(resp);
             });
             return resp;
@@ -160,8 +160,8 @@ var AbstractSearchService = function(resource) {
 
 
 // blobs services
-relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(PredefinedBlobs) {
-    var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs));
+relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', '$location', function(PredefinedBlobs, $location) {
+    var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs, $location));
 
     return searchService;
 }]);

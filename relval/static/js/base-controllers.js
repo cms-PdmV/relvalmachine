@@ -3,17 +3,41 @@
  */
 
 // this controller provides basic functionality: search, pagination and sorting
-function BaseViewPageController($scope, Resource, AlertsService, SearchService) {
+function BaseViewPageController($scope, $location, Resource, AlertsService, SearchService) {
     $scope.search = {
         searchText: ""
     };
+
+    var params = $location.search();
+
+    $scope.maxSize = 10;       // how many pages display
+    $scope.currentPage = params.page_num ? params.page_num : 1;   // current page in pagination
+    $scope.itemsPerPage = params.items_per_page ? params.items_per_page : 20; // how many items to display in one page
+
     // pre-load blobs
-    var resp = Resource.all(function() {
-        $scope.totalItems = resp.total
-        $scope.items = resp.items
-    }, function() { // on failure
-        AlertsService.addError({msg: "Server error. Failed to fetch data"});
-    });
+    if (params.search) {
+        $scope.search.searchText = params.search;
+        SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
+            function(response) {
+                $scope.totalItems = response.total
+                $scope.items = response.items
+                if ($scope.totalItems == 0) {
+                    AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
+                }
+            }
+        );
+    } else {
+        var resp = Resource.all({
+                search: $scope.search.searchText,
+                page_num: $scope.currentPage,
+                items_per_page: $scope.itemsPerPage
+            }, function() {
+                $scope.totalItems = resp.total
+                $scope.items = resp.items
+            }, function() { // on failure
+                AlertsService.addError({msg: "Server error. Failed to fetch data"});
+            });
+    }
 
     /*
      * Sorting
@@ -43,10 +67,6 @@ function BaseViewPageController($scope, Resource, AlertsService, SearchService) 
     /*
      * Pagination
      */
-    $scope.itemsPerPage = 20;  // how many items are in one page
-    $scope.currentPage = 1;    // current page that is selected
-    $scope.maxSize = 10;       // how many pages display
-
     $scope.setPage = function(pageNo) {
         if (SearchService.isSearchingMode()) { // if in search mode then change page with same search query
             SearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
@@ -60,20 +80,23 @@ function BaseViewPageController($scope, Resource, AlertsService, SearchService) 
             });
         }
         $scope.currentPage = pageNo;
-    };
+        $location.search('page_num', pageNo);
+    }
 
     /*
      * Search functionality
      */
     $scope.searchAll = function() {
-        SearchService.search($scope.search.searchText, $scope.itemsPerPage, function(response) {
-            $scope.totalItems = response.total
-            $scope.items = response.items
-            $scope.currentPage = 1;
-            if ($scope.totalItems == 0) {
-                AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
+        SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
+            function(response) {
+                $scope.totalItems = response.total;
+                $scope.items = response.items;
+                $location.search('search', $scope.search.searchText);
+                if ($scope.totalItems == 0) {
+                    AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
+                }
             }
-        });
+        );
     }
 
     $scope.resetSearch = function() {
@@ -82,6 +105,8 @@ function BaseViewPageController($scope, Resource, AlertsService, SearchService) 
             $scope.totalItems = response.total
             $scope.items = response.items
             $scope.currentPage = 1;
+            $location.search("search", null);
+            $location.search("page_num", 1);
             $scope.sort.column = '';
         });
     }
