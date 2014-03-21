@@ -142,6 +142,7 @@ batch_marshaller = {
     'description': fields.String,
     'immutable': fields.Boolean,
     'run_the_matrix_conf': fields.String,
+    'cmssw_release': fields.String,
     'priority': fields.Integer,
     'requests': fields.Nested(request_tight_marshaller)
 }

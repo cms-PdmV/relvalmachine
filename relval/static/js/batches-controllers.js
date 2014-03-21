@@ -32,6 +32,7 @@ var constructBatch = function(scope, Batches) {
         description: scope.currentItem.description,
         immutable: scope.currentItem.immutable,
         run_the_matrix_conf: scope.currentItem.run_the_matrix_conf,
+        cmssw_release: scope.currentItem.cmssw_release,
         priority: scope.currentItem.priority
     });
     var requests = [];
@@ -95,6 +96,7 @@ var BaseBatchEditWithPreloadCtrl = function($scope, $modal, $rootScope, $routePa
         $scope.currentItem.immutable = batch.immutable;
         $scope.currentItem.description = batch.description;
         $scope.currentItem.run_the_matrix_conf = batch.run_the_matrix_conf;
+        $scope.currentItem.cmssw_release = batch.cmssw_release;
         $scope.currentItem.requests = batch.requests;
         $scope.currentItem.priority = (batch.priority == 0) ? undefined : batch.priority;
     });
@@ -116,6 +118,7 @@ relvalControllers.controller('NewBatchCtrl', ['$scope', '$modal', '$rootScope', 
         $scope.currentItem.requests = [];
         $scope.currentItem.run_the_matrix_conf = undefined;
         $scope.currentItem.priority = undefined;
+        $scope.currentItem.cmssw_release = undefined;
 
         $scope.submit = function() {
             $scope.preSubmit();
