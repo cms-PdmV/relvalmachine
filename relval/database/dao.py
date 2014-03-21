@@ -130,7 +130,7 @@ class RequestsDao(BaseValidationDao):
         ]
 
         ancestor = self.get_ancestor(req)
-        return self.add(label=new_label, description=req.description, immutable=req.immutable,
+        return self.add(label=new_label, description=req.description, immutable=False,
                         type=req.type, cmssw_release=req.cmssw_release, run_the_matrix_conf=run_the_matrix,
                         events=req.events, priority=priority_to_set, ancestor_request=ancestor, steps=steps)
 
@@ -202,9 +202,19 @@ class BatchesDao(BaseValidationDao):
             batch.run_the_matrix_conf = run_the_matrix_conf
             batch.priority = priority
         else:
-            batch.requests = [
-                self.requests_dao.get(request["id"]) for request in requests
-            ]
+            new_requests = []
+            for request in requests:
+                req = self.requests_dao.get(request["id"])
+
+                # check if run the matrix config or priority need to be overwritten for request
+                if (batch.run_the_matrix_conf is not None and
+                    req.run_the_matrix_conf != batch.run_the_matrix_conf) or \
+                        (batch.priority is not None and req.priority != batch.priority):
+
+                    new_requests.append(self.__clone_request(req, title, run_the_matrix_conf, priority))
+                else:
+                    new_requests.append(req)
+            batch.requests = new_requests
         db.session.commit()
 
     def get_paginated(self, page_num=1, items_per_page=10):
