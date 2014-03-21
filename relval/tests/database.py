@@ -9,7 +9,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 from relval.tests import factory
 from relval.tests import utils
 from relval.tests.base import BaseTestsCase
-from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao, BatchesDao
+from relval.database.dao import UsersDao, RequestsDao, PredefinedBlobsDao, StepsDao, BatchesDao, Customization
 from relval.database.models import Users, Requests, Parameters, PredefinedBlob, Steps, StepType, DataStep, Batches
 from datetime import datetime
 import re
@@ -141,14 +141,16 @@ class RequestsDaoTests(BaseTestsCase):
         req = utils.prepare_request(steps_count=2)
         self.assertModelCount(Requests, 1)
 
-        new_req = self.request_dao.clone(req, "new-lbl", run_the_matrix_conf="new-conf", priority=1)
+        customization = Customization(run_the_matrix="new-conf", cmssw_release="9_0_0", priority=1)
+
+        new_req = self.request_dao.clone(req, "new-lbl", customization)
 
         self.assertModelCount(Requests, 2)
         self.assertEqual(new_req.label, "new-lbl")
-        self.assertEqual(new_req.run_the_matrix_conf, "new-conf")
-        self.assertEqual(new_req.priority, 1)
+        self.assertEqual(new_req.run_the_matrix_conf, customization.run_the_matrix)
+        self.assertEqual(new_req.priority, customization.priority)
+        self.assertEqual(new_req.cmssw_release, customization.cmssw_release)
         self.assertEqual(new_req.description, req.description)
-        self.assertEqual(new_req.cmssw_release, req.cmssw_release)
         self.assertEqual(len(new_req.steps), len(req.steps))
 
 

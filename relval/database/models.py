@@ -39,6 +39,7 @@ class Batches(db.Model):
     immutable = db.Column("immutable", db.Boolean, default=False)
     run_the_matrix_conf = db.Column("run_the_matrix_conf", db.String(2048), nullable=True, default=None)
     priority = db.Column("priority", db.Integer, nullable=True, default=None)
+    cmssw_release = db.Column("cmssw_release", db.String(128))
 
     requests = db.relationship(
         'Requests',

@@ -122,17 +122,34 @@ class RequestsDao(BaseValidationDao):
             ancestor = ancestor.ancestor_request
         return ancestor
 
-    def clone(self, req, new_label, run_the_matrix_conf, priority):
-        run_the_matrix = run_the_matrix_conf if run_the_matrix_conf else req.run_the_matrix_conf
-        priority_to_set = priority if priority else req.priority
+    def clone(self, req, new_label, customization):
+        run_the_matrix = customization.run_the_matrix if customization.run_the_matrix else req.run_the_matrix_conf
+        cmssw_release = customization.cmssw_release if customization.cmssw_release else req.cmssw_release
+        priority_to_set = customization.priority if customization.priority else req.priority
         steps = [
             {"id": step.id} for step in req.steps
         ]
 
         ancestor = self.get_ancestor(req)
         return self.add(label=new_label, description=req.description, immutable=False,
-                        type=req.type, cmssw_release=req.cmssw_release, run_the_matrix_conf=run_the_matrix,
+                        type=req.type, cmssw_release=cmssw_release, run_the_matrix_conf=run_the_matrix,
                         events=req.events, priority=priority_to_set, ancestor_request=ancestor, steps=steps)
+
+
+class Customization():
+
+    def __init__(self, run_the_matrix, cmssw_release, priority):
+        self.run_the_matrix = run_the_matrix
+        self.cmssw_release = cmssw_release
+        self.priority = priority
+
+    def is_any_defined(self):
+        return self.run_the_matrix or self.priority or self.cmssw_release
+
+    def is_customization_changed(self, batch):
+        return batch.run_the_matrix_conf != self.run_the_matrix or \
+            batch.priority != self.priority or \
+            batch.cmssw_release != self.cmssw_release
 
 
 class BatchesDao(BaseValidationDao):
@@ -148,18 +165,21 @@ class BatchesDao(BaseValidationDao):
         return self.insert_batch(is_cloning=True, **kwargs)
 
     def insert_batch(self, title="", description="", immutable=False, run_the_matrix_conf=None,
-                     priority=None, requests=[], is_cloning=False):
+                     priority=None, cmssw_release=None, requests=[], is_cloning=False):
         self.validate_distinct_title(title)
         batch = Batches(
             title=title,
             description=description,
             immutable=immutable,
             run_the_matrix_conf=run_the_matrix_conf,
-            priority=priority
+            priority=priority,
+            cmssw_release=cmssw_release
         )
-        # if request is cloning or run the matrix conf or priority are defined then we clone all requests
-        if is_cloning or run_the_matrix_conf or priority:
-            batch.requests = self.__clone_requests(requests, title, run_the_matrix_conf, priority)
+        customization = Customization(run_the_matrix_conf, cmssw_release, priority)
+        # if request is cloning or run the matrix conf or priority
+        # or cmssw release are defined then we clone all requests
+        if is_cloning or customization.is_any_defined():
+            batch.requests = self.__clone_requests(requests, title, customization)
         else:
             batch.requests = [
                 self.requests_dao.get(request["id"]) for request in requests
@@ -170,52 +190,56 @@ class BatchesDao(BaseValidationDao):
         return batch
 
     def update(self, id, title="", description="", immutable=False, run_the_matrix_conf=None,
-               priority=None, requests=[]):
+               priority=None, cmssw_release=None, requests=[]):
         batch = self.get(id)
         if title != batch.title:
             self.validate_distinct_title(title)
         batch.title = title
         batch.description = description
         batch.immutable = immutable
+        cust = Customization(run_the_matrix_conf, cmssw_release, priority)
 
-        if batch.run_the_matrix_conf != run_the_matrix_conf or batch.priority != priority:
+        if cust.is_customization_changed(batch):
             new_requests = []
             for req in requests:
                 req_object = self.requests_dao.get(req["id"])
 
                 # if request is frozen then clone it
                 if req_object.immutable:
-                    new_requests.append(self.__clone_request(req_object, title, run_the_matrix_conf, priority))
+                    new_requests.append(self.__clone_request(req_object, title, cust))
 
-                # if request don't belong to other batches then no cloning
+                # if request is not frozen and don't belong to other batches then no cloning - just update request
                 elif len(req_object.batches) == 0 or \
                         (len(req_object.batches) == 1 and req_object.batches[0].id == batch.id):
-                    req_object.run_the_matrix_conf = run_the_matrix_conf
-                    req_object.priority = priority
+                    req_object.run_the_matrix_conf = cust.run_the_matrix
+                    req_object.priority = cust.priority
+                    req_object.cmssw_release = cust.cmssw_release
                     new_requests.append(req_object)
-
                 else:
-                    new_requests.append(self.__clone_request(req_object, title, run_the_matrix_conf, priority))
+                    new_requests.append(self.__clone_request(req_object, title, cust))
 
             batch.requests = new_requests
 
-            batch.run_the_matrix_conf = run_the_matrix_conf
-            batch.priority = priority
+            batch.run_the_matrix_conf = cust.run_the_matrix
+            batch.priority = cust.priority
+            batch.cmssw_release = cust.cmssw_release
         else:
             new_requests = []
             for request in requests:
                 req = self.requests_dao.get(request["id"])
 
                 # check if run the matrix config or priority need to be overwritten for request
-                if (batch.run_the_matrix_conf is not None and
-                    req.run_the_matrix_conf != batch.run_the_matrix_conf) or \
-                        (batch.priority is not None and req.priority != batch.priority):
-
-                    new_requests.append(self.__clone_request(req, title, run_the_matrix_conf, priority))
+                if self.__is_customizations_differs(batch, req):
+                    new_requests.append(self.__clone_request(req, title, cust))
                 else:
                     new_requests.append(req)
             batch.requests = new_requests
         db.session.commit()
+
+    def __is_customizations_differs(self, batch, request):
+        return (batch.run_the_matrix_conf is not None and request.run_the_matrix_conf != batch.run_the_matrix_conf) or \
+               (batch.cmssw_release is not None and request.cmssw_release != batch.cmssw_release) or \
+               (batch.priority is not None and request.priority != batch.priority)
 
     def get_paginated(self, page_num=1, items_per_page=10):
         return Batches.query \
@@ -229,17 +253,17 @@ class BatchesDao(BaseValidationDao):
             .filter(Batches.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
 
-    def __clone_requests(self, requests, title, run_the_matrix_conf, priority):
+    def __clone_requests(self, requests, title, customization):
         cloned = []
         for request in requests:
             req = self.requests_dao.get(request["id"])
-            cloned_req = self.__clone_request(req, title, run_the_matrix_conf, priority)
+            cloned_req = self.__clone_request(req, title, customization)
             cloned.append(cloned_req)
         return cloned
 
-    def __clone_request(self, request, title, run_the_matrix_conf, priority):
+    def __clone_request(self, request, title, customization):
         new_label = self.__resolve_request_label(request, title)
-        cloned_req = self.requests_dao.clone(request, new_label, run_the_matrix_conf, priority)
+        cloned_req = self.requests_dao.clone(request, new_label, customization)
         return cloned_req
 
     def __resolve_request_label(self, old_request, batch_title):
