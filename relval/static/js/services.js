@@ -150,6 +150,11 @@ var AbstractSearchService = function(resource) {
             return resp;
         },
 
+        emptyQuery: function() {
+            searchingMode = false;
+            query = "";
+        },
+
         isSearchingMode: function() {
             return searchingMode;
         },

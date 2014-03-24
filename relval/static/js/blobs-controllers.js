@@ -178,16 +178,19 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
 var BlobSelectModalCtrl = function($scope,  $location, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
+        $location,
         PredefinedBlobs,
         AlertsService,
         BlobsSearchService
     ));
 
     $scope.selectBlob = function(index) {
+        $scope.clearParameters();
         $modalInstance.close($scope.items[index]);
     }
 
     $scope.cancel = function() {
+        $scope.clearParameters();
         $modalInstance.dismiss('cancel');
     }
 };

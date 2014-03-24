@@ -15,6 +15,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
     function($scope, $location, Steps, AlertsService, StepsSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
+            $location,
             Steps,
             AlertsService,
             StepsSearchService
@@ -26,11 +27,13 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         }
 
         $scope.editBlob = function(index) {
+            $scope.clearParameters();
             $location.path('/steps/edit/' + $scope.items[index].id)
         }
 
         $scope.cloneStep = function(index) {
-            var id = $scope.items[index].id
+            var id = $scope.items[index].id;
+            $scope.clearParameters();
             $location.path("/steps/clone/" + id);
         }
 }]);

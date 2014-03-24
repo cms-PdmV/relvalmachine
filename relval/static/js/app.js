@@ -71,19 +71,23 @@ relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider
     .when('/steps/',  {
         templateUrl: 'static/partials/steps/index.html',
-        controller: 'StepsCtrl'
+        controller: 'StepsCtrl',
+        reloadOnSearch: false
     })
     .when('/steps/new',  {
         templateUrl: 'static/partials/steps/edit.html',
-        controller: 'NewStepCtrl'
+        controller: 'NewStepCtrl',
+        reloadOnSearch: false
     })
     .when('/steps/edit/:stepId',  {
         templateUrl: 'static/partials/steps/edit.html',
-        controller: 'EditStepCtrl'
+        controller: 'EditStepCtrl',
+        reloadOnSearch: false
     })
     .when('/steps/clone/:stepId',  {
         templateUrl: 'static/partials/steps/edit.html',
-        controller: 'CloneStepCtrl'
+        controller: 'CloneStepCtrl',
+        reloadOnSearch: false
     })
 }]);
 
@@ -97,15 +101,18 @@ relval.config(['$routeProvider', function($routeProvider) {
     })
     .when('/blobs/new', {
         templateUrl: 'static/partials/predefined-blobs/edit.html',
-        controller: 'NewBlobCtrl'
+        controller: 'NewBlobCtrl',
+        reloadOnSearch: false
     })
     .when('/blobs/edit/:blobId', {
         templateUrl: 'static/partials/predefined-blobs/edit.html',
-        controller: 'EditBlobCtrl'
+        controller: 'EditBlobCtrl',
+        reloadOnSearch: false
     })
     .when('/blobs/clone/:blobId', {
         templateUrl: 'static/partials/predefined-blobs/edit.html',
-        controller: 'CloneBlobCtrl'
+        controller: 'CloneBlobCtrl',
+        reloadOnSearch: false
     })
 }]);
 

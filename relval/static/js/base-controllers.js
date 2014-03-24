@@ -7,6 +7,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
     $scope.search = {
         searchText: ""
     };
+    SearchService.emptyQuery();
 
     var params = $location.search();
 
@@ -104,6 +105,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
 
     $scope.clearParameters = function() {
         $location.$$search = {};
+        $location.url($location.path());
     }
 }
 
