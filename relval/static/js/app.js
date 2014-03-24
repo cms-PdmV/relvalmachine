@@ -125,19 +125,23 @@ relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider
     .when('/batches',  {
         templateUrl: 'static/partials/batches/index.html',
-        controller: 'BatchesCtrl'
+        controller: 'BatchesCtrl',
+        reloadOnSearch: false
     })
     .when('/batches/new', {
         templateUrl: 'static/partials/batches/edit.html',
-        controller: 'NewBatchCtrl'
+        controller: 'NewBatchCtrl',
+        reloadOnSearch: false
     })
     .when('/batches/clone/:batchId', {
         templateUrl: 'static/partials/batches/edit.html',
-        controller: 'CloneBatchCtrl'
+        controller: 'CloneBatchCtrl',
+        reloadOnSearch: false
     })
     .when('/batches/edit/:batchId', {
         templateUrl: 'static/partials/batches/edit.html',
-        controller: 'EditBatchCtrl'
+        controller: 'EditBatchCtrl',
+        reloadOnSearch: false
     })
 }]);
 

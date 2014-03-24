@@ -5,6 +5,7 @@ relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', '
     function ($scope, $location, Batches, AlertsService, BatchesSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
+            $location,
             Batches,
             AlertsService,
             BatchesSearchService
@@ -15,12 +16,14 @@ relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', '
         };
 
         $scope.clone = function(index) {
-            var id = $scope.items[index].id
+            var id = $scope.items[index].id;
+            $scope.clearParameters();
             $location.path("/batches/clone/" + id);
         };
 
         $scope.edit = function(index) {
-            var id = $scope.items[index].id
+            var id = $scope.items[index].id;
+            $scope.clearParameters();
             $location.path("/batches/edit/" + id);
         }
 

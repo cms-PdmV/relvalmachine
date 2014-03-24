@@ -209,9 +209,10 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
         }
     }]);
 
-var RequestSelectModalCtrl = function($scope, $modalInstance, Requests, AlertsService, RequestsSearchService) {
+var RequestSelectModalCtrl = function($scope, $location, $modalInstance, Requests, AlertsService, RequestsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
+        $location,
         Requests,
         AlertsService,
         RequestsSearchService
@@ -219,10 +220,12 @@ var RequestSelectModalCtrl = function($scope, $modalInstance, Requests, AlertsSe
 
 
     $scope.selectRequest = function(index) {
+        $scope.clearParameters();
         $modalInstance.close($scope.items[index]);
     }
 
     $scope.cancel = function() {
+        $scope.clearParameters();
         $modalInstance.dismiss('cancel');
     }
 };
