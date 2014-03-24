@@ -118,7 +118,7 @@ relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
 
 
 // abstract search service
-var AbstractSearchService = function(resource, $location) {
+var AbstractSearchService = function(resource) {
     var searchingMode = false;
     var query = "";
 
@@ -152,6 +152,11 @@ var AbstractSearchService = function(resource, $location) {
 
         isSearchingMode: function() {
             return searchingMode;
+        },
+
+        searchingModeOn: function(searchTerm) {
+            searchingMode = true;
+            query = searchTerm;
         }
     };
 
@@ -161,7 +166,7 @@ var AbstractSearchService = function(resource, $location) {
 
 // blobs services
 relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', '$location', function(PredefinedBlobs, $location) {
-    var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs, $location));
+    var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs));
 
     return searchService;
 }]);

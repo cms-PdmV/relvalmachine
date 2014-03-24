@@ -16,7 +16,8 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
     }
 
     $scope.editBlob = function(index) {
-        var id = $scope.items[index].id
+        var id = $scope.items[index].id;
+        $scope.clearParameters();
         $location.path("/blobs/edit/" + id);
     };
 
@@ -36,7 +37,8 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
     };
 
     $scope.cloneBlob = function(index) {
-        var id = $scope.items[index].id
+        var id = $scope.items[index].id;
+        $scope.clearParameters();
         $location.path("/blobs/clone/" + id);
     }
 }

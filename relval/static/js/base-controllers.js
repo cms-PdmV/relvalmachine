@@ -13,30 +13,37 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
     $scope.maxSize = 10;       // how many pages display
     $scope.currentPage = params.page_num ? params.page_num : 1;   // current page in pagination
     $scope.itemsPerPage = params.items_per_page ? params.items_per_page : 20; // how many items to display in one page
+    // DO NOT CHANGE THIS. This is hack to avoid double blobs GET call.
+    // If total item is low number then page automatically set to 1 by angular-ui.pagination.
+    $scope.totalItems = Number.POSITIVE_INFINITY;
+
+
+    /*
+     * Pagination
+     */
+    $scope.setPage = function(pageNo) {
+        if (SearchService.isSearchingMode()) { // if in search mode then change page with same search query
+            SearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
+                $scope.totalItems = response.total;
+                $scope.items = response.items;
+            });
+        } else {
+            var resp = Resource.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
+                $scope.totalItems = resp.total;
+                $scope.items = resp.items;
+            });
+        }
+        $scope.currentPage = pageNo;
+        $location.search('page_num', pageNo);
+    }
 
     // pre-load blobs
     if (params.search) {
         $scope.search.searchText = params.search;
-        SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
-            function(response) {
-                $scope.totalItems = response.total
-                $scope.items = response.items
-                if ($scope.totalItems == 0) {
-                    AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
-                }
-            }
-        );
+        SearchService.searchingModeOn($scope.search.searchText);
+        $scope.setPage($scope.currentPage);
     } else {
-        var resp = Resource.all({
-                search: $scope.search.searchText,
-                page_num: $scope.currentPage,
-                items_per_page: $scope.itemsPerPage
-            }, function() {
-                $scope.totalItems = resp.total
-                $scope.items = resp.items
-            }, function() { // on failure
-                AlertsService.addError({msg: "Server error. Failed to fetch data"});
-            });
+        $scope.setPage($scope.currentPage);
     }
 
     /*
@@ -64,34 +71,18 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
             "fa fa-sort-alpha-" + ($scope.sort.descending ? "desc" : "asc")
     }
 
-    /*
-     * Pagination
-     */
-    $scope.setPage = function(pageNo) {
-        if (SearchService.isSearchingMode()) { // if in search mode then change page with same search query
-            SearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
-                $scope.totalItems = response.total;
-                $scope.items = response.items;
-            });
-        } else {
-            var resp = Resource.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                $scope.totalItems = resp.total;
-                $scope.items = resp.items;
-            });
-        }
-        $scope.currentPage = pageNo;
-        $location.search('page_num', pageNo);
-    }
 
     /*
      * Search functionality
      */
     $scope.searchAll = function() {
+        $location.search('search', $scope.search.searchText);
+        $location.search('page_num', 1);
+        $scope.currentPage = 1;
         SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
             function(response) {
                 $scope.totalItems = response.total;
                 $scope.items = response.items;
-                $location.search('search', $scope.search.searchText);
                 if ($scope.totalItems == 0) {
                     AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
                 }
@@ -109,6 +100,10 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
             $location.search("page_num", 1);
             $scope.sort.column = '';
         });
+    }
+
+    $scope.clearParameters = function() {
+        $location.$$search = {};
     }
 }
 
