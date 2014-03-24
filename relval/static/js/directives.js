@@ -67,6 +67,7 @@ function AbstractValidationDirective($http, url, validity) {
             if (!value) {
                 ctrl.$setValidity(validity, false);
             } else {
+                console.log(url);
                 $http({
                     method: 'POST',
                     url: url,
@@ -84,44 +85,88 @@ function AbstractValidationDirective($http, url, validity) {
     }
 }
 
+// There should be a better way...
+// Cannot avoid duplication cause seems like angular cashes method and
+// if we create AbstractValidationDirective then same url will be called
+// for different controllers until page reload
+
 relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
-    var validation = angular.extend(this,
-        new AbstractValidationDirective($http, "/api/validate/step/title", "unique"));
-    // cannot move link to abstract validation cause it somehow cashes function params
-    // and without page reload always use same url for validation
-    validation.link =  function(scope, element, attrs, ctrl) {
-        ctrl.$parsers.unshift(function(value) {
-            console.log("validating")
-            this.validateCall(ctrl, value)
-            return value;
-        });
+      return {
+        link:  function(scope, element, attrs, ctrl) {
+            ctrl.$parsers.unshift(function(value) {
+                if (!value) {
+                    ctrl.$setValidity("unique", false);
+                } else {
+                    $http({
+                        method: 'POST',
+                        url: "/api/validate/step/title",
+                        data: {value: value}
+                    }).success(function(data) {
+                        ctrl.$setValidity("unique", data.valid);
+
+                    }).error(function() {
+                        ctrl.$setValidity("unique", false);
+                    })
+                }
+                return value;
+            })
+        },
+        restrict: 'A',
+        require: 'ngModel'
     }
-    return validation;
 }]);
 
 relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
-    var validation = angular.extend(this,
-        new AbstractValidationDirective($http, "/api/validate/request/label", "unique"));
-    validation.link =  function(scope, element, attrs, ctrl) {
-        ctrl.$parsers.unshift(function(value) {
-            this.validateCall(ctrl, value)
-            return value;
-        });
+    return {
+        link:  function(scope, element, attrs, ctrl) {
+            ctrl.$parsers.unshift(function(value) {
+                if (!value) {
+                    ctrl.$setValidity("unique", false);
+                } else {
+                    $http({
+                        method: 'POST',
+                        url: "/api/validate/request/label",
+                        data: {value: value}
+                    }).success(function(data) {
+                        ctrl.$setValidity("unique", data.valid);
+
+                    }).error(function() {
+                        ctrl.$setValidity("unique", false);
+                    })
+                }
+                return value;
+            })
+        },
+        restrict: 'A',
+        require: 'ngModel'
     }
-    return validation;
 }]);
 
 relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
-    var validation = angular.extend(this,
-        new AbstractValidationDirective($http, "/api/validate/blob/title", "unique"));
-    validation.link =  function(scope, element, attrs, ctrl) {
-        ctrl.$parsers.unshift(function(value) {
-            this.validateCall(ctrl, value)
-            return value;
-        });
-        
+        return {
+            link:  function(scope, element, attrs, ctrl) {
+                ctrl.$parsers.unshift(function(value) {
+                    console.log("validating")
+                    if (!value) {
+                        ctrl.$setValidity("unique", false);
+                    } else {
+                        $http({
+                            method: 'POST',
+                            url: "/api/validate/blob/title",
+                            data: {value: value}
+                        }).success(function(data) {
+                            ctrl.$setValidity("unique", data.valid);
+
+                        }).error(function() {
+                            ctrl.$setValidity("unique", false);
+                        })
+                    }
+                            return value;
+                    })
+            },
+            restrict: 'A',
+            require: 'ngModel'
     }
-    return validation;
 }]);
 
 relvalDirectives.directive('batchTitleValidation',['$http', function($http) {

@@ -6,13 +6,15 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
     function($scope, $location, Requests, AlertsService, RequestsSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
+            $location,
             Requests,
             AlertsService,
             RequestsSearchService
         ));
 
         $scope.cloneStep = function(index) {
-            var id = $scope.items[index].id
+            var id = $scope.items[index].id;
+            $scope.clearParameters();
             $location.path("/requests/clone/" + id);
         };
 
@@ -21,7 +23,8 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
         };
 
         $scope.editRequest = function(index) {
-            var id = $scope.items[index].id
+            var id = $scope.items[index].id;
+            $scope.clearParameters();
             $location.path("/requests/edit/" + id);
         };
 

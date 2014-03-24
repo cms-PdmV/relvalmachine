@@ -217,9 +217,10 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
         }
     }]);
 
-var StepSelectModalCtrl = function($scope, $modalInstance, Steps, AlertsService, StepsSearchService) {
+var StepSelectModalCtrl = function($scope, $location, $modalInstance, Steps, AlertsService, StepsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
+        $location,
         Steps,
         AlertsService,
         StepsSearchService
@@ -228,10 +229,12 @@ var StepSelectModalCtrl = function($scope, $modalInstance, Steps, AlertsService,
 
 
     $scope.selectStep = function(index) {
+        $scope.clearParameters();
         $modalInstance.close($scope.items[index]);
     }
 
     $scope.cancel = function() {
+        $scope.clearParameters();
         $modalInstance.dismiss('cancel');
     }
 };

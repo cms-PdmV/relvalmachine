@@ -50,19 +50,23 @@ relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider
     .when('/requests/',  {
         templateUrl: 'static/partials/requests/index.html',
-        controller: 'RequestsCtrl'
+        controller: 'RequestsCtrl',
+        reloadOnSearch: false
     })
     .when('/requests/new', {
         templateUrl: 'static/partials/requests/edit.html',
-        controller: 'NewRequestCtrl'
+        controller: 'NewRequestCtrl',
+        reloadOnSearch: false
     })
     .when('/requests/clone/:requestId', {
         templateUrl: 'static/partials/requests/edit.html',
-        controller: 'CloneRequestCtrl'
+        controller: 'CloneRequestCtrl',
+        reloadOnSearch: false
     })
     .when('/requests/edit/:requestId', {
         templateUrl: 'static/partials/requests/edit.html',
-        controller: 'EditRequestCtrl'
+        controller: 'EditRequestCtrl',
+        reloadOnSearch: false
     })
 }]);
 
