@@ -99,7 +99,7 @@ relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
                 } else {
                     $http({
                         method: 'POST',
-                        url: "/api/validate/step/title",
+                        url: "api/validate/step/title",
                         data: {value: value}
                     }).success(function(data) {
                         ctrl.$setValidity("unique", data.valid);
@@ -125,7 +125,7 @@ relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
                 } else {
                     $http({
                         method: 'POST',
-                        url: "/api/validate/request/label",
+                        url: "api/validate/request/label",
                         data: {value: value}
                     }).success(function(data) {
                         ctrl.$setValidity("unique", data.valid);
@@ -151,7 +151,7 @@ relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
                 } else {
                     $http({
                         method: 'POST',
-                        url: "/api/validate/blob/title",
+                        url: "api/validate/blob/title",
                         data: {value: value}
                     }).success(function(data) {
                         ctrl.$setValidity("unique", data.valid);
@@ -177,7 +177,7 @@ relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
                 } else {
                     $http({
                         method: 'POST',
-                        url: "/api/validate/batch/title",
+                        url: "api/validate/batch/title",
                         data: {value: value}
                     }).success(function(data) {
                         ctrl.$setValidity("unique", data.valid);
