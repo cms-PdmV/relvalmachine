@@ -356,7 +356,7 @@ class StepsDao(BaseValidationDao):
                 details = "input from: {0} with run {1}#{2}".format(
                     data_step.data_set, data_step.ib_block, data_step.run)
             else:
-                details = "input from: {0} with run {1}".format(data_step.data_set, data_step.runn)
+                details = "input from: {0} with run {1}".format(data_step.data_set, data_step.run)
 
         return details
 

@@ -26,7 +26,7 @@ def prepare_blob(title=None, parameters_count=1, immutable=False):
     return blob
 
 def prepare_step(title=None, parameters_count=1, blobs_count=1,
-                 immutable=False, type=StepType.Default, data_set=""):
+                 immutable=False, type=StepType.Default, data_set="", data_step={}):
 
     step = factory.step(title=title, parameters_count=parameters_count, blobs_count=blobs_count,
                         immutable=immutable, type=type, data_set=data_set)
@@ -37,7 +37,8 @@ def prepare_step(title=None, parameters_count=1, blobs_count=1,
                   immutable=immutable,
                   type=type,
                   data_set=data_set,
-                  parameters=parameters)
+                  parameters=parameters,
+                  data_step=data_step)
     return step
 
 

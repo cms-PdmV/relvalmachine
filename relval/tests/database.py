@@ -397,6 +397,15 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Parameters, 2)
 
+    def test_blob_get_details(self):
+        utils.prepare_blob(parameters_count=3)
+        id = PredefinedBlob.query.one().id
+
+        details = self.blobs_dao.get_details(id)
+
+        expected = " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
+        self.assertEqual(expected, details)
+
     def blob_insertion_test(self, params_num):
         self.assertModelEmpty(PredefinedBlob)
         blob = utils.prepare_blob(parameters_count=params_num)
@@ -633,3 +642,40 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(new_step.type, StepType.FirstData)
         self.assertEqual(new_step.data_step.data_set, "test-data_set")
         self.assertEqual(new_step.data_step.files, 100)
+
+    def test_step_default_get_details(self):
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default,
+                           data_set="data_set")
+        id = Steps.query.one().id
+
+        details = self.steps_dao.get_details(id)
+        expected = "cmsDriver.py " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
+        self.assertEqual(expected, details)
+
+    def test_step_first_mc_get_details(self):
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc,
+                           data_set="data_set")
+        id = Steps.query.one().id
+
+        details = self.steps_dao.get_details(id)
+        expected = "cmsDriver.py data_set " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
+        self.assertEqual(expected, details)
+
+    def test_step_first_data_with_ib_block_get_details(self):
+        data_step = factory.data_step(data_set="test-data_set", ib_block="test_ib", run="test-run")
+        utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)
+        id = Steps.query.one().id
+
+        details = self.steps_dao.get_details(id)
+        expected = "input from: test-data_set with run test_ib#test-run"
+        self.assertEqual(expected, details)
+
+    def test_step_first_data_without_ib_block_get_details(self):
+        data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="test-run")
+        utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)
+        id = Steps.query.one().id
+
+        details = self.steps_dao.get_details(id)
+        expected = "input from: test-data_set with run test-run"
+        self.assertEqual(expected, details)
+

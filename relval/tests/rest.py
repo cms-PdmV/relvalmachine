@@ -260,3 +260,27 @@ class RequestRestTests(BaseTestsCase):
 
             self.assertEqual(response.status_code, 200)
             mock_method.assert_called_once_with(1)
+
+
+class DetailsApiTests(BaseTestsCase):
+
+    def setUp(self):
+        BaseTestsCase.setUp(self)
+
+    def test_blob_details_fetch(self):
+        with patch.object(PredefinedBlobsDao, "get_details") as mock_method:
+            mock_method.return_value = "--flag value"
+            response = self.app.get("/api/predefined_blob/2/details")
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(2)
+            data = json.loads(response.data)
+            self.assertEqual(data["details"], "--flag value")
+
+    def test_step_details_fetch(self):
+        with patch.object(StepsDao, "get_details") as mock_method:
+            mock_method.return_value = "--flag value"
+            response = self.app.get("/api/steps/5/details")
+            self.assertEqual(response.status_code, 200)
+            mock_method.assert_called_once_with(5)
+            data = json.loads(response.data)
+            self.assertEqual(data["details"], "--flag value")
