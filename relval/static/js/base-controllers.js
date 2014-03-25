@@ -107,6 +107,17 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         $location.$$search = {};
         $location.url($location.path());
     }
+
+    $scope.showDetails = function(index) {
+        var resp = Resource.details({item_id: $scope.items[index].id}, function() {
+            $scope.items[index].details = resp.details;
+        });
+        $scope.items[index].doShowDetails = true;
+    }
+
+    $scope.hideDetails = function(index) {
+        $scope.items[index].doShowDetails = false;
+    }
 }
 
 // this controller provides basic functionality for edit pages

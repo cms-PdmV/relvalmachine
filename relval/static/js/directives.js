@@ -88,7 +88,7 @@ function AbstractValidationDirective($http, url, validity) {
 // There should be a better way...
 // Cannot avoid duplication cause seems like angular cashes method and
 // if we create AbstractValidationDirective then same url will be called
-// for different controllers until page reload
+// for different controllers until full page reload
 
 relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
     return {
@@ -146,7 +146,6 @@ relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
     return {
         link:  function(scope, element, attrs, ctrl) {
             ctrl.$parsers.unshift(function(value) {
-                console.log("validating")
                 if (!value) {
                     ctrl.$setValidity("unique", false);
                 } else {
@@ -173,7 +172,6 @@ relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
     return {
         link:  function(scope, element, attrs, ctrl) {
             ctrl.$parsers.unshift(function(value) {
-                console.log("validating")
                 if (!value) {
                     ctrl.$setValidity("unique", false);
                 } else {

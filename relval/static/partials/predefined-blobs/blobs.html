@@ -33,26 +33,37 @@
       <th>Actions</th>
       <th></th>
       </thead>
-      <tbody>
-      <tr ng-repeat="blob in items | filter: {title: search.searchText} | orderBy:sort.column:sort.descending">
+      <tbody ng-repeat="item in items | filter: {title: search.searchText} | orderBy:sort.column:sort.descending">
+      <tr>
         <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
-        <td>{{blob.title}}</td>
-        <td>{{blob.creation_date}}</td>
+        <td>{{item.title}}</td>
+        <td>{{item.creation_date}}</td>
         <td>
-          <div ng-show="blob.immutable">
+          <div ng-show="item.immutable">
             <i class="fa fa-check fa-lg"></i>
           </div>
         </td>
         <td>
-          <div ng-show="showEditControllers($index)">
+          <button class="btn btn-sm btn-transparent" ng-hide="item.doShowDetails" ng-click="showDetails($index)"><i
+                  class="fa fa fa-eye fa-lg"></i></button>
+          <button class="btn btn-sm btn-transparent" ng-show="item.doShowDetails" ng-click="hideDetails($index)"><i
+                  class="fa fa-eye-slash fa-lg"></i></button>
+          <span ng-show="showEditControllers($index)">
             <button class="btn btn-sm btn-transparent" ng-click="editBlob($index)"><i
                     class="fa fa-pencil-square-o fa-lg"></i></button>
             <button class="btn btn-sm btn-transparent" ng-click="deleteBlob($index)"><i
                     class="fa fa-times fa-lg"></i></button>
-          </div>
+          </span>
         </td>
         <td>
           <button class="btn btn-sm btn-primary" ng-click="cloneBlob($index)">Clone</button>
+        </td>
+      </tr>
+      <tr ng-show="item.doShowDetails">
+        <td colspan="6">
+          <div class="well">
+            {{item.details}}
+          </div>
         </td>
       </tr>
       </tbody>

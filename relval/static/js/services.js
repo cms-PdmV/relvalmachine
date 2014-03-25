@@ -1,22 +1,18 @@
 var relvalServices = angular.module('relvalServices', ['ngResource']);
 
 relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
-        return $resource('api/predefined_blob/:blob_id', {}, {
+        return $resource('api/predefined_blob/:item_id', {}, {
             all: {
                 method: 'GET'
             },
-            get: {
-                method: 'GET'
-            },
-            create: {
-                method: 'POST'
-            },
-            delete: {
-                method: 'DELETE'
-            },
             update: {
                 method: 'PUT'
+            },
+            details: {
+                method: 'GET',
+                url: 'api/predefined_blob/:item_id/details'
             }
+            // Also available default methods: get, create, delete
         });
 }]);
 
@@ -51,6 +47,7 @@ relvalServices.factory('Requests', ['$resource', function($resource) {
             update: {
                 method: 'PUT'
             }
+            // Also available default methods: get, create, delete
         });
 }]);
 

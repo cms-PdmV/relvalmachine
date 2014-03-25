@@ -27,7 +27,7 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
                 if (removeApproved) {
                     var id = $scope.items[index].id
                     // DELETE blob
-                    PredefinedBlobs.delete({blob_id: id}, function() {
+                    PredefinedBlobs.delete({item_id: id}, function() {
                         $scope.items.splice(index, 1);
                         AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
                     }, function() {
@@ -84,7 +84,7 @@ function BaseBlobEditPageControllerWithInitialLoad($scope, $rootScope, $routePar
 
     // load blob data
     $scope.id = $routeParams.blobId;
-    var blob = PredefinedBlobs.get({blob_id: $scope.id}, function() {
+    var blob = PredefinedBlobs.get({item_id: $scope.id}, function() {
         $scope.currentItem = {};
         $scope.currentItem.title = blob.title;
         $scope.currentItem.immutable = blob.immutable;
@@ -107,7 +107,7 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'Predefined
 
             if ($scope.mainForm.$valid) {
                 // POST to create new blob
-                blob.$create(function() {
+                blob.$save(function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to create new predefined blob."});
@@ -134,7 +134,7 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
 
             if ($scope.mainForm.$valid) {
                 // PUT to update blob
-                blob.$update({blob_id: $scope.id}, function() {
+                blob.$update({item_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update predefined blob."});
@@ -163,7 +163,7 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
             if ($scope.mainForm.$valid) {
                 $scope.submited = true;
                 // POST to create new blob
-                blob.$create(function() {
+                blob.$save(function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update predefined blob."});
@@ -196,7 +196,7 @@ var BlobSelectModalCtrl = function($scope,  $location, $modalInstance, Predefine
 };
 
 var BlobViewDetailsCtrl = function($scope, $modalInstance, PredefinedBlobs, blobId) {
-    var blob = PredefinedBlobs.get({blob_id: blobId}, function() {
+    var blob = PredefinedBlobs.get({item_id: blobId}, function() {
         $scope.blob = {};
         $scope.blob.title = blob.title;
         $scope.blob.immutable = blob.immutable;
