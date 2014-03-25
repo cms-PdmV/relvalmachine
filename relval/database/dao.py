@@ -399,9 +399,16 @@ class PredefinedBlobsDao(BaseValidationDao):
             .filter(PredefinedBlob.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
 
-
     def get(self, id):
         return PredefinedBlob.query.get(id)
+
+    def get_details(self, id):
+        blob = self.get(id)
+        details = ""
+        for p in blob.parameters:
+            details += " ".join([p.flag, p.value]) + " "
+
+        return details
 
     def validate(self, entity):
         if not self.validate_distinct_title(entity.title):
