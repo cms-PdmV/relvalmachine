@@ -99,7 +99,7 @@ relval.config(['$routeProvider', function($routeProvider) {
 relval.config(['$routeProvider', function($routeProvider) {
     $routeProvider
     .when('/blobs',  {
-        templateUrl: 'static/partials/predefined-blobs/blobs.html',
+        templateUrl: 'static/partials/predefined-blobs/index.html',
         controller: 'BlobsCtrl',
         reloadOnSearch: false
     })
