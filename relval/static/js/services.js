@@ -29,6 +29,10 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
             },
             update: {
                 method: 'PUT'
+            },
+            details: {
+                method: 'GET',
+                url: 'api/steps/:item_id/details'
             }
         });
 }]);
