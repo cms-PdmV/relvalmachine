@@ -262,6 +262,16 @@ class BatchesDao(BaseValidationDao):
     def get(self, id):
         return Batches.query.get(id)
 
+    def get_details(self, id):
+        batch = self.get(id)
+
+        details = "Requests:"
+        for req in batch.requests:
+            details += "\n{0}\n".format(self.requests_dao.get_details(req.id)["details"])
+        return details
+
+
+
     def search_all(self, query, page_num, items_per_page):
         return Batches.query \
             .filter(Batches.title.ilike("%{0}%".format(query))) \

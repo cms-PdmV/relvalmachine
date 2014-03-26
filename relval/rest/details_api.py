@@ -1,13 +1,23 @@
 from flask import jsonify
 from flask.ext.restful import Resource
-from relval.database.dao import PredefinedBlobsDao, StepsDao, RequestsDao
+from relval.database.dao import PredefinedBlobsDao, StepsDao, RequestsDao, BatchesDao
 
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
 
-class BlobDetailsApi(Resource):
+class BaseDetailsApi(Resource):
 
+    def __init__(self, dao):
+        self.dao = dao
+
+    def get(self, item_id):
+        details = self.dao.get_details(item_id)
+        return jsonify(
+            details=details
+        )
+
+class BlobDetailsApi(Resource):
     def __init__(self):
         self.dao = PredefinedBlobsDao()
 
@@ -19,7 +29,6 @@ class BlobDetailsApi(Resource):
 
 
 class StepDetailsApi(Resource):
-
     def __init__(self):
         self.dao = StepsDao()
 
@@ -31,7 +40,6 @@ class StepDetailsApi(Resource):
 
 
 class RequestDetailsApi(Resource):
-
     def __init__(self):
         self.dao = RequestsDao()
 
@@ -40,3 +48,8 @@ class RequestDetailsApi(Resource):
         return jsonify(
             details=details
         )
+
+
+class BatchDetailsApi(BaseDetailsApi):
+    def __init__(self):
+        BaseDetailsApi.__init__(self, BatchesDao())

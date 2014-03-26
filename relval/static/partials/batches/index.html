@@ -34,13 +34,13 @@
     <th>Actions</th>
     <th></th>
     </thead>
-    <tbody ng-repeat="batch in items | filter: {title: search.searchText} | orderBy:sort.column:sort.descending">
+    <tbody ng-repeat="item in items | filter: {title: search.searchText} | orderBy:sort.column:sort.descending">
     <tr>
       <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
-      <td>{{batch.title}}</td>
-      <td>{{batch.requests}}</td>
+      <td>{{item.title}}</td>
+      <td>{{item.requests}}</td>
       <td>
-        <div ng-show="batch.immutable">
+        <div ng-show="item.immutable">
           <i class="fa fa-check fa-lg"></i>
         </div>
       </td>
@@ -52,9 +52,9 @@
       </td>
     </tr>
     <tr ng-show="item.doShowDetails">
-      <td colspan="6">
-        <div class="well">
-          {{item.details}}
+      <td colspan="7">
+        <div class="panel">
+          <pre style="white-space: pre-wrap;" class="well">{{item.details}}</pre>
         </div>
       </td>
     </tr>
