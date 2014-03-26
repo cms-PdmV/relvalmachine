@@ -26,9 +26,24 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
             return !$scope.items[index].immutable
         }
 
-        $scope.editBlob = function(index) {
+        $scope.edit = function(index) {
             $scope.clearParameters();
             $location.path('/steps/edit/' + $scope.items[index].id)
+        }
+
+        $scope.delete = function(index) {
+            bootbox.confirm("Do You really want to remove step " + $scope.items[index].title + " ?",
+            function(removeApproved) {
+                if (removeApproved) {
+                    var id = $scope.items[index].id
+                    // DELETE step
+                    Steps.delete({step_id: id}, function() {
+                        $scope.items.splice(index, 1);
+                        AlertsService.addSuccess({msg: "Step deleted successfully!"});
+                    }, function() {
+                        AlertsService.addError({msg: "Server error. Failed to remove step"});
+                    });
+                }});
         }
 
         $scope.cloneStep = function(index) {

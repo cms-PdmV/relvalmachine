@@ -379,6 +379,11 @@ class StepsDao(BaseValidationDao):
             .filter(Steps.title.ilike("%{0}%".format(query))) \
             .paginate(page_num, items_per_page, False)
 
+    def delete(self, id):
+        step = Steps.query.get(id)
+        db.session.delete(step)
+        db.session.commit()
+
     def construct_data_step(self, data_step):
         return DataStep(
             data_set=data_step.get("data_set", None),

@@ -186,6 +186,11 @@ class StepApi(Resource):
         data = convert_keys_to_string(request.json)
         self.steps_dao.update(step_id, **data)
 
+    def delete(self, step_id):
+        """ Deletes step with id=step_id
+        """
+        self.steps_dao.delete(step_id)
+
 
 class RequestsApi(Resource, ListApi):
     """ Requests resource

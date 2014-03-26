@@ -15,13 +15,13 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
         return !$scope.items[index].immutable; // if not immutable than show edit controllers
     }
 
-    $scope.editBlob = function(index) {
+    $scope.edit = function(index) {
         var id = $scope.items[index].id;
         $scope.clearParameters();
         $location.path("/blobs/edit/" + id);
     };
 
-    $scope.deleteBlob = function(index) {
+    $scope.delete = function(index) {
         bootbox.confirm("Do You really want to remove predefined blob " + $scope.items[index].title + " ?",
             function(removeApproved) {
                 if (removeApproved) {
@@ -29,9 +29,9 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
                     // DELETE blob
                     PredefinedBlobs.delete({item_id: id}, function() {
                         $scope.items.splice(index, 1);
-                        AlertsService.addSuccess({msg: "Predefined blob deleted successfully!"});
+                        AlertsService.addSuccess({msg: "Blob deleted successfully!"});
                     }, function() {
-                        AlertsService.addError({msg: "Server error. Failed to remove predefined blob"});
+                        AlertsService.addError({msg: "Server error. Failed to remove blob"});
                     });
                 }});
     };
