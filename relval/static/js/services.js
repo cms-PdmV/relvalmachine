@@ -65,6 +65,10 @@ relvalServices.factory('Batches', ['$resource', function($resource) {
             },
             update: {
                 method: 'PUT'
+            },
+            details: {
+                method: 'GET',
+                url: 'api/batches/:item_id/details'
             }
         });
 }]);
