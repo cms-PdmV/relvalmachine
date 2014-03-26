@@ -7,7 +7,6 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 
 class BaseDetailsApi(Resource):
-
     def __init__(self, dao):
         self.dao = dao
 
@@ -17,37 +16,20 @@ class BaseDetailsApi(Resource):
             details=details
         )
 
-class BlobDetailsApi(Resource):
+
+class BlobDetailsApi(BaseDetailsApi):
     def __init__(self):
-        self.dao = PredefinedBlobsDao()
-
-    def get(self, blob_id):
-        details = self.dao.get_details(blob_id)
-        return jsonify(
-            details=details
-        )
+        BaseDetailsApi.__init__(self, PredefinedBlobsDao())
 
 
-class StepDetailsApi(Resource):
+class StepDetailsApi(BaseDetailsApi):
     def __init__(self):
-        self.dao = StepsDao()
-
-    def get(self, step_id):
-        details = self.dao.get_details(step_id)
-        return jsonify(
-            details=details
-        )
+        BaseDetailsApi.__init__(self, StepsDao())
 
 
-class RequestDetailsApi(Resource):
+class RequestDetailsApi(BaseDetailsApi):
     def __init__(self):
-        self.dao = RequestsDao()
-
-    def get(self, request_id):
-        details = self.dao.get_details(request_id)
-        return jsonify(
-            details=details
-        )
+        BaseDetailsApi.__init__(self, RequestsDao())
 
 
 class BatchDetailsApi(BaseDetailsApi):
