@@ -15,7 +15,6 @@ relvalControllers.controller('NavbarCtrl', ['$scope', '$location', 'Users',
         };
         var resp = Users.username({}, function() {
             $scope.username = resp.result
-            console.log("Username=", $scope.username)
         });
     }
 ]);

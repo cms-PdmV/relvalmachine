@@ -22,13 +22,13 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             return !$scope.items[index].immutable
         };
 
-        $scope.editRequest = function(index) {
+        $scope.edit = function(index) {
             var id = $scope.items[index].id;
             $scope.clearParameters();
             $location.path("/requests/edit/" + id);
         };
 
-        $scope.deleteRequest = function(index) {
+        $scope.delete = function(index) {
             bootbox.confirm("Do You really want to remove request " + $scope.items[index].label + " ?",
             function(removeApproved) {
                 if (removeApproved) {

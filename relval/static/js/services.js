@@ -12,7 +12,7 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
                 method: 'GET',
                 url: 'api/predefined_blob/:item_id/details'
             }
-            // Also available default methods: get, create, delete
+            // Also available default methods: get, save, delete
         });
 }]);
 
@@ -50,8 +50,11 @@ relvalServices.factory('Requests', ['$resource', function($resource) {
             },
             update: {
                 method: 'PUT'
+            },
+            details: {
+                method: 'GET',
+                url: 'api/requests/:item_id/details'
             }
-            // Also available default methods: get, create, delete
         });
 }]);
 

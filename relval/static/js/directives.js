@@ -193,3 +193,10 @@ relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
         require: 'ngModel'
     }
 }]);
+
+relvalDirectives.directive('entityActions', function() {
+    return {
+        templateUrl: "static/partials/reusable/entity-actions.html",
+        restrict: "E"
+    }
+});
