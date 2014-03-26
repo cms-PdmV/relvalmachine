@@ -34,7 +34,7 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
                 if (removeApproved) {
                     var id = $scope.items[index].id
                     // DELETE request
-                    Requests.delete({request_id: id}, function() {
+                    Requests.delete({item_id: id}, function() {
                         $scope.items.splice(index, 1);
                         AlertsService.addSuccess({msg: "Request deleted successfully!"});
                     }, function() {
@@ -152,7 +152,7 @@ var BaseRequestEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $r
     ));
     // load request data
     $scope.id = $routeParams.requestId;
-    var request = Requests.get({request_id: $scope.id}, function() {
+    var request = Requests.get({item_id: $scope.id}, function() {
         $scope.currentItem.label = request.label;
         $scope.currentItem.description = request.description;
         $scope.currentItem.immutable = request.immutable;
@@ -198,7 +198,7 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
             var request = constructRequest($scope, Requests);
             // PUT to update step
             if ($scope.mainForm.$valid) {
-                request.$update({request_id: $scope.id}, function() {
+                request.$update({item_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update request."});
@@ -231,7 +231,7 @@ var RequestSelectModalCtrl = function($scope, $location, $modalInstance, Request
 };
 
 var RequestViewDetailsCtrl = function($scope, $modalInstance, Requests, Steps, requestId, $modal) {
-    var request = Requests.get({request_id: requestId}, function() {
+    var request = Requests.get({item_id: requestId}, function() {
         $scope.request = request;
     });
 

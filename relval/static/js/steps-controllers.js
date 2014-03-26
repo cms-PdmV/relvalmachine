@@ -37,7 +37,7 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
                 if (removeApproved) {
                     var id = $scope.items[index].id
                     // DELETE step
-                    Steps.delete({step_id: id}, function() {
+                    Steps.delete({item_id: id}, function() {
                         $scope.items.splice(index, 1);
                         AlertsService.addSuccess({msg: "Step deleted successfully!"});
                     }, function() {
@@ -120,7 +120,7 @@ var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $rout
     ));
     // load blob data
     $scope.id = $routeParams.stepId;
-    var step = Steps.get({step_id: $scope.id}, function() {
+    var step = Steps.get({item_id: $scope.id}, function() {
         $scope.currentItem.title = step.title;
         $scope.currentItem.immutable = step.immutable;
         $scope.currentItem.parameters = step.parameters;
@@ -221,7 +221,7 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
             var step = constructStep($scope, Steps);
             // PUT to update step
             if ($scope.mainForm.$valid) {
-                step.$update({step_id: $scope.id}, function() {
+                step.$update({item_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update step."});
@@ -255,7 +255,7 @@ var StepSelectModalCtrl = function($scope, $location, $modalInstance, Steps, Ale
 };
 
 var StepViewDetailsCtrl = function($scope, $modalInstance, Steps, stepId) {
-    var step = Steps.get({step_id: stepId}, function() {
+    var step = Steps.get({item_id: stepId}, function() {
         $scope.step = step;
         $scope.step.blobs.forEach(function(item) {
             item.show = false;

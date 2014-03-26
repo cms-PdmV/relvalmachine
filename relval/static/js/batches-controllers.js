@@ -94,7 +94,7 @@ var BaseBatchEditWithPreloadCtrl = function($scope, $modal, $rootScope, $routePa
     ));
     $scope.currentItem = {};
     $scope.id = $routeParams.batchId;
-    var batch = Batches.get({batch_id: $scope.id}, function() {
+    var batch = Batches.get({item_id: $scope.id}, function() {
         $scope.currentItem.title = batch.title;
         $scope.currentItem.immutable = batch.immutable;
         $scope.currentItem.description = batch.description;
@@ -179,7 +179,7 @@ relvalControllers.controller('EditBatchCtrl', ['$scope', '$modal', '$rootScope',
             $scope.preSubmit();
             if ($scope.mainForm.$valid) {
                 var batch = constructBatch($scope, Batches);
-                batch.$update({batch_id: $scope.id}, function() {
+                batch.$update({item_id: $scope.id}, function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to update batch."});

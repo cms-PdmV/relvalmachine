@@ -17,7 +17,7 @@ relvalServices.factory('PredefinedBlobs', ['$resource', function($resource) {
 }]);
 
 relvalServices.factory('Steps', ['$resource', function($resource) {
-        return $resource('api/steps/:step_id', {}, {
+        return $resource('api/steps/:item_id', {}, {
             all: {
                 method: 'GET'
             },
@@ -38,7 +38,7 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
 }]);
 
 relvalServices.factory('Requests', ['$resource', function($resource) {
-        return $resource('api/requests/:request_id', {}, {
+        return $resource('api/requests/:item_id', {}, {
             all: {
                 method: 'GET'
             },
@@ -59,7 +59,7 @@ relvalServices.factory('Requests', ['$resource', function($resource) {
 }]);
 
 relvalServices.factory('Batches', ['$resource', function($resource) {
-        return $resource('api/batches/:batch_id', {}, {
+        return $resource('api/batches/:item_id', {}, {
             all: {
                 method: 'GET'
             },
