@@ -103,6 +103,22 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         });
     }
 
+    $scope.delete = function(index) {
+        bootbox.confirm("Do You really want to remove item " + $scope.items[index].title + " ?",
+            function(removeApproved) {
+                if (removeApproved) {
+                    var id = $scope.items[index].id
+                    // DELETE item
+                    Resource.delete({item_id: id}, function() {
+                        $scope.items.splice(index, 1);
+                        AlertsService.addSuccess({msg: "Item deleted successfully!"});
+                    }, function() {
+                        AlertsService.addError({msg: "Server error. Failed to remove item"});
+                    });
+                }
+            });
+    };
+
     $scope.clearParameters = function() {
         $location.$$search = {};
         $location.url($location.path());

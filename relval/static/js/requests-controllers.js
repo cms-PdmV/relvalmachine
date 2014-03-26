@@ -27,21 +27,6 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             $scope.clearParameters();
             $location.path("/requests/edit/" + id);
         };
-
-        $scope.delete = function(index) {
-            bootbox.confirm("Do You really want to remove request " + $scope.items[index].label + " ?",
-            function(removeApproved) {
-                if (removeApproved) {
-                    var id = $scope.items[index].id
-                    // DELETE request
-                    Requests.delete({item_id: id}, function() {
-                        $scope.items.splice(index, 1);
-                        AlertsService.addSuccess({msg: "Request deleted successfully!"});
-                    }, function() {
-                        AlertsService.addError({msg: "Server error. Failed to remove request"});
-                    });
-                }});
-        };
 }]);
 
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {

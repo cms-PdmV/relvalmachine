@@ -21,21 +21,6 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
         $location.path("/blobs/edit/" + id);
     };
 
-    $scope.delete = function(index) {
-        bootbox.confirm("Do You really want to remove predefined blob " + $scope.items[index].title + " ?",
-            function(removeApproved) {
-                if (removeApproved) {
-                    var id = $scope.items[index].id
-                    // DELETE blob
-                    PredefinedBlobs.delete({item_id: id}, function() {
-                        $scope.items.splice(index, 1);
-                        AlertsService.addSuccess({msg: "Blob deleted successfully!"});
-                    }, function() {
-                        AlertsService.addError({msg: "Server error. Failed to remove blob"});
-                    });
-                }});
-    };
-
     $scope.cloneBlob = function(index) {
         var id = $scope.items[index].id;
         $scope.clearParameters();
