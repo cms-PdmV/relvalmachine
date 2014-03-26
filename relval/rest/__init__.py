@@ -32,9 +32,9 @@ restful_api.add_resource(BlobsValidationApi, "/api/validate/blob/<field>")
 restful_api.add_resource(BatchesValidationApi, "/api/validate/batch/<field>")
 
 # details
-restful_api.add_resource(BlobDetailsApi, "/api/predefined_blob/<int:blob_id>/details")
-restful_api.add_resource(StepDetailsApi, "/api/steps/<int:step_id>/details")
-restful_api.add_resource(RequestDetailsApi, "/api/requests/<int:request_id>/details")
+restful_api.add_resource(BlobDetailsApi, "/api/predefined_blob/<int:item_id>/details")
+restful_api.add_resource(StepDetailsApi, "/api/steps/<int:item_id>/details")
+restful_api.add_resource(RequestDetailsApi, "/api/requests/<int:item_id>/details")
 restful_api.add_resource(BatchDetailsApi, "/api/batches/<int:item_id>/details")
 
 # users resources
