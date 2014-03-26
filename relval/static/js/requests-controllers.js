@@ -92,7 +92,7 @@ var saveRequest = function(scope, rootScope, Requests, AlertsService) {
     scope.preSubmit();
     if (scope.mainForm.$valid) {
         var request = constructRequest(scope, Requests);
-        request.$create(function() {
+        request.$save(function() {
             rootScope.back();
         }, function() {
             AlertsService.addError({msg: "Server Error. Failed to save request."});

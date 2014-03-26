@@ -21,12 +21,6 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
             all: {
                 method: 'GET'
             },
-            create: {
-                method: 'POST'
-            },
-            get: {
-                method: 'GET'
-            },
             update: {
                 method: 'PUT'
             },
@@ -34,18 +28,13 @@ relvalServices.factory('Steps', ['$resource', function($resource) {
                 method: 'GET',
                 url: 'api/steps/:item_id/details'
             }
+            // Also available default methods: get, save, delete
         });
 }]);
 
 relvalServices.factory('Requests', ['$resource', function($resource) {
         return $resource('api/requests/:item_id', {}, {
             all: {
-                method: 'GET'
-            },
-            create: {
-                method: 'POST'
-            },
-            get: {
                 method: 'GET'
             },
             update: {
@@ -55,6 +44,7 @@ relvalServices.factory('Requests', ['$resource', function($resource) {
                 method: 'GET',
                 url: 'api/requests/:item_id/details'
             }
+            // Also available default methods: get, save, delete
         });
 }]);
 

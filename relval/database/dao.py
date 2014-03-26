@@ -360,7 +360,7 @@ class StepsDao(BaseValidationDao):
             details += step.data_set + " "
         if step.type == StepType.Default or step.type == StepType.FirstMc:
             for p in step.parameters:
-                details += " ".join([p.flag, p.value]) + " "
+                details += " ".join([p.flag or "", p.value or ""]) + " "  # null safe
             for blob in step.predefined_blobs:
                 details += " " + self.blobs_dao.get_details(blob.id)
 
@@ -446,7 +446,7 @@ class PredefinedBlobsDao(BaseValidationDao):
         blob = self.get(id)
         details = ""
         for p in blob.parameters:
-            details += " ".join([p.flag, p.value]) + " "
+            details += " ".join([p.flag or "", p.value or ""]) + " "
 
         return details
 

@@ -159,7 +159,7 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
             var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.mainForm.$valid) {
-                step.$create(function() {
+                step.$save(function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to create step."});
@@ -182,7 +182,7 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
             var step = constructStep($scope, Steps);
             // POST to create step
             if ($scope.mainForm.$valid) {
-                step.$create(function() {
+                step.$save(function() {
                     $rootScope.back();
                 }, function() {
                     AlertsService.addError({msg: "Server Error. Failed to create step."});
