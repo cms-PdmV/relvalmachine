@@ -8,11 +8,15 @@ relvalControllers.controller('HomeCtrl', ['$scope',
     }
 ])
 
-relvalControllers.controller('NavbarCtrl', ['$scope', '$location',
-    function($scope, $location) {
+relvalControllers.controller('NavbarCtrl', ['$scope', '$location', 'Users',
+    function($scope, $location, Users) {
         $scope.isActive = function(viewLocation) {
             return $location.path().lastIndexOf(viewLocation, 0) === 0
         };
+        var resp = Users.username({}, function() {
+            $scope.username = resp.result
+            console.log("Username=", $scope.username)
+        });
     }
 ]);
 

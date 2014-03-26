@@ -66,6 +66,20 @@ relvalServices.factory('Batches', ['$resource', function($resource) {
         });
 }]);
 
+relvalServices.factory('Users', ['$resource', function($resource) {
+        return $resource('api/users/:field', {}, {
+            username: {
+                method: 'GET',
+                params: {field: 'username'}
+            },
+            email: {
+                method: 'GET',
+                params: {field: 'email'}
+            }
+
+    });
+}]);
+
 relvalServices.factory('AlertsService', ['$timeout', function($timeout) {
         var alerts = [];
         var time_out = 5000;
