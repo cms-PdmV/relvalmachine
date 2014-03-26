@@ -103,6 +103,15 @@ class RequestsDao(BaseValidationDao):
     def get(self, id):
         return Requests.query.get(id)
 
+    def get_details(self, id):
+        request = self.get(id)
+
+        details = "Steps:"
+        for i, step in enumerate(request.steps):
+            details +="\n[{0}] {1}".format(i, self.steps_dao.get_details(step.id))
+
+        return details
+
     def validate_distinct_label(self, label_to_validate):
         self.validate_distinct_value(label_to_validate, Requests.label)
 

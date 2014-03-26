@@ -36,14 +36,14 @@
     <th>Actions</th>
     <th></th>
     </thead>
-    <tbody ng-repeat="request in items | filter: {label: search.searchText} | orderBy:sort.column:sort.descending">
+    <tbody ng-repeat="item in items | filter: {label: search.searchText} | orderBy:sort.column:sort.descending">
     <tr>
       <td>{{(currentPage-1) * itemsPerPage + $index+1}}</td>
-      <td>{{request.label}}</td>
-      <td>{{request.type}}</td>
-      <td>{{request.status}}</td>
+      <td>{{item.label}}</td>
+      <td>{{item.type}}</td>
+      <td>{{item.status}}</td>
       <td>
-        <div ng-show="request.immutable">
+        <div ng-show="item.immutable">
           <i class="fa fa-check fa-lg"></i>
         </div>
       </td>
@@ -56,8 +56,8 @@
     </tr>
     <tr ng-show="item.doShowDetails">
       <td colspan="7">
-        <div class="well">
-          {{item.details}}
+        <div class="panel">
+          <pre style="white-space: pre-wrap;" class="well">{{item.details}}</pre>
         </div>
       </td>
     </tr>
