@@ -110,7 +110,12 @@ class RequestsDao(BaseValidationDao):
         for i, step in enumerate(request.steps):
             details +="\n[{0}] {1}".format(i, self.steps_dao.get_details(step.id))
 
-        return details
+        return {
+            "details": details,
+            "cmssw_release": request.cmssw_release,
+            "run_the_matrix": request.run_the_matrix_conf,
+            "description": request.description
+        }
 
     def validate_distinct_label(self, label_to_validate):
         self.validate_distinct_value(label_to_validate, Requests.label)
