@@ -68,6 +68,11 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'EditRequestCtrl',
         reloadOnSearch: false
     })
+    .when('/requests/view/:requestId', {
+        templateUrl: 'static/partials/requests/readonly.html',
+        controller: 'ViewRequestCtrl',
+        reloadOnSearch: false
+    })
 }]);
 
 // routes for steps

@@ -1,0 +1,90 @@
+<div class="container">
+  <!-- Form start -->
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <div class="col-sm-offset-1 col-sm-2">
+        <strong ng-if="currentItem.immutable">Request is frozen</strong>
+        <strong ng-if="!currentItem.immutable">Request is editable</strong>
+      </div>
+      <div class="btn-group col-sm-offset-5">
+        <a href="#blobs/new" class="btn btn-default btn-xs"><i class="fa fa-plus-square-o"></i> New</a>
+        <a href="#blobs/edit/{{id}}" ng-hide="currentItem.immutable" class="btn btn-default btn-xs"><i
+                class="fa fa-pencil-square-o"></i> Edit</a>
+        <a href="#blobs/clone/{{id}}" class="btn btn-default btn-xs"><i
+                class="fa fa-files-o"></i> Clone</a>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="requestLabel" class="col-sm-1 control-label">Label</label>
+
+      <div class="col-sm-9">
+        <input ng-model="currentItem.label" class="form-control" id="requestLabel" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="requestDescription" class="col-sm-1 control-label">Description</label>
+
+      <div class="col-sm-9">
+        <textarea ng-model="currentItem.description" class="form-control" id="requestDescription" readonly>
+        </textarea>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+      <div ng-model="currentItem.steps"
+           ng-show="currentItem.steps.length"
+           class="list-group col-sm-offset-6 col-sm-4">
+        <a class="list-group-item list-group-item-readonly">Steps added</a>
+
+        <div ng-repeat="step in currentItem.steps" class="list-group-item step">
+          <span>{{$index+1}}. {{ step.title}}</span>
+
+          <div class="pull-right">
+            <i ng-click="showStepDetails($index)" class="fa fa-list-alt fa-lg"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="releaseNumber" class="col-sm-2 control-label">CMSSW Release</label>
+      <div class="col-sm-8">
+        <input ng-model="currentItem.cmssw_release" class="form-control" id="releaseNumber" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="runTheMatrixConf" class="col-sm-2 control-label">runTheMatrix command</label>
+      <div class="col-sm-8">
+        <textarea ng-model="currentItem.run_the_matrix_conf" class="form-control" id="runTheMatrixConf"
+                  readonly></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="typeInput" class="col-sm-2 control-label">Type</label>
+      <div class="col-sm-3">
+        <input ng-model="currentItem.type" class="form-control" id="typeInput" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-3 col-sm-offset-2">
+        <label for="eventsInput">Number of events</label>
+        <input ng-model="currentItem.events" class="form-control" id="eventsInput" readonly/>
+      </div>
+      <div class="col-sm-offset-1 col-sm-3">
+        <label for="priorityInput">Priority</label>
+        <input ng-model="currentItem.priority" class="form-control" id="priorityInput" readonly/>
+      </div>
+    </div>
+
+    <div id="step-buttons" class="col-sm-3 pull-right">
+      <button ng-click="back()" type="button" class="btn btn-success">Back</button>
+    </div>
+
+  </form>
+</div>

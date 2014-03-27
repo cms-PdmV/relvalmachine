@@ -11,6 +11,7 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             AlertsService,
             RequestsSearchService
         ));
+        $scope.entity = "requests";
 
         $scope.cloneStep = function(index) {
             var id = $scope.items[index].id;
@@ -29,8 +30,25 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
         };
 }]);
 
+var BaseRequestReadOnlyViewCtrl = function($scope, $modal) {
+    $scope.showStepDetails = function(index) {
+        var modal = $modal.open({
+            templateUrl: 'static/partials/modal/step-details.html',
+            controller: StepViewDetailsCtrl,
+            resolve: {
+                stepId: function() {
+                    return $scope.currentItem.steps[index].id
+                }
+            }
+        });
+    }
+};
+
+
 var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
     angular.extend(this, new BaseEditPageController($scope));
+    angular.extend(this, new BaseRequestReadOnlyViewCtrl($scope, $modal));
+
     $scope.addStep = function() {
         var modal = $modal.open({
             templateUrl: 'static/partials/modal/select-step.html',
@@ -51,18 +69,6 @@ var BaseRequestEditPageCtrl = function($scope, $modal, $rootScope) {
             }
         });
     };
-
-    $scope.showStepDetails = function(index) {
-        var modal = $modal.open({
-            templateUrl: 'static/partials/modal/step-details.html',
-            controller: StepViewDetailsCtrl,
-            resolve: {
-                stepId: function() {
-                    return $scope.currentItem.steps[index].id
-                }
-            }
-        });
-    }
 
     $scope.discard = function() {
         $rootScope.back();
@@ -128,13 +134,8 @@ relvalControllers.controller('NewRequestCtrl', ['$scope', '$modal', '$rootScope'
 
     }]);
 
-var BaseRequestEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Requests) {
+var RequestPreloadCtrl = function($scope, $routeParams, Requests) {
     $scope.currentItem = {};
-    angular.extend(this, new BaseRequestEditPageCtrl(
-            $scope,
-            $modal,
-            $rootScope
-    ));
     // load request data
     $scope.id = $routeParams.requestId;
     var request = Requests.get({item_id: $scope.id}, function() {
@@ -152,13 +153,8 @@ var BaseRequestEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $r
 
 relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'AlertsService', 'Requests',
     function($scope, $modal, $rootScope, $routeParams, AlertsService, Requests) {
-        angular.extend(this, new BaseRequestEditPageWithPreloadCtrl(
-            $scope,
-            $modal,
-            $rootScope,
-            $routeParams,
-            Requests
-        ));
+        angular.extend(this, new BaseRequestEditPageCtrl($scope, $modal, $rootScope));
+        angular.extend(this, new RequestPreloadCtrl($scope, $routeParams, Requests));
 
         $scope.actionName = "Clone";
 
@@ -169,13 +165,9 @@ relvalControllers.controller('CloneRequestCtrl', ['$scope', '$modal', '$rootScop
 
 relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'AlertsService', 'Requests',
     function($scope, $modal, $rootScope, $routeParams, AlertsService, Requests) {
-        angular.extend(this, new BaseRequestEditPageWithPreloadCtrl(
-            $scope,
-            $modal,
-            $rootScope,
-            $routeParams,
-            Requests
-        ));
+        angular.extend(this, new BaseRequestEditPageCtrl($scope, $modal, $rootScope));
+        angular.extend(this, new RequestPreloadCtrl($scope, $routeParams, Requests));
+
         $scope.actionName = "Update";
 
         $scope.submit = function() {
@@ -192,6 +184,16 @@ relvalControllers.controller('EditRequestCtrl', ['$scope', '$modal', '$rootScope
                 AlertsService.addError({msg: "Error! Fix errors in request form and then try to submit again."});
             }
         }
+    }]);
+
+relvalControllers.controller('ViewRequestCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'Requests',
+    function($scope, $modal, $rootScope, $routeParams, Requests) {
+        angular.extend(this, new BaseRequestReadOnlyViewCtrl($scope, $modal));
+        angular.extend(this, new RequestPreloadCtrl($scope, $routeParams, Requests));
+
+        $scope.back = function() {
+            $rootScope.back();
+        };
     }]);
 
 var RequestSelectModalCtrl = function($scope, $location, $modalInstance, Requests, AlertsService, RequestsSearchService) {

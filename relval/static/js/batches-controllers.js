@@ -10,6 +10,7 @@ relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', '
             AlertsService,
             BatchesSearchService
         ));
+        $scope.entity = "batches";
 
         $scope.showEditControllers = function(index) {
             return !$scope.items[index].immutable;
