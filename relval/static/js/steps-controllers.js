@@ -23,21 +23,6 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         angular.extend(this, new BaseStepCtrl($scope));
 
         $scope.entity = "steps";
-
-        $scope.showEditControllers = function(index) {
-            return !$scope.items[index].immutable
-        }
-
-        $scope.edit = function(index) {
-            $scope.clearParameters();
-            $location.path('/steps/edit/' + $scope.items[index].id)
-        }
-
-        $scope.cloneStep = function(index) {
-            var id = $scope.items[index].id;
-            $scope.clearParameters();
-            $location.path("/steps/clone/" + id);
-        }
 }]);
 
 var BaseStepReadOnlyViewCtrl = function($scope, $modal) {

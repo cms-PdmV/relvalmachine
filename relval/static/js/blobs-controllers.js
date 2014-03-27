@@ -11,22 +11,6 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
             BlobsSearchService
         ));
     $scope.entity = "blobs";
-
-    $scope.showEditControllers = function(index) {
-        return !$scope.items[index].immutable; // if not immutable than show edit controllers
-    }
-
-    $scope.edit = function(index) {
-        var id = $scope.items[index].id;
-        $scope.clearParameters();
-        $location.path("/blobs/edit/" + id);
-    };
-
-    $scope.cloneBlob = function(index) {
-        var id = $scope.items[index].id;
-        $scope.clearParameters();
-        $location.path("/blobs/clone/" + id);
-    }
 }
 
 relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',

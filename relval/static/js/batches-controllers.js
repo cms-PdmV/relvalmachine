@@ -11,23 +11,6 @@ relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', '
             BatchesSearchService
         ));
         $scope.entity = "batches";
-
-        $scope.showEditControllers = function(index) {
-            return !$scope.items[index].immutable;
-        };
-
-        $scope.clone = function(index) {
-            var id = $scope.items[index].id;
-            $scope.clearParameters();
-            $location.path("/batches/clone/" + id);
-        };
-
-        $scope.edit = function(index) {
-            var id = $scope.items[index].id;
-            $scope.clearParameters();
-            $location.path("/batches/edit/" + id);
-        }
-
     }]);
 
 var constructBatch = function(scope, Batches) {

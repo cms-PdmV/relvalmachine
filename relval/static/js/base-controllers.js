@@ -129,6 +129,22 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         $location.path("/" + $scope.entity + "/view/" + id);
     }
 
+    $scope.showEditControllers = function(index) {
+        return !$scope.items[index].immutable;
+    };
+
+    $scope.clone = function(index) {
+        var id = $scope.items[index].id;
+        $scope.clearParameters();
+        $location.path("/"+ $scope.entity +"/clone/" + id);
+    };
+
+    $scope.edit = function(index) {
+        var id = $scope.items[index].id;
+        $scope.clearParameters();
+        $location.path("/"+ $scope.entity +"/edit/" + id);
+    }
+
     $scope.clearParameters = function() {
         $location.$$search = {};
         $location.url($location.path());

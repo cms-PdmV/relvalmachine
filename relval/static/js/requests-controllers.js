@@ -12,22 +12,6 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             RequestsSearchService
         ));
         $scope.entity = "requests";
-
-        $scope.cloneStep = function(index) {
-            var id = $scope.items[index].id;
-            $scope.clearParameters();
-            $location.path("/requests/clone/" + id);
-        };
-
-        $scope.showEditControllers = function(index) {
-            return !$scope.items[index].immutable
-        };
-
-        $scope.edit = function(index) {
-            var id = $scope.items[index].id;
-            $scope.clearParameters();
-            $location.path("/requests/edit/" + id);
-        };
 }]);
 
 var BaseRequestReadOnlyViewCtrl = function($scope, $modal) {
