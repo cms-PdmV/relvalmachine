@@ -365,24 +365,29 @@ class StepsDao(BaseValidationDao):
 
     def get_details(self, id):
         step = self.get(id)
-        details = "cmsDriver.py "
+        text = "cmsDriver.py "
+        blobs = []
         if step.type == StepType.FirstMc:
-            details += step.data_set + " "
+            text += step.data_set + " "
         if step.type == StepType.Default or step.type == StepType.FirstMc:
             for p in step.parameters:
-                details += " ".join([p.flag or "", p.value or ""]) + " "  # null safe
+                text += " ".join([p.flag or "", p.value or ""]) + " "  # null safe
             for blob in step.predefined_blobs:
-                details += " " + self.blobs_dao.get_details(blob.id)
+                text += " " + self.blobs_dao.get_details(blob.id)
+                blobs.append(dict(title=blob.title, id=blob.id))
 
         if step.type == StepType.FirstData:
             data_step = step.data_step
             if data_step.ib_block:
-                details = "input from: {0} with run {1}#{2}".format(
+                text = "input from: {0} with run {1}#{2}".format(
                     data_step.data_set, data_step.ib_block, data_step.run)
             else:
-                details = "input from: {0} with run {1}".format(data_step.data_set, data_step.run)
+                text = "input from: {0} with run {1}".format(data_step.data_set, data_step.run)
 
-        return details
+        return dict(
+            text=text,
+            blobs=blobs
+        )
 
     def search_all(self, query, page_num, items_per_page):
         return Steps.query \

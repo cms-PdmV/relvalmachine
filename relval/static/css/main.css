@@ -82,3 +82,7 @@ a.clickable {
 a.clickable:hover {
     text-decoration:none;
 }
+
+a.label.item-label {
+    margin-left: 15px;
+}

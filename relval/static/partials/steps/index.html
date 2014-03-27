@@ -57,7 +57,12 @@
       <tr ng-show="item.doShowDetails">
         <td colspan="6">
           <div class="well">
-            {{item.details}}
+            <p>{{item.details.text}}</p>
+            <p><strong>Blobs: </strong>
+              <a href="#blobs/clone/{{blob.id}}" ng-repeat="blob in item.details.blobs" class="label label-default item-label">
+                {{blob.title}}
+              </a>
+            </p>
           </div>
         </td>
       </tr>
