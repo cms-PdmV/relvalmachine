@@ -77,10 +77,10 @@
           <!--<pre style="white-space: pre-wrap;" class="well">{{item.details.text}}</pre>-->
           <div class="well"><strong>Steps: </strong><br />
               <div ng-repeat="step in item.details.steps" style="padding-top: 5px" class="row">
+                <span class="col-sm-9">{{step.text}}</span>
                 <a href="#steps/clone/{{step.id}}" class="label label-default step-label ">
                   {{step.title}}
                 </a>
-                <span class="col-sm-9">{{step.text}}</span>
               </div>
           </div>
         </div>

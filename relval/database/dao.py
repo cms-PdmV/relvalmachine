@@ -271,10 +271,17 @@ class BatchesDao(BaseValidationDao):
     def get_details(self, id):
         batch = self.get(id)
 
-        details = "Requests:"
+        requests = []
         for req in batch.requests:
-            details += "\n{0}\n".format(self.requests_dao.get_details(req.id)["details"])
-        return details
+            steps = self.requests_dao.get_details(req.id)["steps"]
+            requests.append(dict(
+                steps=steps,
+                id=req.id,
+                label=req.label
+            ))
+        return dict(
+            requests=requests
+        )
 
 
 

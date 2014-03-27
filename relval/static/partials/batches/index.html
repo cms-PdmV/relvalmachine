@@ -53,8 +53,19 @@
     </tr>
     <tr ng-show="item.doShowDetails">
       <td colspan="7">
-        <div class="panel">
-          <pre style="white-space: pre-wrap;" class="well">{{item.details}}</pre>
+        <div class="well">
+          <div ng-repeat="request in item.details.requests" style="padding-top: 5px">
+            <a href="#requests/clone/{{request.id}}" class="label label-default label-info">
+              {{request.label}}
+            </a>
+
+            <div ng-repeat="step in request.steps" style="padding-top: 5px" class="row">
+              <span class="col-sm-9">{{step.text}}</span>
+              <a href="#steps/clone/{{step.id}}" class="label label-default step-label ">
+                {{step.title}}
+              </a>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
