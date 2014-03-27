@@ -10,6 +10,7 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
             AlertsService,
             BlobsSearchService
         ));
+    $scope.entity = "blobs";
 
     $scope.showEditControllers = function(index) {
         return !$scope.items[index].immutable; // if not immutable than show edit controllers
@@ -64,9 +65,7 @@ function BaseBlobEditPageController($scope, $rootScope) {
     };
 }
 
-function BaseBlobEditPageControllerWithInitialLoad($scope, $rootScope, $routeParams, PredefinedBlobs) {
-    angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
-
+function BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs) {
     // load blob data
     $scope.id = $routeParams.blobId;
     var blob = PredefinedBlobs.get({item_id: $scope.id}, function() {
@@ -106,8 +105,9 @@ relvalControllers.controller('NewBlobCtrl', ['$scope', '$rootScope', 'Predefined
 
 relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
     function($scope, $routeParams, $rootScope, PredefinedBlobs, AlertsService) {
-        angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
-            $scope, $rootScope, $routeParams, PredefinedBlobs));
+        angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
+        angular.extend(this, new BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs));
+
         $scope.actionName = "Update";
         $scope.submit = function() {
             $scope.preSubmit();
@@ -133,8 +133,8 @@ relvalControllers.controller('EditBlobCtrl', ['$scope', '$routeParams', '$rootSc
 
 relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
     function($scope, $routeParams, $rootScope, PredefinedBlobs, AlertsService) {
-        angular.extend(this, new BaseBlobEditPageControllerWithInitialLoad(
-            $scope, $rootScope, $routeParams, PredefinedBlobs));
+        angular.extend(this, new BaseBlobEditPageController($scope, $rootScope));
+        angular.extend(this, new BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs));
         $scope.actionName = "Clone";
 
         $scope.submit = function() {
@@ -156,7 +156,15 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
             } else {
                 AlertsService.addError({msg: "Error! Fix errors in blob creation form and then try to submit again."});
             }
+        };
+    }]);
 
+relvalControllers.controller('ViewBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
+    function($scope, $routeParams, $rootScope, PredefinedBlobs) {
+        angular.extend(this, new BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs));
+
+        $scope.back = function() {
+            $rootScope.back();
         };
     }]);
 

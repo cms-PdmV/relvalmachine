@@ -1,0 +1,49 @@
+<div class="container">
+  <!-- Form start -->
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <div class="col-sm-offset-1 col-sm-2">
+        <strong ng-if="currentItem.immutable">Blob is frozen</strong>
+        <strong ng-if="!currentItem.immutable">Blob is editable</strong>
+      </div>
+      <div class="btn-group col-sm-offset-5">
+        <a href="#blobs/new" class="btn btn-default btn-xs"><i class="fa fa-plus-square-o"></i> New</a>
+        <a href="#blobs/clone/{{id}}" class="btn btn-default btn-xs"><i
+                class="fa fa-files-o"></i> Clone</a>
+        <a href="#blobs/edit/{{id}}" ng-hide="currentItem.immutable" class="btn btn-default btn-xs"><i
+                class="fa fa-pencil-square-o"></i> Edit</a>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="blobTitle" class="col-sm-1 control-label">Title</label>
+
+      <div class="col-sm-9">
+        <input ng-model="currentItem.title" class="form-control" id="blobTitle" readonly>
+      </div>
+
+    </div>
+
+    <div ng-repeat="param in currentItem.parameters">
+      <div class="form-group">
+        <label for="parameterFlag" class="col-sm-1 control-label">Flag</label>
+
+        <div class="col-sm-4">
+          <input ng-model="param.flag" class="form-control" id="parameterFlag" readonly>
+        </div>
+
+        <label for="parameterValue" class="col-sm-1 control-label">Value</label>
+
+        <div class="col-sm-4">
+          <input ng-model="param.value" class="form-control" id="parameterValue" readonly>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="step-buttons" class="col-sm-3 pull-right">
+      <button ng-click="back()" type="button" class="btn btn-success">Back</button>
+    </div>
+  </form>
+  <!-- Form end -->
+
+</div>

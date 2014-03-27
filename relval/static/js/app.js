@@ -118,6 +118,11 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'CloneBlobCtrl',
         reloadOnSearch: false
     })
+    .when('/blobs/view/:blobId', {
+        templateUrl: 'static/partials/predefined-blobs/readonly.html',
+        controller: 'ViewBlobCtrl',
+        reloadOnSearch: false
+    })
 }]);
 
 // routes for batches

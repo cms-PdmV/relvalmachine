@@ -123,6 +123,12 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
             });
     };
 
+    $scope.redirectToView = function(index) {
+        var id = $scope.items[index].id;
+        $scope.clearParameters();
+        $location.path("/" + $scope.entity + "/view/" + id);
+    }
+
     $scope.clearParameters = function() {
         $location.$$search = {};
         $location.url($location.path());
