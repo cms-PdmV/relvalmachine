@@ -1,6 +1,15 @@
 <div class="container">
   <!-- Form start -->
   <form class="form-horizontal" role="form" name="mainForm">
+    <div class="form-group" ng-hide="actionName=='Save'">
+      <div class="btn-group col-sm-offset-8">
+        <a href="#blobs/new" class="btn btn-default btn-xs"><i class="fa fa-plus-square-o"></i> New</a>
+        <a href="#blobs/clone/{{id}}" ng-hide="actionName=='Clone'" class="btn btn-default btn-xs"><i
+                class="fa fa-files-o"></i> Clone</a>
+        <a href="#blobs/edit/{{id}}" ng-hide="actionName=='Update'" class="btn btn-default btn-xs"><i
+                class="fa fa-pencil-square-o"></i> Edit</a>
+      </div>
+    </div>
     <div class="form-group" ng-class="{'has-error': isTitleError()}">
       <label for="blobTitle" class="col-sm-1 control-label">Title</label>
 
