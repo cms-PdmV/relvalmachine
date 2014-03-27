@@ -93,6 +93,11 @@ relval.config(['$routeProvider', function($routeProvider) {
         controller: 'CloneStepCtrl',
         reloadOnSearch: false
     })
+    .when('/steps/view/:stepId', {
+        templateUrl: 'static/partials/steps/readonly.html',
+        controller: 'ViewStepCtrl',
+        reloadOnSearch: false
+    })
 }]);
 
 // routes for predefined blobs

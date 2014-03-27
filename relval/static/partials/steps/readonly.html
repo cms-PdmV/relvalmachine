@@ -1,0 +1,135 @@
+<div class="container">
+  <!-- Form start -->
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <div class="col-sm-offset-1 col-sm-2">
+        <strong ng-if="currentItem.immutable">Step is frozen</strong>
+        <strong ng-if="!currentItem.immutable">Step is editable</strong>
+      </div>
+      <div class="btn-group col-sm-offset-5">
+        <a href="#blobs/new" class="btn btn-default btn-xs"><i class="fa fa-plus-square-o"></i> New</a>
+        <a href="#blobs/edit/{{id}}" ng-hide="currentItem.immutable" class="btn btn-default btn-xs"><i
+                class="fa fa-pencil-square-o"></i> Edit</a>
+        <a href="#blobs/clone/{{id}}" class="btn btn-default btn-xs"><i
+                class="fa fa-files-o"></i> Clone</a>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="stepTitle" class="col-sm-1 control-label">Title</label>
+
+      <div class="col-sm-9">
+        <input ng-model="currentItem.title" class="form-control" id="stepTitle" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="type" class="col-sm-1 control-label">Type</label>
+
+      <div class="col-sm-3">
+        <input ng-model="currentItem.type" class="form-control" id="type" readonly>
+      </div>
+    </div>
+
+    <div ng-show="isActiveForm('default') || isActiveForm('first_mc')">
+      <div class="form-group">
+        <div ng-model="currentItem.blobs"
+             id="added-steps-list"
+             ng-show="currentItem.blobs.length"
+             class="list-group col-sm-offset-6 col-sm-4">
+          <a class="list-group-item list-group-item-readonly">Predefined blobs added</a>
+
+          <div drag-and-drop-list="currentItem.blobs">
+            <div ng-repeat="blob in currentItem.blobs" class="list-group-item step">
+              <span>{{$index+1}}. {{ blob.title}}</span>
+
+              <div class="pull-right">
+                <i ng-click="showBlobDetails($index)" class="fa fa-list-alt fa-lg"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-repeat="param in currentItem.parameters">
+      <div class="form-group">
+        <label for="parameterFlag" class="col-sm-1 control-label">Flag</label>
+        <div class="col-sm-4">
+          <input ng-model="param.flag" class="form-control" id="parameterFlag" readonly>
+        </div>
+        <label for="parameterValue" class="col-sm-1 control-label">Value</label>
+        <div class="col-sm-4">
+          <input ng-model="param.value" class="form-control" id="parameterValue" readonly>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div ng-show="isActiveForm('first_mc')">
+      <div class="clearfix"></div>
+      <br>
+      <div class="col-sm-10">
+        <hr>
+        <div class="form-group">
+          <label for="mcDataSetInput">Input GEN-SIM dataset</label>
+          <textarea ng-model="currentItem.dataSet" class="form-control" id="mcDataSetInput"
+                    readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="isActiveForm('first_data')" class="col-sm-10">
+      <div class="form-group">
+        <label for="dataSetInput">Data Set</label>
+        <textarea ng-model="currentItem.dataStep.data_set" class="form-control" id="dataSetInput"
+                  readonly></textarea>
+      </div>
+      <div class="form-group">
+        <label for="labelInput">Label</label>
+        <textarea ng-model="currentItem.dataStep.label" class="form-control" id="labelInput"
+                  readonly></textarea>
+      </div>
+      <div class="form-group">
+        <label for="runInput">Run</label>
+        <textarea ng-model="currentItem.dataStep.run" class="form-control" id="runInput"
+                  readonly></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="ib_blockInput">IB block</label>
+        <input ng-model="currentItem.dataStep.ib_block" class="form-control" id="ib_blockInput"
+               readonly/>
+      </div>
+      <div class="form-group">
+        <label for="ib_blacklistInput">IB black list</label>
+        <input ng-model="currentItem.dataStep.ib_blacklist" class="form-control" id="ib_blacklistInput"
+               readonly/>
+      </div>
+      <div class="form-group">
+        <label for="locationInput">Location</label>
+        <input ng-model="currentItem.dataStep.location" class="form-control" id="locationInput"
+               readonly/>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-3">
+          <label for="filesInput">Files</label>
+          <input ng-model="currentItem.dataStep.files" class="form-control" id="filesInput"
+                 readonly/>
+        </div>
+        <div class="col-sm-offset-1 col-sm-3">
+          <label for="eventsInput">Events</label>
+          <input ng-model="currentItem.dataStep.events" class="form-control" id="eventsInput"
+                 readonly/>
+        </div>
+        <div class="col-sm-offset-1 col-sm-3">
+          <label for="splitInput">Split</label>
+          <input type="number" ng-model="currentItem.dataStep.split" class="form-control" id="splitInput"
+                 readonly/>
+        </div>
+      </div>
+    </div>
+
+    <div id="step-buttons" class="col-sm-3 pull-right">
+      <button ng-click="back()" type="button" class="btn btn-success">Back</button>
+    </div>
+
+  </form>
+</div>

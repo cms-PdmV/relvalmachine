@@ -159,7 +159,7 @@ relvalControllers.controller('CloneBlobCtrl', ['$scope', '$routeParams', '$rootS
         };
     }]);
 
-relvalControllers.controller('ViewBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs', 'AlertsService',
+relvalControllers.controller('ViewBlobCtrl', ['$scope', '$routeParams', '$rootScope', 'PredefinedBlobs',
     function($scope, $routeParams, $rootScope, PredefinedBlobs) {
         angular.extend(this, new BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs));
 

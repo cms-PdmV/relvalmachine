@@ -22,6 +22,8 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         ));
         angular.extend(this, new BaseStepCtrl($scope));
 
+        $scope.entity = "steps";
+
         $scope.showEditControllers = function(index) {
             return !$scope.items[index].immutable
         }
@@ -38,25 +40,10 @@ relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'Aler
         }
 }]);
 
-var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
-    angular.extend(this, new BaseEditPageController($scope));
-
-    $scope.showAdvancedDataStepParams = false;
-
+var BaseStepReadOnlyViewCtrl = function($scope, $modal) {
     $scope.isActiveForm = function(type) {
         return type == $scope.currentItem.type;
     }
-
-    $scope.addParametersRow = function() {
-        $scope.currentItem.parameters.push({
-            "flag": "",
-            "value": ""
-        });
-    };
-
-    $scope.removeParametersRow = function(index) {
-        $scope.currentItem.parameters.splice(index, 1);
-    };
 
     $scope.showBlobDetails = function(index) {
         var modal = $modal.open({
@@ -68,6 +55,24 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
                 }
             }
         });
+    };
+};
+
+var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
+    angular.extend(this, new BaseEditPageController($scope));
+    angular.extend(this, new BaseStepReadOnlyViewCtrl($scope, $modal));
+
+    $scope.showAdvancedDataStepParams = false;
+
+    $scope.addParametersRow = function() {
+        $scope.currentItem.parameters.push({
+            "flag": "",
+            "value": ""
+        });
+    };
+
+    $scope.removeParametersRow = function(index) {
+        $scope.currentItem.parameters.splice(index, 1);
     };
 
     $scope.removeBlob = function(index) {
@@ -96,13 +101,9 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
     };
 }
 
-var BaseStepEditPageWithPreloadCtrl = function($scope, $modal, $rootScope, $routeParams, Steps) {
+var StepPreloadCtrl = function($scope, $routeParams, Steps) {
     $scope.currentItem = {};
-    angular.extend(this, new BaseStepEditPageCtrl(
-        $scope,
-        $modal,
-        $rootScope
-    ));
+
     // load blob data
     $scope.id = $routeParams.stepId;
     var step = Steps.get({item_id: $scope.id}, function() {
@@ -134,11 +135,7 @@ function constructStep(scope, Steps) {
 
 relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
     function($scope, $modal, $rootScope, AlertsService, Steps) {
-        angular.extend(this, new BaseStepEditPageCtrl(
-            $scope,
-            $modal,
-            $rootScope
-        ));
+        angular.extend(this, new BaseStepEditPageCtrl($scope, $modal, $rootScope));
 
         // prepare
         $scope.actionName = "Save";
@@ -172,8 +169,8 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
 
 relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'Steps', 'AlertsService',
     function($scope, $modal, $rootScope, $routeParams, Steps, AlertsService) {
-        angular.extend(this, new BaseStepEditPageWithPreloadCtrl(
-            $scope, $modal, $rootScope, $routeParams, Steps));
+        angular.extend(this, new BaseStepEditPageCtrl($scope, $modal, $rootScope));
+        angular.extend(this, new StepPreloadCtrl($scope, $routeParams, Steps));
 
         $scope.actionName = "Clone";
 
@@ -196,8 +193,8 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
 
 relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', '$routeParams', 'Steps', 'AlertsService',
     function($scope, $modal, $rootScope, $routeParams, Steps, AlertsService) {
-        angular.extend(this, new BaseStepEditPageWithPreloadCtrl(
-            $scope, $modal, $rootScope, $routeParams, Steps));
+        angular.extend(this, new BaseStepEditPageCtrl($scope, $modal, $rootScope));
+        angular.extend(this, new StepPreloadCtrl($scope, $routeParams, Steps));
 
         $scope.actionName = "Update";
 
@@ -215,6 +212,17 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
                 AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
             }
         }
+    }]);
+
+relvalControllers.controller('ViewStepCtrl', ['$scope', '$routeParams', '$rootScope', '$modal', 'Steps',
+    function($scope, $routeParams, $rootScope, $modal, Steps) {
+        angular.extend(this, new BaseStepCtrl($scope));
+        angular.extend(this, new BaseStepReadOnlyViewCtrl($scope, $modal));
+        angular.extend(this, new StepPreloadCtrl($scope, $routeParams, Steps));
+
+        $scope.back = function() {
+            $rootScope.back();
+        };
     }]);
 
 var StepSelectModalCtrl = function($scope, $location, $modalInstance, Steps, AlertsService, StepsSearchService) {

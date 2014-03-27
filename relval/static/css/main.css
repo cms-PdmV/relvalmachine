@@ -90,3 +90,8 @@ a.label.blob-label {
 a.label.step-label {
     margin-right: 15px;
 }
+
+
+a.list-group-item-readonly {
+    background-color: #EEEEEE;
+}
