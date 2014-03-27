@@ -1,10 +1,10 @@
-<button class="btn btn-sm btn-transparent" ng-hide="item.doShowDetails" ng-click="showDetails($index)"><i
+<button class="btn btn-sm btn-transparent" ng-hide="item.doShowDetails" ng-click="showDetails(item.index)"><i
         class="fa fa fa-eye fa-lg"></i></button>
-<button class="btn btn-sm btn-transparent" ng-show="item.doShowDetails" ng-click="hideDetails($index)"><i
+<button class="btn btn-sm btn-transparent" ng-show="item.doShowDetails" ng-click="hideDetails(item.index)"><i
         class="fa fa-eye-slash fa-lg"></i></button>
-<span ng-show="showEditControllers($index)">
-  <button class="btn btn-sm btn-transparent" ng-click="edit($index)"><i
+<span ng-show="showEditControllers(item.index)">
+  <button class="btn btn-sm btn-transparent" ng-click="edit(item.index)"><i
           class="fa fa-pencil-square-o fa-lg"></i></button>
-  <button class="btn btn-sm btn-transparent" ng-click="delete($index)"><i
+  <button class="btn btn-sm btn-transparent" ng-click="delete(item.index)"><i
           class="fa fa-times fa-lg"></i></button>
 </span>

@@ -19,19 +19,25 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
     $scope.totalItems = Number.POSITIVE_INFINITY;
 
 
+    var populate = function(data) {
+        $scope.totalItems = data.total;
+        $scope.items = data.items;
+        for (var i = 0; i < $scope.items.length; ++i) {
+            $scope.items[i].index = i;
+        }
+    }
+
     /*
      * Pagination
      */
     $scope.setPage = function(pageNo) {
         if (SearchService.isSearchingMode()) { // if in search mode then change page with same search query
             SearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
-                $scope.totalItems = response.total;
-                $scope.items = response.items;
+                populate(response);
             });
         } else {
             var resp = Resource.all({page_num: pageNo, items_per_page: $scope.itemsPerPage}, function() {
-                $scope.totalItems = resp.total;
-                $scope.items = resp.items;
+                populate(resp);
             });
         }
         $scope.currentPage = pageNo;
@@ -82,8 +88,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         $scope.currentPage = 1;
         SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
             function(response) {
-                $scope.totalItems = response.total;
-                $scope.items = response.items;
+                populate(response);
                 if ($scope.totalItems == 0) {
                     AlertsService.addWarn({msg: "No result find for query " + $scope.search.searchText + "."})
                 }
@@ -94,8 +99,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
     $scope.resetSearch = function() {
         $scope.search.searchText = "";
         SearchService.resetSearch(function(response) {
-            $scope.totalItems = response.total
-            $scope.items = response.items
+            populate(response);
             $scope.currentPage = 1;
             $location.search("search", null);
             $location.search("page_num", 1);
