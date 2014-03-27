@@ -83,6 +83,10 @@ a.clickable:hover {
     text-decoration:none;
 }
 
-a.label.item-label {
+a.label.blob-label {
     margin-left: 15px;
+}
+
+a.label.step-label {
+    margin-right: 15px;
 }

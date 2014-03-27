@@ -106,15 +106,21 @@ class RequestsDao(BaseValidationDao):
     def get_details(self, id):
         request = self.get(id)
 
-        details = "Steps:"
+        steps = []
         for i, step in enumerate(request.steps):
-            details +="\n[{0}] {1}".format(i, self.steps_dao.get_details(step.id))
+            text = "[{0}] {1}".format(i, self.steps_dao.get_details(step.id)["text"])
+            steps.append(dict(
+                title=step.title,
+                id=step.id,
+                text=text
+            ))
 
         return {
-            "details": details,
+            "steps": steps,
             "cmssw_release": request.cmssw_release,
             "run_the_matrix": request.run_the_matrix_conf,
-            "description": request.description
+            "description": request.description,
+
         }
 
     def validate_distinct_label(self, label_to_validate):
@@ -373,7 +379,7 @@ class StepsDao(BaseValidationDao):
             for p in step.parameters:
                 text += " ".join([p.flag or "", p.value or ""]) + " "  # null safe
             for blob in step.predefined_blobs:
-                text += " " + self.blobs_dao.get_details(blob.id)
+                text += " " + self.blobs_dao.get_details(blob.id)["text"]
                 blobs.append(dict(title=blob.title, id=blob.id))
 
         if step.type == StepType.FirstData:
@@ -463,7 +469,9 @@ class PredefinedBlobsDao(BaseValidationDao):
         for p in blob.parameters:
             details += " ".join([p.flag or "", p.value or ""]) + " "
 
-        return details
+        return dict(
+            text=details
+        )
 
     def validate(self, entity):
         if not self.validate_distinct_title(entity.title):

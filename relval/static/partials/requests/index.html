@@ -60,18 +60,29 @@
           <div class="row">
             <div class="form-group">
               <label class="col-sm-2 control-label">CMSSW Release: </label>
+
               <p class="col-sm-4 form-control-static">{{item.details.cmssw_release}}</p>
               <label class="col-sm-2 control-label">runTheMatrix command: </label>
+
               <p class="col-sm-4 form-control-static">{{item.details.run_the_matrix}}</p>
             </div>
           </div>
           <div class="row">
             <div class="form-group">
               <label class="col-sm-1 control-label">Description: </label>
+
               <p class="col-sm-10 form-control-static">{{item.details.description}}</p>
             </div>
           </div>
-          <pre style="white-space: pre-wrap;" class="well">{{item.details.details}}</pre>
+          <!--<pre style="white-space: pre-wrap;" class="well">{{item.details.text}}</pre>-->
+          <div class="well"><strong>Steps: </strong><br />
+              <div ng-repeat="step in item.details.steps" style="padding-top: 5px" class="row">
+                <a href="#steps/clone/{{step.id}}" class="label label-default step-label ">
+                  {{step.title}}
+                </a>
+                <span class="col-sm-9">{{step.text}}</span>
+              </div>
+          </div>
         </div>
       </td>
     </tr>
