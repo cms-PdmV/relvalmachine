@@ -97,7 +97,6 @@ var StepPreloadCtrl = function($scope, $routeParams, Steps) {
         $scope.currentItem.parameters = step.parameters;
         $scope.currentItem.blobs = step.blobs;
         $scope.currentItem.type = step.type;
-        $scope.currentItem.dataSet = step.data_set;
         $scope.currentItem.dataStep = step.data_step;
     });
 }
@@ -108,11 +107,11 @@ function constructStep(scope, Steps) {
         immutable: scope.currentItem.immutable,
         type: scope.currentItem.type
     });
-    if (scope.currentItem.type != "first_data") {
+    if (scope.currentItem.type != "first_data") { // parameters and blobs has default and first mc steps
         step.parameters = scope.currentItem.parameters;
         step.blobs = scope.currentItem.blobs;
-        step.data_set = scope.currentItem.dataSet;
-    } else {
+    }
+    if (scope.currentItem.type != "default") { // data_step fields has first mc and first data steps
         step.data_step = scope.currentItem.dataStep;
     }
     return step;
@@ -133,7 +132,6 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.currentItem.immutable = false;
         $scope.currentItem.type = "default";
         $scope.currentItem.title = "";
-        $scope.currentItem.dataSet = "";
         $scope.currentItem.dataStep = {};
 
         $scope.submit = function() {
@@ -220,7 +218,6 @@ var StepSelectModalCtrl = function($scope, $location, $modalInstance, Steps, Ale
     ));
     angular.extend(this, new BaseStepCtrl($scope));
 
-
     $scope.selectStep = function(index) {
         $scope.clearParameters();
         $modalInstance.close($scope.items[index]);
@@ -240,7 +237,6 @@ var StepViewDetailsCtrl = function($scope, $modalInstance, Steps, stepId) {
         });
     });
 
-
     $scope.blobToggle = function(index) {
         $scope.step.blobs[index].show =  !$scope.step.blobs[index].show;
     };
@@ -253,7 +249,6 @@ var StepViewDetailsCtrl = function($scope, $modalInstance, Steps, stepId) {
     $scope.doShowBlob = function(index) {
         return $scope.step.blobs[index].show;
     }
-
 
     $scope.back = function() {
         $modalInstance.dismiss('cancel');
