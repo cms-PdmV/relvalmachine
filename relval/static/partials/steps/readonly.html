@@ -63,20 +63,7 @@
     </div>
     </div>
 
-    <div ng-show="isActiveForm('first_mc')">
-      <div class="clearfix"></div>
-      <br>
-      <div class="col-sm-10">
-        <hr>
-        <div class="form-group">
-          <label for="mcDataSetInput">Input GEN-SIM dataset</label>
-          <textarea ng-model="currentItem.dataSet" class="form-control" id="mcDataSetInput"
-                    readonly></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div ng-show="isActiveForm('first_data')" class="col-sm-10">
+    <div ng-show="isActiveForm('first_data') || isActiveForm('first_mc')" class="col-sm-10">
       <div class="form-group">
         <label for="dataSetInput">Data Set</label>
         <textarea ng-model="currentItem.dataStep.data_set" class="form-control" id="dataSetInput"
