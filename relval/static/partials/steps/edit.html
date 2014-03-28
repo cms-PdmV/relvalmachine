@@ -1,3 +1,51 @@
+<script type="text/ng-template" id="advancesDataStepParameters">
+  <div class="form-group">
+    <label for="ib_blockInput">IB block</label>
+    <input ng-model="currentItem.dataStep.ib_block" class="form-control" id="ib_blockInput"
+           placeholder="IB block"/>
+  </div>
+  <div class="form-group">
+    <label for="ib_blacklistInput">IB black list</label>
+    <input ng-model="currentItem.dataStep.ib_blacklist" class="form-control" id="ib_blacklistInput"
+           placeholder="IB black list"/>
+  </div>
+  <div class="form-group">
+    <label for="locationInput">Location</label>
+    <input ng-model="currentItem.dataStep.location" class="form-control" id="locationInput"
+           placeholder="Location"/>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">
+      <label for="filesInput">Files</label>
+      <input type="number" ng-model="currentItem.dataStep.files" class="form-control"
+             id="filesInput" name="files" placeholder="Files" proxy-validity/>
+
+      <div class="error" ng-show="mainForm.files.$invalid">
+        <small class="error">Files must me natural number</small>
+      </div>
+    </div>
+    <div class="col-sm-offset-1 col-sm-3">
+      <label for="eventsInput">Events</label>
+      <input type="number" ng-model="currentItem.dataStep.events" class="form-control" id="eventsInput"
+             name="events" placeholder="Events" proxy-validity/>
+
+      <div class="error" ng-show="mainForm.events.$invalid">
+        <small class="error">Events must me natural number</small>
+      </div>
+    </div>
+    <div class="col-sm-offset-1 col-sm-3">
+      <label for="splitInput">Split</label>
+      <input type="number" ng-model="currentItem.dataStep.split" class="form-control" id="splitInput"
+             name="split" placeholder="Split" proxy-validity/>
+
+      <div class="error" ng-show="mainForm.split.$invalid">
+        <small class="error">Split must me natural number</small>
+      </div>
+    </div>
+  </div>
+</script>
+
+
 <div class="container">
   <!-- Form start -->
   <form class="form-horizontal" role="form" name="mainForm" novalidate>
@@ -16,12 +64,12 @@
       <div class="col-sm-9">
         <input ng-model="currentItem.title" type="text" class="form-control" id="stepTitle"
                placeholder="Title" name="title" required step-title-validation>
-        <span class="help-block" ng-show="isTitleEmpty()">
-          Title field is required
-        </span>
-        <span class="help-block" ng-show="isTitleUnique()">
-          Title field must be unique. Change title.
-        </span>
+            <span class="help-block" ng-show="isTitleEmpty()">
+              Title field is required
+            </span>
+            <span class="help-block" ng-show="isTitleUnique()">
+              Title field must be unique. Change title.
+            </span>
       </div>
     </div>
 
@@ -55,6 +103,28 @@
           <label for="mcDataSetInput">Input GEN-SIM dataset</label>
           <textarea ng-model="currentItem.dataSet" class="form-control" id="mcDataSetInput"
                     placeholder="Input GEN-SIM dataset"></textarea>
+        </div>
+
+
+        <button class="btn btn-primary btn-sm" ng-click="showAdvancedMcStepParams = !showAdvancedMcStepParams">
+          <span ng-hide="showAdvancedMcStepParams"><i class="fa fa-caret-square-o-down"></i> Show advanced</span>
+          <span ng-show="showAdvancedMcStepParams"><i class="fa fa-caret-square-o-up"></i> Hide advanced</span>
+        </button>
+
+        <div ng-show="showAdvancedMcStepParams">
+          <br />
+
+          <div class="form-group">
+            <label for="labelInputM">Label</label>
+            <textarea ng-model="currentItem.dataStep.label" class="form-control" id="labelInputM"
+                      placeholder="Label"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="runInputM">Run</label>
+            <textarea ng-model="currentItem.dataStep.run" class="form-control" id="runInputM"
+                      placeholder="Run"></textarea>
+          </div>
+          <div ng-include src="'advancesDataStepParameters'"></div>
         </div>
       </div>
     </div>
