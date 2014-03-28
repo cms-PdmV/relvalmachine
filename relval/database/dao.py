@@ -317,8 +317,8 @@ class StepsDao(BaseValidationDao):
         BaseValidationDao.__init__(self, Steps)
         self.blobs_dao = PredefinedBlobsDao()
 
-    def add(self, title="", immutable=False, data_set="",
-            type=StepType.Default, parameters=[], blobs=[], data_step={}):
+    def add(self, title="", immutable=False, type=StepType.Default,
+            parameters=[], blobs=[], data_step={}):
         self.validate_distinct_title(title)
         step = Steps(
             title=title,
@@ -332,16 +332,14 @@ class StepsDao(BaseValidationDao):
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        if type == StepType.FirstMc:
-            step.data_set = data_set
-        if type == StepType.FirstData:
+        if type == StepType.FirstData or type == StepType.FirstMc:
             step.data_step = self.construct_data_step(data_step)
 
         db.session.add(step)
         db.session.commit()
 
-    def update(self, id, title=None, immutable=False, data_set=None,
-               type=StepType.Default, parameters=[], blobs=[], data_step={}):
+    def update(self, id, title=None, immutable=False, type=StepType.Default,
+               parameters=[], blobs=[], data_step={}):
         step = self.get(id)
         if step.immutable:
             raise Exception("Cannot edit entity that is immutable.")
@@ -360,9 +358,7 @@ class StepsDao(BaseValidationDao):
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
             ]
-        if type == StepType.FirstMc:
-            step.data_set = data_set
-        if type == StepType.FirstData:
+        if type == StepType.FirstData or type == StepType.FirstMc:
             if step.data_step is not None:
                 db.session.delete(step.data_step)
             step.data_step = self.construct_data_step(data_step)
@@ -381,7 +377,7 @@ class StepsDao(BaseValidationDao):
         text = "cmsDriver.py "
         blobs = []
         if step.type == StepType.FirstMc:
-            text += step.data_set + " "
+            text += step.data_step.data_set + " "
         if step.type == StepType.Default or step.type == StepType.FirstMc:
             for p in step.parameters:
                 text += " ".join([p.flag or "", p.value or ""]) + " "  # null safe

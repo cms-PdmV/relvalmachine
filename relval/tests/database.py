@@ -476,8 +476,7 @@ class StepsDaoTest(BaseTestsCase):
         self.steps_dao.add(title="step",
                            immutable=False,
                            type=StepType.Default,
-                           parameters=factory.parameters(2),
-                           data_set="data_set")
+                           parameters=factory.parameters(2))
 
         self.assertModelCount(Steps, 1)
         self.assertModelCount(Parameters, 2)
@@ -487,7 +486,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(step.type, StepType.Default)
         self.assertEqual(len(step.parameters), 2)
         # should not insert those fields because is_monte_carlo = true
-        self.assertEqual(step.data_set, None)
+        self.assertEqual(step.data_step , None)
 
     def test_step_step1_mc_insertion(self):
         utils.prepare_blob()
@@ -497,7 +496,7 @@ class StepsDaoTest(BaseTestsCase):
                            type=StepType.FirstMc,
                            parameters=factory.parameters(2),
                            blobs=[{"id": blob.id}],
-                           data_set="data_set")
+                           data_step=factory.data_step(data_set="data_set"))
 
         self.assertModelCount(Steps, 1)
 
@@ -507,7 +506,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(len(step.parameters), 2)
         self.assertEqual(len(step.predefined_blobs), 1)
         # should not insert those fields because is_monte_carlo = true
-        self.assertEqual(step.data_set, "data_set")
+        self.assertEqual(step.data_step.data_set, "data_set")
 
     def test_step_step1_data_insertion(self):
         data_step = factory.data_step(data_set="test-data_set", files="100")
@@ -602,8 +601,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(result.items[1].title, "search-aa-smt")
 
     def test_monte_carlo_step_update(self):
-        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc,
-                           data_set="data_set")
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc)
         utils.prepare_blob()
         blob_id = PredefinedBlob.query.one().id
         id = Steps.query.one().id
@@ -633,8 +631,8 @@ class StepsDaoTest(BaseTestsCase):
         new_title = "new-step-title"
         new_parameters = factory.parameters(4)
 
-        self.steps_dao.update(id=id, title=new_title, data_set="data_set", parameters=new_parameters,
-                              type=StepType.FirstMc, blobs=[{"id": blob_id}])
+        self.steps_dao.update(id=id, title=new_title, parameters=new_parameters, type=StepType.FirstMc,
+                              blobs=[{"id": blob_id}], data_step=factory.data_step(data_set="data_set"))
 
         self.assertModelCount(PredefinedBlob, 1)
         self.assertModelCount(Steps, 1)
@@ -642,7 +640,7 @@ class StepsDaoTest(BaseTestsCase):
 
         new_step = Steps.query.one()
         self.assertEqual(new_step.title, new_title)
-        self.assertEqual(new_step.data_set, "data_set")
+        self.assertEqual(new_step.data_step.data_set, "data_set")
         self.assertEqual(new_step.type, StepType.FirstMc)
         self.assertEqual(len(new_step.predefined_blobs), 1)
         self.assertEqual(len(new_step.parameters), 4)
@@ -666,8 +664,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(new_step.data_step.files, 100)
 
     def test_step_default_get_details(self):
-        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default,
-                           data_set="data_set")
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default)
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
@@ -675,8 +672,8 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(expected, details["text"])
 
     def test_step_first_mc_get_details(self):
-        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc,
-                           data_set="data_set", blobs_count=2)
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc, blobs_count=2,
+                           data_step=factory.data_step(data_set="data_set"))
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
