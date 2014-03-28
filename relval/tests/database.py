@@ -153,6 +153,16 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(new_req.description, req.description)
         self.assertEqual(len(new_req.steps), len(req.steps))
 
+    def test_request_get_details(self):
+        utils.prepare_request(cmssw_release="7_0", run_the_matrix_conf="-all", steps_count=2)
+        id = Requests.query.one().id
+
+        details = self.request_dao.get_details(id)
+
+        self.assertEqual("7_0", details["cmssw_release"])
+        self.assertEqual("-all", details["run_the_matrix"])
+        self.assertEqual(2, len(details["steps"]))
+
 
 class BatchesDaoTest(BaseTestsCase):
 
@@ -295,6 +305,18 @@ class BatchesDaoTest(BaseTestsCase):
             self.assertEqual(req.run_the_matrix_conf, "--test")
             self.assertTrue(req.ancestor_request is not None)
 
+    def test_batches_get_details(self):
+        utils.prepare_batch(requests_count=2)
+        id = Batches.query.one().id
+
+        details = self.dao.get_details(id)
+
+        self.assertEqual(2, len(details["requests"]))
+        for i in range(2):
+            self.assertTrue("id" in details["requests"][i])
+            self.assertTrue("label" in details["requests"][i])
+            self.assertTrue("steps" in details["requests"][i])
+
 
 class PredefinedBlobsDaoTest(BaseTestsCase):
 
@@ -404,7 +426,7 @@ class PredefinedBlobsDaoTest(BaseTestsCase):
         details = self.blobs_dao.get_details(id)
 
         expected = " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
-        self.assertEqual(expected, details)
+        self.assertEqual(expected, details["text"])
 
     def blob_insertion_test(self, params_num):
         self.assertModelEmpty(PredefinedBlob)
@@ -650,16 +672,17 @@ class StepsDaoTest(BaseTestsCase):
 
         details = self.steps_dao.get_details(id)
         expected = "cmsDriver.py " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
-        self.assertEqual(expected, details)
+        self.assertEqual(expected, details["text"])
 
     def test_step_first_mc_get_details(self):
         utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc,
-                           data_set="data_set")
+                           data_set="data_set", blobs_count=2)
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
         expected = "cmsDriver.py data_set " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
-        self.assertEqual(expected, details)
+        self.assertEqual(expected, details["text"])
+        self.assertTrue(details.has_key("blobs"))
 
     def test_step_first_data_with_ib_block_get_details(self):
         data_step = factory.data_step(data_set="test-data_set", ib_block="test_ib", run="test-run")
@@ -668,7 +691,7 @@ class StepsDaoTest(BaseTestsCase):
 
         details = self.steps_dao.get_details(id)
         expected = "input from: test-data_set with run test_ib#test-run"
-        self.assertEqual(expected, details)
+        self.assertEqual(expected, details["text"])
 
     def test_step_first_data_without_ib_block_get_details(self):
         data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="test-run")
@@ -677,5 +700,5 @@ class StepsDaoTest(BaseTestsCase):
 
         details = self.steps_dao.get_details(id)
         expected = "input from: test-data_set with run test-run"
-        self.assertEqual(expected, details)
+        self.assertEqual(expected, details["text"])
 
