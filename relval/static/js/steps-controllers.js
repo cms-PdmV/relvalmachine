@@ -204,7 +204,7 @@ relvalControllers.controller('ViewStepCtrl', ['$scope', '$routeParams', '$rootSc
         angular.extend(this, new StepPreloadCtrl($scope, $routeParams, Steps));
 
         $scope.back = function() {
-            $rootScope.back();
+            window.history.back();
         };
     }]);
 

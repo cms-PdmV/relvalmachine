@@ -176,7 +176,7 @@ relvalControllers.controller('ViewRequestCtrl', ['$scope', '$modal', '$rootScope
         angular.extend(this, new RequestPreloadCtrl($scope, $routeParams, Requests));
 
         $scope.back = function() {
-            $rootScope.back();
+            window.history.back();
         };
     }]);
 

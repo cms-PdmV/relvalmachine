@@ -14,6 +14,14 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
     $scope.maxSize = 10;       // how many pages display
     $scope.currentPage = params.page_num ? params.page_num : 1;   // current page in pagination
     $scope.itemsPerPage = params.items_per_page ? params.items_per_page : 20; // how many items to display in one page
+    var details = params.details ? params.details : "";
+    $scope.details = [];
+    details.split(',').forEach(function(item) {
+        var intVal = parseInt(item)
+        if (!isNaN(intVal)) {
+            $scope.details.push(intVal);
+        }
+    });
     // DO NOT CHANGE THIS. This is hack to avoid double blobs GET call.
     // If total item is low number then page automatically set to 1 by angular-ui.pagination.
     $scope.totalItems = Number.POSITIVE_INFINITY;
@@ -25,12 +33,19 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         for (var i = 0; i < $scope.items.length; ++i) {
             $scope.items[i].index = i;
         }
+        var itemsInPage = $scope.totalItems > $scope.itemsPerPage ? $scope.itemsPerPage : $scope.totalItems;
+        $scope.details.forEach(function(index) {
+            if (index >= 0 && index < itemsInPage) {
+                $scope.detailsOn(index);
+            }
+        });
     }
 
     /*
      * Pagination
      */
     $scope.setPage = function(pageNo) {
+        $scope.details = [];
         if (SearchService.isSearchingMode()) { // if in search mode then change page with same search query
             SearchService.changePage(pageNo, $scope.itemsPerPage, function(response) {
                 populate(response);
@@ -86,6 +101,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         $location.search('search', $scope.search.searchText);
         $location.search('page_num', 1);
         $scope.currentPage = 1;
+        $scope.details = [];
         SearchService.search($scope.search.searchText, $scope.itemsPerPage, $scope.currentPage,
             function(response) {
                 populate(response);
@@ -150,15 +166,30 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
         $location.url($location.path());
     }
 
-    $scope.showDetails = function(index) {
+    $scope.detailsOn = function(index) {
         var resp = Resource.details({item_id: $scope.items[index].id}, function() {
             $scope.items[index].details = resp.details;
         });
         $scope.items[index].doShowDetails = true;
     }
 
+    $scope.showDetails = function(index) {
+        $scope.detailsOn(index);
+        $scope.details.indexOf(index);
+        if (index > -1) {
+            $scope.details.push(index);
+            $location.search('details', $scope.details.toString());
+        }
+    }
+
     $scope.hideDetails = function(index) {
         $scope.items[index].doShowDetails = false;
+         var detailsIndex = $scope.details.indexOf(index);
+        if (detailsIndex > -1) {
+            $scope.details.splice(detailsIndex, 1);
+            $location.search('details', $scope.details.toString());
+        }
+
     }
 }
 

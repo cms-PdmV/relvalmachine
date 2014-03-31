@@ -148,7 +148,7 @@ relvalControllers.controller('ViewBlobCtrl', ['$scope', '$routeParams', '$rootSc
         angular.extend(this, new BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs));
 
         $scope.back = function() {
-            $rootScope.back();
+            window.history.back();
         };
     }]);
 
