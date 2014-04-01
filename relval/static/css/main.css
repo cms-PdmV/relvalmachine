@@ -95,3 +95,7 @@ a.label.step-label {
 a.list-group-item-readonly {
     background-color: #EEEEEE;
 }
+
+.black {
+    color: #000000;
+}
