@@ -27,9 +27,8 @@ configuration.readfp(open(config_file))
 
 
 #
-# Configuration setupW
+# Configuration setup
 #
-
 RELVAL_DB_PASSWORD = configuration.get("DB", "PASSWORD")
 RELVAL_DB_USER = configuration.get("DB", "USER")
 RELVAL_DB_HOST = configuration.get("DB", "HOST")
@@ -37,7 +36,7 @@ RELVAL_DB_PORT = configuration.get("DB", "PORT")
 RELVAL_DB_SID = configuration.get("DB", "SID")
 
 
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
     RELVAL_DB_USER,
     RELVAL_DB_PASSWORD,
@@ -45,6 +44,7 @@ SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
     RELVAL_DB_PORT,
     RELVAL_DB_SID
 )
+LOGGER_NAME="relval"
 
 BLOBS_PER_PAGE=20
 STEPS_PER_PAGE=20
