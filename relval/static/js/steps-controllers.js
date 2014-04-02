@@ -98,6 +98,7 @@ var StepPreloadCtrl = function($scope, $routeParams, Steps) {
         $scope.currentItem.blobs = step.blobs;
         $scope.currentItem.type = step.type;
         $scope.currentItem.dataStep = step.data_step;
+        $scope.currentItem.name = step.name;
     });
 }
 
@@ -105,7 +106,8 @@ function constructStep(scope, Steps) {
     var step = new Steps({
         title: scope.currentItem.title,
         immutable: scope.currentItem.immutable,
-        type: scope.currentItem.type
+        type: scope.currentItem.type,
+        name: scope.currentItem.name
     });
     if (scope.currentItem.type != "first_data") { // parameters and blobs has default and first mc steps
         step.parameters = scope.currentItem.parameters;
