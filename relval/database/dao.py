@@ -317,13 +317,14 @@ class StepsDao(BaseValidationDao):
         BaseValidationDao.__init__(self, Steps)
         self.blobs_dao = PredefinedBlobsDao()
 
-    def add(self, title="", immutable=False, type=StepType.Default,
+    def add(self, title="", immutable=False, type=StepType.Default, name="",
             parameters=[], blobs=[], data_step={}):
         self.validate_distinct_title(title)
         step = Steps(
             title=title,
             immutable=immutable,
             type=type,
+            name=name
         )
         if type == StepType.Default or type == StepType.FirstMc:
             step.parameters = [
@@ -338,7 +339,7 @@ class StepsDao(BaseValidationDao):
         db.session.add(step)
         db.session.commit()
 
-    def update(self, id, title=None, immutable=False, type=StepType.Default,
+    def update(self, id, title=None, immutable=False, type=StepType.Default, name=None,
                parameters=[], blobs=[], data_step={}):
         step = self.get(id)
         if step.immutable:
@@ -347,6 +348,8 @@ class StepsDao(BaseValidationDao):
             self.validate_distinct_title(title)
         if title is not None:
             step.title = title
+        if name is not None:
+            step.name = name
         step.immutable = immutable
         for parameter in step.parameters:
             db.session.delete(parameter)
@@ -374,7 +377,7 @@ class StepsDao(BaseValidationDao):
 
     def get_details(self, id):
         step = self.get(id)
-        text = "cmsDriver.py "
+        text = "cmsDriver.py {0}".format(step.name or "")
         blobs = []
         if step.type == StepType.FirstMc:
             text += step.data_step.data_set + " "

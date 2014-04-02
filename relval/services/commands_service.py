@@ -21,8 +21,9 @@ class CommandsService(object):
         request = self.request_dao.get(request_id)
         steps = []
         for step in request.steps:
-            steps.append(self.steps_dao.get_details(step.id))
-            print steps[-1]
+            step_details = self.steps_dao.get_details(step.id)
+            step_details["events_num"] = 2
+            steps.append(step_details)
 
         return template.render(dict(
             cmssw_release=request.cmssw_release,
