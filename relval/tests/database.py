@@ -458,7 +458,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertModelEmpty(PredefinedBlob)
         self.assertModelEmpty(Steps)
 
-        self.steps_dao.add(title="step", immutable=False, type=StepType.Default,
+        self.steps_dao.add(title="step", immutable=False, type=StepType.Default, name="step-name",
                            parameters=factory.parameters(2))
 
         self.assertModelCount(PredefinedBlob, 0)
@@ -468,6 +468,7 @@ class StepsDaoTest(BaseTestsCase):
         step = Steps.query.one()
 
         self.assertEqual(step.title, "step")
+        self.assertEqual(step.name, "step-name")
         self.assertEqual(step.immutable, False)
         self.assertEqual(step.type, StepType.Default)
         self.assertEqual(step.predefined_blobs, [])
@@ -476,6 +477,7 @@ class StepsDaoTest(BaseTestsCase):
         self.steps_dao.add(title="step",
                            immutable=False,
                            type=StepType.Default,
+                           name="step-name",
                            parameters=factory.parameters(2))
 
         self.assertModelCount(Steps, 1)
@@ -483,6 +485,7 @@ class StepsDaoTest(BaseTestsCase):
 
         step = Steps.query.one()
         self.assertEqual(step.title, "step")
+        self.assertEqual(step.name, "step-name")
         self.assertEqual(step.type, StepType.Default)
         self.assertEqual(len(step.parameters), 2)
         # should not insert those fields because is_monte_carlo = true
@@ -493,6 +496,7 @@ class StepsDaoTest(BaseTestsCase):
         blob = PredefinedBlob.query.one()
         self.steps_dao.add(title="step",
                            immutable=False,
+                           name="step-name",
                            type=StepType.FirstMc,
                            parameters=factory.parameters(2),
                            blobs=[{"id": blob.id}],
@@ -502,6 +506,7 @@ class StepsDaoTest(BaseTestsCase):
 
         step = Steps.query.one()
         self.assertEqual(step.title, "step")
+        self.assertEqual(step.name, "step-name")
         self.assertEqual(step.type, StepType.FirstMc)
         self.assertEqual(len(step.parameters), 2)
         self.assertEqual(len(step.predefined_blobs), 1)
@@ -664,11 +669,11 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(new_step.data_step.files, 100)
 
     def test_step_default_get_details(self):
-        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default)
+        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.Default, name="name")
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
-        expected = "cmsDriver.py " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
+        expected = "cmsDriver.py name " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
         self.assertEqual(expected, details["text"])
 
     def test_step_first_mc_get_details(self):
@@ -677,7 +682,7 @@ class StepsDaoTest(BaseTestsCase):
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
-        expected = "cmsDriver.py data_set " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
+        expected = "cmsDriver.py  data_set " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
         self.assertEqual(expected, details["text"])
         self.assertTrue(details.has_key("blobs"))
 

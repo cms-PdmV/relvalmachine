@@ -377,7 +377,7 @@ class StepsDao(BaseValidationDao):
 
     def get_details(self, id):
         step = self.get(id)
-        text = "cmsDriver.py {0}".format(step.name or "")
+        text = "cmsDriver.py {0} ".format(step.name or "")
         blobs = []
         if step.type == StepType.FirstMc:
             text += step.data_step.data_set + " "
