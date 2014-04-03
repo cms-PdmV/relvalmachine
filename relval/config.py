@@ -35,6 +35,9 @@ RELVAL_DB_HOST = configuration.get("DB", "HOST")
 RELVAL_DB_PORT = configuration.get("DB", "PORT")
 RELVAL_DB_SID = configuration.get("DB", "SID")
 
+SSH_HOSTNAME = configuration.get("SSH", "HOSTNAME")
+SSH_USER = configuration.get("SSH", "USER")
+SSH_PASSWORD = configuration.get("SSH", "PASSWORD")
 
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
