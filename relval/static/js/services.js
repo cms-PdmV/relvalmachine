@@ -182,7 +182,7 @@ var AbstractSearchService = function(resource) {
 
 
 // blobs services
-relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', '$location', function(PredefinedBlobs, $location) {
+relvalServices.factory('BlobsSearchService', ['PredefinedBlobs', function(PredefinedBlobs) {
     var searchService = angular.extend(this, new AbstractSearchService(PredefinedBlobs));
 
     return searchService;
@@ -202,7 +202,25 @@ relvalServices.factory('RequestsSearchService', ['Requests', function(Requests) 
     return searchService;
 }]);
 
-// requests services
+
+relvalServices.factory('RequestsService', ['$http', 'AlertsService', function($http, AlertsService) {
+    var service = {
+
+        submitRequest: function(requestId) {
+            $http({
+                url: 'api/commands/test/'+ requestId,
+                method: 'POST'
+            }).then(function() { // success
+                AlertsService.addSuccess({msg: "Tests passed."})
+            }, function(response) { // error
+                AlertsService.addError({msg: response.error})
+            });
+        }
+    }
+    return service;
+}]);
+
+// batches services
 relvalServices.factory('BatchesSearchService', ['Batches', function(Batches) {
     var searchService = angular.extend(this, new AbstractSearchService(Batches));
 

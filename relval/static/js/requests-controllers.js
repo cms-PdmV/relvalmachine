@@ -2,8 +2,8 @@
  * Created by Zygimantas Gatelis on 3/13/14.
  */
 
-relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'RequestsSearchService',
-    function($scope, $location, Requests, AlertsService, RequestsSearchService) {
+relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'RequestsSearchService', 'RequestsService',
+    function($scope, $location, Requests, AlertsService, RequestsSearchService, RequestService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
             $location,
@@ -12,6 +12,11 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             RequestsSearchService
         ));
         $scope.entity = "requests";
+
+        $scope.submitForTesting = function(index) {
+            var id = $scope.items[index].id;
+            RequestService.submitRequest(id);
+        }
 }]);
 
 var BaseRequestReadOnlyViewCtrl = function($scope, $modal) {
