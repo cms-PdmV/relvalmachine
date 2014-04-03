@@ -74,6 +74,7 @@ data_step_marshaller = {
 step_marshaller = {
     'id': fields.String,
     'title': fields.String,
+    'name': fields.String,
     'immutable': fields.Boolean,
     'type': fields.String,
     'parameters': fields.Nested(parameter_marshaller),
