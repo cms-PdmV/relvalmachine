@@ -2,6 +2,7 @@ flask==0.10
 flask-sqlalchemy==0.16
 flask-restful==0.2.1
 cx-Oracle==5.1.2
+paramiko==1.13
 
 # Unittest dependencies
 mock==1.0.1

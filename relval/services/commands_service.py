@@ -1,24 +1,35 @@
-from jinja2.environment import Environment
-from jinja2.loaders import FileSystemLoader, PackageLoader
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
+from jinja2.environment import Environment
+from jinja2.loaders import PackageLoader
+from relval.services.ssh_service import SshService
 from relval.database.dao import RequestsDao, StepsDao
-from flask import render_template
 
 
 class CommandsService(object):
+    """ Service handles operations related to commands execution or creation
+    """
 
     def __init__(self):
         self.env = Environment(loader=PackageLoader("relval", "/templates/bash"))
         self.request_dao = RequestsDao()
         self.steps_dao = StepsDao()
+        self.ssh_service = SshService()
 
     def get_test_command(self, request_id):
+        request = self.request_dao.get(request_id)
+        return self.__render_command(request)
+
+    def submit_for_testing(self, request_id):
+        request = self.request_dao.get(request_id)
+        command = self.__render_command(request)
+
+        logs, errors  = self.ssh_service.execute(command)
+
+    def __render_command(self, request):
         template = self.env.get_template('test_request.sh')
 
-        request = self.request_dao.get(request_id)
         steps = []
         for step in request.steps:
             step_details = self.steps_dao.get_details(step.id)
@@ -28,6 +39,7 @@ class CommandsService(object):
         return template.render(dict(
             cmssw_release=request.cmssw_release,
             steps=steps))
+
 
 
 

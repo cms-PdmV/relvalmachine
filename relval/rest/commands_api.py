@@ -16,6 +16,17 @@ def returns_plain_text(f):
     return decorated_function
 
 
+def handle_exception(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            r = f(*args, **kwargs)
+            return r
+        except Exception as ex:
+            return {"error": str(ex)}, 500
+    return decorated_function
+
+
 class RequestCommandApi(Resource):
     def __init__(self):
         self.service = CommandsService()
@@ -23,3 +34,7 @@ class RequestCommandApi(Resource):
     @returns_plain_text
     def get(self, request_id):
         return self.service.get_test_command(request_id)
+
+    @handle_exception
+    def post(self, request_id):
+        self.service.submit_for_testing(request_id)
