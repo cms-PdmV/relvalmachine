@@ -29,15 +29,16 @@ class CommandsService(object):
 
         try:
             logs, errors = self.ssh_service.execute(command)
+            # logs, errors = "", "aaaaa"
         except:
-            self.request_dao.update_status(RequestStatus.TestFailed)
+            self.request_dao.update_status(request_id, RequestStatus.TestFailed)
             raise
 
         if len(errors) > 0:
-            self.request_dao.update_status(RequestStatus.TestFailed)
+            self.request_dao.update_status(request_id, RequestStatus.TestFailed)
             raise Exception("Testing failed. More info in log files.")
         else:
-            self.request_dao.update_status(RequestStatus.TestPassed)
+            self.request_dao.update_status(request_id, RequestStatus.TestPassed)
 
         return True
 
