@@ -11,6 +11,10 @@ app = Flask(__name__, template_folder="relval/templates")
 app.config.from_object('relval.config')
 db = SQLAlchemy(app)
 
+###############################################################
+# Logging configuration
+###############################################################
+
 if not os.path.exists("logs"):
     os.makedirs("logs")
 
