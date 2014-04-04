@@ -1,3 +1,5 @@
+from relval.database.models import RequestStatus
+
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
@@ -25,10 +27,17 @@ class CommandsService(object):
         request = self.request_dao.get(request_id)
         command = self.__render_command(request)
 
-        logs, errors = self.ssh_service.execute(command)
+        try:
+            logs, errors = self.ssh_service.execute(command)
+        except:
+            self.request_dao.update_status(RequestStatus.TestFailed)
+            raise
 
         if len(errors) > 0:
+            self.request_dao.update_status(RequestStatus.TestFailed)
             raise Exception("Testing failed. More info in log files.")
+        else:
+            self.request_dao.update_status(RequestStatus.TestPassed)
 
         return True
 

@@ -94,6 +94,14 @@ class RequestsDao(BaseValidationDao):
         request.steps = [
             self.steps_dao.get(step["id"]) for step in steps
         ]
+        request.updated = datetime.now()
+        db.session.commit()
+
+    def update_status(self, id, new_status):
+        request = self.get(id)
+        request.status = new_status
+        request.updated = datetime.now()
+
         db.session.commit()
 
     def get_paginated(self, page_num=1, items_per_page=10):
