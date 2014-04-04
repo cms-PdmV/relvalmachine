@@ -5,6 +5,13 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 import os
 from relval import app
+from relval.services import tasks_executor
+
+
+def teardown():
+    print "Waiting for executor to finish:", tasks_executor
+    tasks_executor.stop()
+    print "Executor finished:", tasks_executor
 
 
 def run_server():
@@ -16,4 +23,11 @@ def run_server():
 
 
 if __name__ == "__main__":
-    run_server()
+    try:
+        run_server()
+
+        # executes after server shuts down
+        teardown()
+
+    except Exception as ex:
+        print ex

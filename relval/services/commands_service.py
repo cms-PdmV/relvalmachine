@@ -1,3 +1,4 @@
+from relval import app
 from relval.database.models import RequestStatus
 
 __author__ = "Zygimantas Gatelis"
@@ -30,14 +31,17 @@ class CommandsService(object):
         try:
             logs, errors = self.ssh_service.execute(command)
         except:
-            self.request_dao.update_status(RequestStatus.TestFailed)
+            app.logger.info("Request id={0} testing failed with technical error".format(request_id))
+            self.request_dao.update_status(request_id, RequestStatus.TestFailed)
             raise
 
         if len(errors) > 0:
-            self.request_dao.update_status(RequestStatus.TestFailed)
+            app.logger.info("Request id={0} testing failed".format(request_id))
+            self.request_dao.update_status(request_id, RequestStatus.TestFailed)
             raise Exception("Testing failed. More info in log files.")
         else:
-            self.request_dao.update_status(RequestStatus.TestPassed)
+            app.logger.info("Request id={0} testing passed".format(request_id))
+            self.request_dao.update_status(request_id, RequestStatus.TestPassed)
 
         return True
 

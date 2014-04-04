@@ -1,10 +1,11 @@
-from flask.wrappers import Response
-from relval.services.commands_service import CommandsService
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
+from relval.services.commands_service import CommandsService
+from relval.services.concurrent_executor import SubmitForTestingTask
+from relval.services import tasks_executor
 from flask.ext.restful import Resource
+from flask.wrappers import Response
 from functools import wraps
 
 
@@ -37,4 +38,5 @@ class RequestCommandApi(Resource):
 
     @handle_exception
     def post(self, request_id):
-        self.service.submit_for_testing(request_id)
+        task = SubmitForTestingTask(request_id)
+        tasks_executor.add_task(task)
