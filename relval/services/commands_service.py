@@ -25,7 +25,12 @@ class CommandsService(object):
         request = self.request_dao.get(request_id)
         command = self.__render_command(request)
 
-        logs, errors  = self.ssh_service.execute(command)
+        logs, errors = self.ssh_service.execute(command)
+
+        if len(errors) > 0:
+            raise Exception("Testing failed. More info in log files.")
+
+        return True
 
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')
