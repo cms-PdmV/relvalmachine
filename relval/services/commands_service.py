@@ -44,6 +44,11 @@ class CommandsService(object):
 
         return True
 
+    def get_logs(self, request_id):
+        request = self.request_dao.get(request_id)
+        return self.log_manager.get_testing_log(request.label)
+
+
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')
 

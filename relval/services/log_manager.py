@@ -26,15 +26,15 @@ class LogsManager(object):
             log_file.write(text)
 
     def get_testing_log(self, name):
-        self.get_log(name, "tests")
+        return self.get_log(name, "tests")
 
     def get_log(self, name, subdir):
         name = self.__get_file_name(name)
         filename = os.path.join(self.logs_dir, subdir, name)
-        content = ""
+        print filename
         with open(filename, "r") as log_file:
             content = log_file.read()
-        return content
+            return content
 
     def __get_file_name(self, name):
         return self.__turn_into_valid_file_name(name) + ".log"

@@ -39,3 +39,13 @@ class RequestCommandApi(Resource):
     @handle_exception
     def post(self, request_id):
         self.service.submit_for_testing(request_id)
+
+
+class RequestLogsCommandApi(Resource):
+
+    def __init__(self):
+        self.service = CommandsService()
+
+    @returns_plain_text
+    def get(self, request_id):
+        return self.service.get_logs(request_id)
