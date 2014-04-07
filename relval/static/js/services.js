@@ -213,7 +213,12 @@ relvalServices.factory('RequestsService', ['$http', 'AlertsService', function($h
             }).then(function() { // success
                 AlertsService.addSuccess({msg: "Tests passed."})
             }, function(response) { // error
-                AlertsService.addError({msg: response.error})
+                console.log(response)
+                if (response.data !== undefined && response.data.error !== undefined) {
+                    AlertsService.addError({msg: response.data.error})
+                } else {
+                    AlertsService.addError({msg: "Technical problems when submitting request for testing."})
+                }
             });
         }
     }
