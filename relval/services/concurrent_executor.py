@@ -13,7 +13,7 @@ __executor_instance = None
 
 
 def get_and_start_concurrent_executor(*args, **kwargs):
-    """ Creates singleton ConcurrentExecutor instance and starts immediatly
+    """ Creates singleton ConcurrentExecutor instance and starts immediately
     """
     global __executor_instance
     if not __executor_instance or __executor_instance.is_stopped():
