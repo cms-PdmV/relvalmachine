@@ -56,6 +56,12 @@
         <button class="btn btn-sm btn-transparent black" ng-click="submitForTesting(item.index)"
           data-toggle="tooltip" data-placement="top" title="Submit request for testing"><i
           class="fa fa fa-check-circle fa-lg"></i></button>
+        <!-- TODO: change ng-hide to reasonable check. This one is silly -->
+        <a class="btn btn-sm btn-transparent black" href="api/commands/test/logs/{{item.id}}" target="_blank"
+           style="text-decoration: none"
+           ng-show="doShowLogs(item.index)"
+          data-toggle="tooltip" data-placement="top" title="Show logs from last testing"><i
+          class="fa fa-comments-o fa-lg"></i></a>
       </td>
       <td>
         <button class="btn btn-sm btn-primary" ng-click="clone(item.index)">Clone</button>

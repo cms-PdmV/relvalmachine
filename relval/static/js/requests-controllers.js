@@ -17,6 +17,10 @@ relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests',
             var id = $scope.items[index].id;
             RequestService.submitRequest(id);
         }
+
+        $scope.doShowLogs = function(index) {
+            return $scope.items[index].status != 'new'
+        }
 }]);
 
 var BaseRequestReadOnlyViewCtrl = function($scope, $modal) {

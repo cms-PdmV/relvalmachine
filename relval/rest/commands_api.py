@@ -1,9 +1,11 @@
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
-from relval.services.commands_service import CommandsService
+
 from relval.services.concurrent_executor import SubmitForTestingTask
 from relval.services import tasks_executor
+from relval import app
+from relval.services.commands_service import CommandsService
 from flask.ext.restful import Resource
 from flask.wrappers import Response
 from functools import wraps
@@ -24,6 +26,7 @@ def handle_exception(f):
             r = f(*args, **kwargs)
             return r
         except Exception as ex:
+            app.logger.error("Error occurred: " + str(ex))
             return {"error": str(ex)}, 500
     return decorated_function
 
@@ -40,3 +43,13 @@ class RequestCommandApi(Resource):
     def post(self, request_id):
         task = SubmitForTestingTask(request_id)
         tasks_executor.add_task(task)
+
+
+class RequestLogsCommandApi(Resource):
+
+    def __init__(self):
+        self.service = CommandsService()
+
+    @returns_plain_text
+    def get(self, request_id):
+        return self.service.get_logs(request_id)

@@ -1,5 +1,6 @@
 from relval import app
 from relval.database.models import RequestStatus
+from relval.services.log_manager import LogsManager
 
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
@@ -19,6 +20,7 @@ class CommandsService(object):
         self.request_dao = RequestsDao()
         self.steps_dao = StepsDao()
         self.ssh_service = SshService()
+        self.log_manager = LogsManager()
 
     def get_test_command(self, request_id):
         request = self.request_dao.get(request_id)
@@ -38,12 +40,18 @@ class CommandsService(object):
         if len(errors) > 0:
             app.logger.info("Request id={0} testing failed".format(request_id))
             self.request_dao.update_status(request_id, RequestStatus.TestFailed)
+            self.log_manager.save_testing_log(request.label, errors)
             raise Exception("Testing failed. More info in log files.")
         else:
             app.logger.info("Request id={0} testing passed".format(request_id))
             self.request_dao.update_status(request_id, RequestStatus.TestPassed)
 
         return True
+
+    def get_logs(self, request_id):
+        request = self.request_dao.get(request_id)
+        return self.log_manager.get_testing_log(request.label)
+
 
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')

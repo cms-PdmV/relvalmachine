@@ -11,7 +11,7 @@ from relval.rest.validation_api import \
     StepsValidationApi, RequestsValidationApi, BlobsValidationApi, BatchesValidationApi
 from relval.rest.details_api import BlobDetailsApi, StepDetailsApi, RequestDetailsApi, BatchDetailsApi
 from relval.rest.users_api import UsersResource
-from relval.rest.commands_api import RequestCommandApi
+from relval.rest.commands_api import RequestCommandApi, RequestLogsCommandApi
 from flask.ext.restful import Api
 
 
@@ -43,4 +43,5 @@ restful_api.add_resource(UsersResource, "/api/users/<field>")
 
 # commands api
 restful_api.add_resource(RequestCommandApi, "/api/commands/test/<int:request_id>")
+restful_api.add_resource(RequestLogsCommandApi, "/api/commands/test/logs/<int:request_id>")
 
