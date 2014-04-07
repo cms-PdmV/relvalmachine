@@ -39,6 +39,8 @@ SSH_HOSTNAME = configuration.get("SSH", "HOSTNAME")
 SSH_USER = configuration.get("SSH", "USER")
 SSH_PASSWORD = configuration.get("SSH", "PASSWORD")
 
+LOGS_FROM_SERVER_DIR = configuration.get("SSH", "LOGS_FROM_SERVER_DIR")
+
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
     RELVAL_DB_USER,

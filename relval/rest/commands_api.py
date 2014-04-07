@@ -1,9 +1,9 @@
-from flask.wrappers import Response
-from relval.services.commands_service import CommandsService
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
+from flask.wrappers import Response
+from relval import app
+from relval.services.commands_service import CommandsService
 from flask.ext.restful import Resource
 from functools import wraps
 
@@ -23,6 +23,7 @@ def handle_exception(f):
             r = f(*args, **kwargs)
             return r
         except Exception as ex:
+            app.logger.error("Error occurred: " + str(ex))
             return {"error": str(ex)}, 500
     return decorated_function
 
