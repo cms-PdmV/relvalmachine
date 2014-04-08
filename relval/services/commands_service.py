@@ -1,14 +1,14 @@
-from relval import app
-from relval.database.models import RequestStatus
-from relval.services.log_manager import LogsManager
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
 from jinja2.environment import Environment
 from jinja2.loaders import PackageLoader
-from relval.services.ssh_service import SshService
 from relval.database.dao import RequestsDao, StepsDao
+from relval.database.models import RequestStatus
+from relval.services.log_manager import LogsManager
+from relval.services.ssh_service import SshService
+from relval import app
+import os
 
 
 class CommandsService(object):
@@ -52,9 +52,11 @@ class CommandsService(object):
         request = self.request_dao.get(request_id)
         return self.log_manager.get_testing_log(request.label)
 
-
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')
+
+        subdir = "{0}_{1}".format(request.cmssw_release, request.id)
+        directory = os.path.join(app.config["TESTS_DIR"], subdir)
 
         steps = []
         for step in request.steps:
@@ -64,7 +66,8 @@ class CommandsService(object):
 
         return template.render(dict(
             cmssw_release=request.cmssw_release,
-            steps=steps))
+            steps=steps,
+            directory=directory))
 
 
 

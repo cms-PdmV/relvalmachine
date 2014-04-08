@@ -1,5 +1,3 @@
-from relval.services.commands_service import CommandsService
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
@@ -7,6 +5,7 @@ from concurrent import futures
 from Queue import Queue, Empty
 from threading import Thread
 from relval import app
+from relval.services.commands_service import CommandsService
 
 
 __executor_instance = None
@@ -24,13 +23,27 @@ def get_and_start_concurrent_executor(*args, **kwargs):
 
 
 class AbstractTask(object):
+    """ Abstract task to. In order to create custom task extend this class and override internal_run method.
+    """
     def __init__(self, name):
         self.name = name
         self.result = None
         self.exception = None
 
     def run(self):
-        raise NotImplementedError("You should extend AbstractTask and override run method")
+        app.logger.info("Executing task {0}".format(self.name))
+        try:
+            self.internal_run()
+        except Exception as ex:
+            app.logger.error("Error occurred when executing task {0}.\nWith exception: {1}".format(
+                self.name, str(ex)
+            ))
+            self.exception = ex
+
+    def internal_run(self):
+        """ You should override this method for custom task logic.
+        """
+        raise NotImplementedError("You should extend AbstractTask and override internal_run method")
 
 
 class ConcurrentExecutor(Thread):
@@ -81,12 +94,16 @@ class SubmitForTestingTask(AbstractTask):
         self.request_id = request_id
         self.commands_service = CommandsService()
 
-    def run(self):
-        app.logger.info("Executing task {0}".format(self.name))
-        try:
-            self.result = self.commands_service.submit_for_testing(self.request_id)
-        except Exception as ex:
-            app.logger.error("Error occurred when executing task {0}.\nWith exception: {1}".format(
-                self.name, str(ex)
-            ))
-            self.exception = ex
+    def internal_run(self):
+        self.result = self.commands_service.submit_for_testing(self.request_id)
+
+
+class LogCleanUpTask(AbstractTask):
+    def __init__(self):
+        AbstractTask.__init__(self, "Clean up old log files")
+        self.commands_service = CommandsService()
+
+    def internal_run(self):
+        import time
+        print time.time()
+        print "Running clean up..."

@@ -1,4 +1,8 @@
 #!/bin/bash
+
+mkdir -p {{directory}}
+cd {{directory}}
+
 source  /afs/cern.ch/cms/cmsset_default.sh
 
 if [ -r {{cmssw_release}}/src ] ; then

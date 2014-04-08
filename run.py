@@ -18,7 +18,7 @@ def run_server():
     port_number = 8000 if app.config["ENVIRONMENT"] == "LOCAL" else 80
 
     port = int(os.environ.get('PORT', port_number))
-    app.debug = True
+    app.debug = False
     app.run(host='0.0.0.0', port=port)
 
 

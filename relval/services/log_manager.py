@@ -4,6 +4,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 import os
 from relval import app
 
+
 class LogsManager(object):
     """ Service that manages logs from testing submission and other servers.
     """
@@ -16,7 +17,6 @@ class LogsManager(object):
 
     def save_log(self, name, text, subdir):
         path = os.path.join(self.logs_dir, subdir)
-        print path
         if not os.path.exists(path):
             os.makedirs(path)
         name = self.__get_file_name(name)

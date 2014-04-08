@@ -1,10 +1,11 @@
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
-from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 import logging
 import os
+
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__, template_folder="relval/templates")
@@ -19,7 +20,7 @@ if not os.path.exists("logs"):
     os.makedirs("logs")
 
 # root logger
-logging.root.setLevel(logging.ERROR)
+logging.root.setLevel(logging.INFO)
 
 
 # sql alchemy logger setup
@@ -37,7 +38,11 @@ service_log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(l
 app.logger.addHandler(service_log_handler)
 
 
+logging.getLogger("apscheduler").addHandler(service_log_handler)
+
+
 import relval.views
 import relval.rest
+import relval.services
 import relval.database.models
 

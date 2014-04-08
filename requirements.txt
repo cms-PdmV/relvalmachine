@@ -4,6 +4,7 @@ flask-restful==0.2.1
 cx-Oracle==5.1.2
 paramiko==1.13
 futures==2.1.6
+apscheduler==2.1.2
 
 # Unittest dependencies
 mock==1.0.1

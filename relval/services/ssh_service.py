@@ -43,8 +43,6 @@ class SshService(object):
         app.logger.debug("STDOUT from server: " + logs)
         app.logger.debug("STDERR from server: " + errors)
 
-        # todo save logs or what?
-
         return logs, errors
 
 
