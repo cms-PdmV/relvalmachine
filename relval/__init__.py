@@ -41,6 +41,10 @@ app.logger.addHandler(service_log_handler)
 scheduler_logger = logging.getLogger("apscheduler")
 scheduler_logger.addHandler(service_log_handler)
 
+paramiko_logger = logging.getLogger("paramiko")
+paramiko_logger.addHandler(service_log_handler)
+
+
 
 import relval.views
 import relval.rest

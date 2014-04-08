@@ -40,7 +40,7 @@ class CommandsService(object):
         if len(errors) > 0:
             app.logger.info("Request id={0} testing failed".format(request_id))
             self.request_dao.update_status(request_id, RequestStatus.TestFailed)
-            self.log_manager.save_testing_log(request.label, errors)
+            self.log_manager.save_testing_log(request.label, errors, self.__get_subdir(request))
             raise Exception("Testing failed. More info in log files.")
         else:
             app.logger.info("Request id={0} testing passed".format(request_id))
@@ -50,12 +50,11 @@ class CommandsService(object):
 
     def get_logs(self, request_id):
         request = self.request_dao.get(request_id)
-        return self.log_manager.get_testing_log(request.label)
+        return self.log_manager.get_testing_log(request.label, self.__get_subdir(request))
 
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')
-
-        subdir = "{0}_{1}".format(request.cmssw_release, request.id)
+        subdir = self.__get_subdir(request)
         directory = os.path.join(app.config["TESTS_DIR"], subdir)
 
         steps = []
@@ -68,6 +67,9 @@ class CommandsService(object):
             cmssw_release=request.cmssw_release,
             steps=steps,
             directory=directory))
+
+    def __get_subdir(self, request):
+        return "{0}_{1}".format(request.cmssw_release, request.id)
 
 
 

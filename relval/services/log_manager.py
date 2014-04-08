@@ -14,8 +14,8 @@ class LogsManager(object):
     def __init__(self):
         self.logs_dir = app.config["LOGS_FROM_SERVER_DIR"]
 
-    def save_testing_log(self, name, text):
-        self.save_log(name, text, "tests")
+    def save_testing_log(self, name, text, subdir):
+        self.save_log(name, text, os.path.join("tests", subdir))
 
     def save_log(self, name, text, subdir):
         path = os.path.join(self.logs_dir, subdir)
@@ -27,8 +27,8 @@ class LogsManager(object):
         with open(filename, "w") as log_file:
             log_file.write(text)
 
-    def get_testing_log(self, name):
-        return self.get_log(name, "tests")
+    def get_testing_log(self, name, subdir):
+        return self.get_log(name, os.path.join("tests", subdir))
 
     def get_log(self, name, subdir):
         name = self.__get_file_name(name)
