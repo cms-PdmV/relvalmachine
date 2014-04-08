@@ -41,6 +41,7 @@ SSH_PASSWORD = configuration.get("SSH", "PASSWORD")
 
 LOGS_FROM_SERVER_DIR = configuration.get("SSH", "LOGS_FROM_SERVER_DIR")
 TESTS_DIR = configuration.get("SSH", "TESTS_DIR")
+DAYS_TO_KEEP_LOGS = int(configuration.get("SSH", "DAYS_TO_KEEP_LOGS"))
 
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (

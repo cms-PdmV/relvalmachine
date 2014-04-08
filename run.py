@@ -5,10 +5,11 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 import os
 from relval import app
-from relval.services import tasks_executor
+from relval.services import tasks_executor, scheduler
 
 
 def teardown():
+    scheduler.shutdown()
     print "Waiting for executor to finish:", tasks_executor
     tasks_executor.stop()
     print "Executor finished:", tasks_executor

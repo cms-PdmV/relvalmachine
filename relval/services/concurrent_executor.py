@@ -1,3 +1,5 @@
+from relval.services.log_manager import LogsManager
+
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
@@ -35,7 +37,7 @@ class AbstractTask(object):
         try:
             self.internal_run()
         except Exception as ex:
-            app.logger.error("Error occurred when executing task {0}.\nWith exception: {1}".format(
+            app.logger.error("Error occurred when executing task {0}.With exception:\n{1}".format(
                 self.name, str(ex)
             ))
             self.exception = ex
@@ -57,6 +59,7 @@ class ConcurrentExecutor(Thread):
         """
         Thread.__init__(self)
         self.workers = workers
+        self.timeout = 5      # timeout in seconds. After this time executor check for exit signal and waits for new tasks again.
         self.stopped = False  # flag indicates that executor get signal to stop
         self.tasks_queue = Queue()
 
@@ -76,12 +79,13 @@ class ConcurrentExecutor(Thread):
         with futures.ThreadPoolExecutor(max_workers=self.workers) as executor:
             while not self.stopped:
                 try:
-                    task = self.tasks_queue.get(True, 5)
+                    task = self.tasks_queue.get(True, self.timeout)
                     app.logger.info("Added task '{0}' for concurrent execution".format(task.name))
                     executor.submit(task.run)
                 except Empty:
                     # No new tasks within 5 seconds (tasks queue is empty).
                     # Check if executor not stopped and continue work
+                    app.logger.info("No new task in ConcurrentExecutor within {0} sec. Waiting for task...".format(self.timeout))
                     pass
             app.logger.info("ConcurrentExecutor shuts down.")
             executor.shutdown()
@@ -101,9 +105,7 @@ class SubmitForTestingTask(AbstractTask):
 class LogCleanUpTask(AbstractTask):
     def __init__(self):
         AbstractTask.__init__(self, "Clean up old log files")
-        self.commands_service = CommandsService()
+        self.logs_manager = LogsManager()
 
     def internal_run(self):
-        import time
-        print time.time()
-        print "Running clean up..."
+        self.logs_manager.delete_old_test_log_files()

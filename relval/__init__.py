@@ -38,7 +38,8 @@ service_log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(l
 app.logger.addHandler(service_log_handler)
 
 
-logging.getLogger("apscheduler").addHandler(service_log_handler)
+scheduler_logger = logging.getLogger("apscheduler")
+scheduler_logger.addHandler(service_log_handler)
 
 
 import relval.views
