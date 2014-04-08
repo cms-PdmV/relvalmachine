@@ -106,6 +106,7 @@ class RequestsDao(BaseValidationDao):
 
     def get_paginated(self, page_num=1, items_per_page=10):
         return Requests.query \
+            .order_by(Requests.updated.desc()) \
             .paginate(page_num, items_per_page, False)
 
     def get(self, id):

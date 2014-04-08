@@ -93,7 +93,8 @@ requests_marshaller = {
     'label': fields.String,
     'immutable': fields.Boolean,
     'type': fields.String,
-    'status': fields.String
+    'status': fields.String,
+    'updated': fields.String
 }
 
 requests_marshaller_paginated = {

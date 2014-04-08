@@ -211,7 +211,7 @@ relvalServices.factory('RequestsService', ['$http', 'AlertsService', function($h
                 url: 'api/commands/test/'+ requestId,
                 method: 'POST'
             }).then(function() { // success
-                AlertsService.addSuccess({msg: "Tests passed."})
+                AlertsService.addSuccess({msg: "Successfully submitted for testing. "})
             }, function(response) { // error
                 console.log(response)
                 if (response.data !== undefined && response.data.error !== undefined) {
