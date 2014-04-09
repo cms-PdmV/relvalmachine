@@ -6,7 +6,7 @@ from relval import app
 from relval.rest.resources_api import \
     UsersListApi, PredefinedBlobsApi, PredefinedBlobApi,\
     StepsApi, StepApi, RequestsApi, \
-    RequestApi, BatchesApi, BatchApi
+    RequestApi, BatchesApi, BatchApi, IntegrationApi
 from relval.rest.validation_api import \
     StepsValidationApi, RequestsValidationApi, BlobsValidationApi, BatchesValidationApi
 from relval.rest.details_api import BlobDetailsApi, StepDetailsApi, RequestDetailsApi, BatchDetailsApi
@@ -44,4 +44,7 @@ restful_api.add_resource(UsersResource, "/api/users/<field>")
 # commands api
 restful_api.add_resource(RequestCommandApi, "/api/commands/test/<int:request_id>")
 restful_api.add_resource(RequestLogsCommandApi, "/api/commands/test/logs/<int:request_id>")
+
+# integration endpoint
+restful_api.add_resource(IntegrationApi, "/api/conf/<int:request_id>")
 

@@ -1,3 +1,4 @@
+
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
@@ -7,13 +8,14 @@ __email__ = "zygimantas.gatelis@cern.ch"
 """
 
 from flask.ext.restful import Resource, marshal_with, reqparse
-from flask import request
+from flask import request, jsonify
 
 from relval import app
 from relval.database.models import Users
 from relval.database.dao import UsersDao, PredefinedBlobsDao, StepsDao, RequestsDao, BatchesDao
 from relval.rest.utils import convert_keys_to_string
 from relval.rest import marshallers
+from relval.services.runTheMatrix_integration import ConfigurationPreparationService
 
 
 class UsersListApi(Resource):
@@ -280,4 +282,16 @@ class BatchApi(Resource):
         data = convert_keys_to_string(request.json)
         self.dao.update(batch_id, **data)
 
+
+class IntegrationApi(Resource):
+    """ Probably temporary endpoint just to view json which will be passed to run the matrix
+    """
+
+    def __init__(self):
+        self.service = ConfigurationPreparationService()
+
+    def get(self, request_id):
+        return jsonify(
+            self.service.prepare_configuration(request_id)
+        )
 

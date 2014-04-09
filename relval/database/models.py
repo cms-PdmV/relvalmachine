@@ -142,7 +142,7 @@ class Steps(db.Model):
     sequence_number = db.Column("sequence_number", db.Integer)
     title = db.Column("title", db.String(256))
     name = db.Column("name", db.String(512), default="")
-    data_set = db.Column("data_set", db.String(1024))
+    data_set = db.Column("data_set", db.String(1024))   # TODO remove this
     immutable = db.Column("immutable", db.Boolean, default=False)
     type = db.Column("type", db.Enum(*StepType.types()))
 

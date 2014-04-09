@@ -62,6 +62,8 @@ class CommandsService(object):
         for step in request.steps:
             step_details = self.steps_dao.get_details(step.id)
             step_details["events_num"] = 2
+            if "--no_exec" not in step_details["text"]:
+                step_details["text"] += " --no_exec"
             steps.append(step_details)
 
         return template.render(dict(
