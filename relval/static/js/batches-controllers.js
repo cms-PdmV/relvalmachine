@@ -1,11 +1,12 @@
 /**
  * Created by Zygimantas Gatelis on 3/17/14.
  */
-relvalControllers.controller('BatchesCtrl', ['$scope', '$location', 'Batches', 'AlertsService', 'BatchesSearchService',
-    function ($scope, $location, Batches, AlertsService, BatchesSearchService) {
+relvalControllers.controller('BatchesCtrl', ['$scope', '$location', '$route', 'Batches', 'AlertsService', 'BatchesSearchService',
+    function ($scope, $location, $route, Batches, AlertsService, BatchesSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
             $location,
+            $route,
             Batches,
             AlertsService,
             BatchesSearchService

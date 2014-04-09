@@ -2,11 +2,12 @@
  * Created by Zygimantas Gatelis on 3/13/14.
  */
 
-relvalControllers.controller('RequestsCtrl', ['$scope', '$location', 'Requests', 'AlertsService', 'RequestsSearchService', 'RequestsService',
-    function($scope, $location, Requests, AlertsService, RequestsSearchService, RequestService) {
+relvalControllers.controller('RequestsCtrl', ['$scope', '$location', '$route', 'Requests', 'AlertsService', 'RequestsSearchService', 'RequestsService',
+    function($scope, $location, $route, Requests, AlertsService, RequestsSearchService, RequestService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
             $location,
+            $route,
             Requests,
             AlertsService,
             RequestsSearchService
@@ -189,10 +190,11 @@ relvalControllers.controller('ViewRequestCtrl', ['$scope', '$modal', '$rootScope
         };
     }]);
 
-var RequestSelectModalCtrl = function($scope, $location, $modalInstance, Requests, AlertsService, RequestsSearchService) {
+var RequestSelectModalCtrl = function($scope, $location, $route, $modalInstance, Requests, AlertsService, RequestsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
         $location,
+        $route,
         Requests,
         AlertsService,
         RequestsSearchService

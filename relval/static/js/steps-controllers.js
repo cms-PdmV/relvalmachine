@@ -11,11 +11,12 @@ var BaseStepCtrl = function($scope) {
     }
 }
 
-relvalControllers.controller('StepsCtrl', ['$scope', '$location', 'Steps', 'AlertsService', 'StepsSearchService',
-    function($scope, $location, Steps, AlertsService, StepsSearchService) {
+relvalControllers.controller('StepsCtrl', ['$scope', '$location', '$route', 'Steps', 'AlertsService', 'StepsSearchService',
+    function($scope, $location, $route, Steps, AlertsService, StepsSearchService) {
         angular.extend(this, new BaseViewPageController(
             $scope,
             $location,
+            $route,
             Steps,
             AlertsService,
             StepsSearchService
@@ -210,10 +211,11 @@ relvalControllers.controller('ViewStepCtrl', ['$scope', '$routeParams', '$rootSc
         };
     }]);
 
-var StepSelectModalCtrl = function($scope, $location, $modalInstance, Steps, AlertsService, StepsSearchService) {
+var StepSelectModalCtrl = function($scope, $location, $route, $modalInstance, Steps, AlertsService, StepsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
         $location,
+        $route,
         Steps,
         AlertsService,
         StepsSearchService

@@ -3,7 +3,7 @@
  */
 
 // this controller provides basic functionality: search, pagination and sorting
-function BaseViewPageController($scope, $location, Resource, AlertsService, SearchService) {
+function BaseViewPageController($scope, $location, $route, Resource, AlertsService, SearchService) {
     $scope.search = {
         searchText: ""
     };
@@ -131,6 +131,7 @@ function BaseViewPageController($scope, $location, Resource, AlertsService, Sear
                     // DELETE item
                     Resource.delete({item_id: id}, function() {
                         $scope.items.splice(index, 1);
+                        $route.reload();
                         AlertsService.addSuccess({msg: "Item deleted successfully!"});
                     }, function() {
                         AlertsService.addError({msg: "Server error. Failed to remove item"});

@@ -2,10 +2,11 @@
  * Created by Zygimantas Gatelis on 3/12/14.
  */
 // controller extends BaseBlobsViewPageController with additional actions like edit, remove and clone blob
-function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
+function BaseBlobsController($scope, $location, $route, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseViewPageController(
             $scope,
             $location,
+            $route,
             PredefinedBlobs,
             AlertsService,
             BlobsSearchService
@@ -13,11 +14,12 @@ function BaseBlobsController($scope, $location, PredefinedBlobs, AlertsService, 
     $scope.entity = "blobs";
 }
 
-relvalControllers.controller('BlobsCtrl', ['$scope', '$location', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
-    function($scope, $location, PredefinedBlobs, AlertsService, BlobsSearchService) {
+relvalControllers.controller('BlobsCtrl', ['$scope', '$location', '$route', 'PredefinedBlobs', 'AlertsService', 'BlobsSearchService',
+    function($scope, $location, $route, PredefinedBlobs, AlertsService, BlobsSearchService) {
         angular.extend(this, new BaseBlobsController(
             $scope,
             $location,
+            $route,
             PredefinedBlobs,
             AlertsService,
             BlobsSearchService
@@ -152,10 +154,11 @@ relvalControllers.controller('ViewBlobCtrl', ['$scope', '$routeParams', '$rootSc
         };
     }]);
 
-var BlobSelectModalCtrl = function($scope,  $location, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
+var BlobSelectModalCtrl = function($scope,  $location, $route, $modalInstance, PredefinedBlobs, AlertsService, BlobsSearchService) {
     angular.extend(this, new BaseViewPageController(
         $scope,
         $location,
+        $route,
         PredefinedBlobs,
         AlertsService,
         BlobsSearchService
