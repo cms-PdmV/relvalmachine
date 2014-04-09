@@ -10,9 +10,9 @@ tasks_executor = get_and_start_concurrent_executor()
 scheduler = Scheduler()
 scheduler.start()
 
-#######################################################
-# Jobs that should be executed in a particular interval
-#######################################################
+########################################################
+# Jobs that should be executed after particular interval
+########################################################
 
 @scheduler.interval_schedule(seconds=10)
 def clean_up_job():

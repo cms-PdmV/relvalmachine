@@ -50,15 +50,17 @@ class LogsManager(object):
         # limit = current_time - 60 * 60 * 24 * days_limit
 
         limit = current_time - 60 * minutes_limit
-        folder = os.path.join(self.logs_dir, "tests")
-        for directory in os.listdir(folder):
-            path = os.path.join(folder, directory)
-            st = os.stat(path)
+        path = os.path.join(self.logs_dir, "tests")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        for directory in os.listdir(path):
+            path_to_file = os.path.join(path, directory)
+            st = os.stat(path_to_file)
             mtime = st.st_mtime
             if mtime < limit:
                 app.logger.info("Removing old directory %s. It is %d minutes old" % (
                     directory, int((current_time - mtime) / 60)))
-                LogsManager.remove_dir(path)
+                LogsManager.remove_dir(path_to_file)
 
     def __get_file_name(self, name):
         return self.__turn_into_valid_file_name(name) + ".log"
