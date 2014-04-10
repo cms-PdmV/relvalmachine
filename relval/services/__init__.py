@@ -14,7 +14,7 @@ scheduler.start()
 # Jobs that should be executed after particular interval
 ########################################################
 
-@scheduler.interval_schedule(seconds=10)
+@scheduler.interval_schedule(minutes=1)
 def clean_up_job():
     tasks_executor.add_task(LogCleanUpTask())
 

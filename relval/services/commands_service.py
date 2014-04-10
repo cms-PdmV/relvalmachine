@@ -51,7 +51,7 @@ class CommandsService(object):
 
     def get_logs(self, request_id):
         request = self.request_dao.get(request_id)
-        return self.log_manager.get_testing_std_error_log(request.label, self.__get_subdir(request))
+        return self.log_manager.get_logs(request.label, self.__get_subdir(request))
 
     def __render_command(self, request):
         template = self.env.get_template('test_request.sh')

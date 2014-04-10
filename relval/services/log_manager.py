@@ -30,13 +30,20 @@ class LogsManager(object):
         with open(filename, "w") as log_file:
             log_file.write(text)
 
+    def get_logs(self, name, subdir):
+        """ Returns both stdout and stderr logs
+        """
+        return "STDOUT:\n{0}\nSTDERR:\n{1}".format(
+            self.get_testing_std_out_log(name, subdir),
+            self.get_testing_std_error_log(name, subdir))
+
     def get_testing_std_error_log(self, name, subdir):
-        return self.get_log(self.stderr_log(name), os.path.join("tests", subdir))
+        return self.__get_log(self.stderr_log(name), os.path.join("tests", subdir))
 
     def get_testing_std_out_log(self, name, subdir):
-        return self.get_log(self.stdout_log(name), os.path.join("tests", subdir))
+        return self.__get_log(self.stdout_log(name), os.path.join("tests", subdir))
 
-    def get_log(self, name, subdir):
+    def __get_log(self, name, subdir):
         name = self.__get_file_name(name)
         filename = os.path.join(self.logs_dir, subdir, name)
         print filename
