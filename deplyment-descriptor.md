@@ -101,7 +101,15 @@ and run command:
 After that you can deploy RelValMachine with command:
 
     sudo bash
-    nohup python run.py &
+    ./deploy.sh
+
+You can monitor service logs that are located in logs/ directory.
+In most of the cases you should look at logs/service.log file.
+
+When you want to undeploy service just run: (only work when flask is not in debug mode)
+
+    sudo bash
+    ./undeploy.sh
 
 
 

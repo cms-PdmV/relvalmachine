@@ -34,14 +34,14 @@ class SshService(object):
             app.logger.error("Unknown error connecting to ssh server %s" % self.hostname)
             raise
 
-        app.logger.debug("Executing command in server\n%s\n" % command)
+        app.logger.info("Executing command in server\n%s\n" % command)
         _, stdout, stderr = self.ssh_client.exec_command(command)
 
         logs = stdout.read()
         errors = stderr.read()
 
-        app.logger.debug("STDOUT from server: " + logs)
-        app.logger.debug("STDERR from server: " + errors)
+        app.logger.info("STDOUT from server: " + logs)
+        app.logger.info("STDERR from server: " + errors)
 
         return logs, errors
 
