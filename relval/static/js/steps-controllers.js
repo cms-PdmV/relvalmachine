@@ -90,7 +90,7 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
 var StepPreloadCtrl = function($scope, $routeParams, Steps) {
     $scope.currentItem = {};
 
-    // load blob data
+    // load step data
     $scope.id = $routeParams.stepId;
     var step = Steps.get({item_id: $scope.id}, function() {
         $scope.currentItem.title = step.title;
@@ -100,6 +100,10 @@ var StepPreloadCtrl = function($scope, $routeParams, Steps) {
         $scope.currentItem.type = step.type;
         $scope.currentItem.dataStep = step.data_step;
         $scope.currentItem.name = step.name;
+
+        if ($scope.actionName == "Update") {
+            $scope.oldTitle = step.title;
+        }
     });
 }
 
@@ -118,6 +122,27 @@ function constructStep(scope, Steps) {
         step.data_step = scope.currentItem.dataStep;
     }
     return step;
+}
+
+function validateStep(step, onError, onSuccess) {
+    var errors = false;
+    if (step.data_step !== undefined &&  step.data_step.data_set) { // if data_set defined then no parameters should be defined
+        if (step.blobs.length > 0) {
+            onError("You cannot define both Gen Sim data set and blobs in one step.")
+            errors = true;
+        }
+        step.parameters.forEach(function(param) {
+            console.log(param.flag, param.value)
+            if ( param.flag && param.value) {
+                onError("You cannot define both Gen Sim data set and steps in single step.")
+                errors = true;
+            }
+        })
+    }
+    if (!errors) {
+        onSuccess();
+    }
+
 }
 
 relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', 'AlertsService', 'Steps',
@@ -140,16 +165,21 @@ relvalControllers.controller('NewStepCtrl', ['$scope', '$modal', '$rootScope', '
         $scope.submit = function() {
             $scope.preSubmit();
             var step = constructStep($scope, Steps);
-            // POST to create step
-            if ($scope.mainForm.$valid) {
-                step.$save(function() {
-                    $rootScope.back();
-                }, function() {
-                    AlertsService.addError({msg: "Server Error. Failed to create step."});
-                });
-            } else {
-                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
-            }
+            validateStep(step, function(message) {
+                 AlertsService.addError({msg: message});
+            }, function() {
+                // POST to create step
+                if ($scope.mainForm.$valid) {
+                    step.$save(function() {
+                        $rootScope.back();
+                    }, function() {
+                        AlertsService.addError({msg: "Server Error. Failed to create step."});
+                    });
+                } else {
+                    AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+                }
+            });
+
         }
     }]);
 
@@ -163,16 +193,20 @@ relvalControllers.controller('CloneStepCtrl', ['$scope', '$modal', '$rootScope',
         $scope.submit = function() {
             $scope.preSubmit();
             var step = constructStep($scope, Steps);
-            // POST to create step
-            if ($scope.mainForm.$valid) {
-                step.$save(function() {
-                    $rootScope.back();
-                }, function() {
-                    AlertsService.addError({msg: "Server Error. Failed to create step."});
-                });
-            } else {
-                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
-            }
+            validateStep(step, function(message) {
+                 AlertsService.addError({msg: message});
+            }, function() {
+                // POST to create step
+                if ($scope.mainForm.$valid) {
+                    step.$save(function() {
+                        $rootScope.back();
+                    }, function() {
+                        AlertsService.addError({msg: "Server Error. Failed to create step."});
+                    });
+                } else {
+                    AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+                }
+            });
         }
 
 }]);
@@ -182,21 +216,27 @@ relvalControllers.controller('EditStepCtrl', ['$scope', '$modal', '$rootScope', 
         angular.extend(this, new BaseStepEditPageCtrl($scope, $modal, $rootScope));
         angular.extend(this, new StepPreloadCtrl($scope, $routeParams, Steps));
 
+        $scope.oldTitle = $scope.currentItem.title;
+
         $scope.actionName = "Update";
 
         $scope.submit = function() {
             $scope.preSubmit();
             var step = constructStep($scope, Steps);
-            // PUT to update step
-            if ($scope.mainForm.$valid) {
-                step.$update({item_id: $scope.id}, function() {
-                    $rootScope.back();
-                }, function() {
-                    AlertsService.addError({msg: "Server Error. Failed to update step."});
-                });
-            } else {
-                AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
-            }
+            validateStep(step, function(message) {
+                 AlertsService.addError({msg: message});
+            }, function() {
+                // PUT to update step
+                if ($scope.mainForm.$valid) {
+                    step.$update({item_id: $scope.id}, function() {
+                        $rootScope.back();
+                    }, function() {
+                        AlertsService.addError({msg: "Server Error. Failed to update step."});
+                    });
+                } else {
+                    AlertsService.addError({msg: "Error! Fix errors in step creation error and then try to submit again."});
+                }
+            });
         }
     }]);
 

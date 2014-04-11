@@ -96,17 +96,19 @@ relvalDirectives.directive('stepTitleValidation',['$http', function($http) {
             ctrl.$parsers.unshift(function(value) {
                 if (!value) {
                     ctrl.$setValidity("unique", false);
+                } else if (scope.oldTitle !== undefined && scope.oldTitle == value) {
+                    ctrl.$setValidity("unique", true);
                 } else {
                     $http({
                         method: 'POST',
                         url: "api/validate/step/title",
                         data: {value: value}
                     }).success(function(data) {
-                        ctrl.$setValidity("unique", data.valid);
+                            ctrl.$setValidity("unique", data.valid);
 
-                    }).error(function() {
-                        ctrl.$setValidity("unique", false);
-                    })
+                        }).error(function() {
+                            ctrl.$setValidity("unique", false);
+                        })
                 }
                 return value;
             })

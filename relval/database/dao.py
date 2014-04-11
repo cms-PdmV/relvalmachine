@@ -31,6 +31,14 @@ class BaseValidationDao(object):
     def validate_distinct_title(self, title_to_validate):
         self.validate_distinct_value(title_to_validate, self.entity.title)
 
+    def remove_empty_parameters(self, parameters):
+        new_params = []
+        for param in parameters:
+            if param["value"] and param["flag"]: # at least one of flag and value shouldn't be empty
+                new_params.append(param)
+        return new_params
+
+
 class UsersDao(object):
     def get(self, id):
         user = Users.query.get(id)
@@ -336,8 +344,9 @@ class StepsDao(BaseValidationDao):
             name=name
         )
         if type == StepType.Default or type == StepType.FirstMc:
+            validated_parameters = self.remove_empty_parameters(parameters)
             step.parameters = [
-                Parameters(flag=param['flag'], value=param['value']) for param in parameters
+                Parameters(flag=param['flag'], value=param['value']) for param in validated_parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
