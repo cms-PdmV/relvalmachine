@@ -124,6 +124,8 @@ relvalDirectives.directive('requestLabelValidation',['$http', function($http) {
             ctrl.$parsers.unshift(function(value) {
                 if (!value) {
                     ctrl.$setValidity("unique", false);
+                } else if (scope.oldLabel !== undefined && scope.oldLabel == value) {
+                    ctrl.$setValidity("unique", true);
                 } else {
                     $http({
                         method: 'POST',
@@ -150,6 +152,8 @@ relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
             ctrl.$parsers.unshift(function(value) {
                 if (!value) {
                     ctrl.$setValidity("unique", false);
+                } else if (scope.oldTitle !== undefined && scope.oldTitle == value) {
+                    ctrl.$setValidity("unique", true);
                 } else {
                     $http({
                         method: 'POST',
@@ -176,6 +180,8 @@ relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
             ctrl.$parsers.unshift(function(value) {
                 if (!value) {
                     ctrl.$setValidity("unique", false);
+                } else if (scope.oldTitle !== undefined && scope.oldTitle == value) {
+                    ctrl.$setValidity("unique", true);
                 } else {
                     $http({
                         method: 'POST',

@@ -59,6 +59,10 @@ function BlobPreloadCtrl($scope, $routeParams, PredefinedBlobs) {
         $scope.currentItem.title = blob.title;
         $scope.currentItem.immutable = blob.immutable;
         $scope.currentItem.parameters = blob.parameters;
+
+        if ($scope.actionName == "Update") {
+            $scope.oldTitle = blob.title;
+        }
     });
 }
 

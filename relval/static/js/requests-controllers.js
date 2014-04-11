@@ -141,7 +141,11 @@ var RequestPreloadCtrl = function($scope, $routeParams, Requests) {
         $scope.currentItem.cmssw_release = request.cmssw_release;
         $scope.currentItem.run_the_matrix_conf = request.run_the_matrix_conf;
         $scope.currentItem.events = request.events;
-        $scope.currentItem.steps = request.steps
+        $scope.currentItem.steps = request.steps;
+
+        if ($scope.actionName == "Update") {
+            $scope.oldLabel = request.label;
+        }
     });
 }
 

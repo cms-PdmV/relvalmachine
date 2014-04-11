@@ -87,6 +87,10 @@ var BaseBatchEditWithPreloadCtrl = function($scope, $modal, $rootScope, $routePa
         $scope.currentItem.cmssw_release = batch.cmssw_release;
         $scope.currentItem.requests = batch.requests;
         $scope.currentItem.priority = (batch.priority == 0) ? undefined : batch.priority;
+
+        if ($scope.actionName == "Update") {
+            $scope.oldTitle = batch.title;
+        }
     });
 }
 
