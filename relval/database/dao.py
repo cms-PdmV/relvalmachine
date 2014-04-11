@@ -373,8 +373,9 @@ class StepsDao(BaseValidationDao):
             db.session.delete(parameter)
         step.type = type
         if type == StepType.Default or type == StepType.FirstMc:
+            validated_parameters = self.remove_empty_parameters(parameters)
             step.parameters = [
-                Parameters(flag=param['flag'], value=param['value']) for param in parameters
+                Parameters(flag=param['flag'], value=param['value']) for param in validated_parameters
             ]
             step.predefined_blobs = [
                 self.blobs_dao.get(blob['id']) for blob in blobs
@@ -430,6 +431,12 @@ class StepsDao(BaseValidationDao):
         db.session.commit()
 
     def construct_data_step(self, data_step):
+        if "run" in data_step:
+            run = data_step["run"]
+            run = run.replace("[", "").replace("]", "").replace(" ", "").split(",")
+            if not all([r.isdigit() for r in run]):
+                raise Exception("Wrong run format!")
+
         return DataStep(
             data_set=data_step.get("data_set", None),
             label=data_step.get("label", None),
@@ -464,8 +471,9 @@ class PredefinedBlobsDao(BaseValidationDao):
             title=title,
             creation_date=creation_date,
             immutable=immutable)
+        validated_parameters = self.remove_empty_parameters(parameters)
         predefined_blob.parameters = [
-            Parameters(flag=param['flag'], value=param['value']) for param in parameters
+            Parameters(flag=param['flag'], value=param['value']) for param in validated_parameters
         ]
 
         db.session.add(predefined_blob)
@@ -512,8 +520,9 @@ class PredefinedBlobsDao(BaseValidationDao):
         for parameter in blob.parameters:
             db.session.delete(parameter)
         blob.immutable = immutable
+        validated_parameters = self.remove_empty_parameters(parameters)
         blob.parameters = [
-            Parameters(flag=param['flag'], value=param['value']) for param in parameters
+            Parameters(flag=param['flag'], value=param['value']) for param in validated_parameters
         ]
         db.session.commit()
 

@@ -29,7 +29,7 @@ def predefined_blob(params_count=1):
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(params_count)
         ])
 
-def data_step(data_set="test-data-set", files="1", events="1", split="1", ib_block="test-ib-block", run="test-run"):
+def data_step(data_set="test-data-set", files="1", events="1", split="1", ib_block="test-ib-block", run="123,321"):
     return {
         "data_set": data_set,
         "label": "test-label",

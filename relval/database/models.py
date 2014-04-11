@@ -126,9 +126,9 @@ class DataStep(db.Model):
     run = db.Column("run", db.String(1024))
     ib_block = db.Column("ib_block", db.String(1024))
     ib_blacklist = db.Column("ib_blacklist", db.String(1024))
-    files = db.Column("files", db.Integer, default=1000)
-    events = db.Column("events", db.Integer, default=2000000)
-    split = db.Column("split", db.Integer, default=10)
+    files = db.Column("files", db.Integer, default=None)
+    events = db.Column("events", db.Integer, default=None)
+    split = db.Column("split", db.Integer, default=None)
     location = db.Column("location", db.String(1024))
 
     step_id = db.Column("step_id", db.Integer, db.ForeignKey("steps.id"), nullable=False)

@@ -57,6 +57,10 @@ var BaseStepEditPageCtrl = function($scope, $modal, $rootScope) {
         });
     };
 
+    $scope.isRunError = function() {
+        return $scope.mainForm.run.$dirty && $scope.mainForm.run.$invalid
+    }
+
     $scope.removeParametersRow = function(index) {
         $scope.currentItem.parameters.splice(index, 1);
     };
@@ -127,17 +131,18 @@ function constructStep(scope, Steps) {
 function validateStep(step, onError, onSuccess) {
     var errors = false;
     if (step.data_step !== undefined &&  step.data_step.data_set) { // if data_set defined then no parameters should be defined
-        if (step.blobs.length > 0) {
+        if (step.blobs && step.blobs.length > 0) {
             onError("You cannot define both Gen Sim data set and blobs in one step.")
             errors = true;
         }
-        step.parameters.forEach(function(param) {
-            console.log(param.flag, param.value)
-            if ( param.flag && param.value) {
-                onError("You cannot define both Gen Sim data set and steps in single step.")
-                errors = true;
-            }
-        })
+        if (step.parameters) {
+            step.parameters.forEach(function(param) {
+                if ( param.flag || param.value) {
+                    onError("You cannot define both Gen Sim data set and steps in single step.")
+                    errors = true;
+                }
+            })
+        }
     }
     if (!errors) {
         onSuccess();

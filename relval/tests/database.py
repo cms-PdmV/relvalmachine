@@ -114,7 +114,7 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(len(result.items), 1)
         self.assertEqual(result.items[0].label, "search-label")
 
-    def test_request_paginated_fetch(self):
+    def test_request_paginated_fetch_sort_by_update(self):
         for i in range(3):
             utils.prepare_request(label="title%d" % i, step_title="step%d" % i)
 
@@ -122,7 +122,7 @@ class RequestsDaoTests(BaseTestsCase):
 
         self.assertEqual(len(result.items), 1)
         self.assertEqual(result.total, 3)
-        self.assertEqual(result.items[0].label, "title0")
+        self.assertEqual(result.items[0].label, "title2")
         self.assertModelCount(Requests, 3)
 
     def test_request_delete(self):
@@ -531,7 +531,7 @@ class StepsDaoTest(BaseTestsCase):
         self.assertEqual(step.data_step.events, 1)
         self.assertEqual(step.data_step.files, 100)
 
-    def test_step_step1_data_insertion_default_values_are_correct(self):
+    def test_step_step1_data_insertion_default_values_are_None(self):
         data_step = factory.data_step(events="", files=None, split="any")
         self.steps_dao.add(title="step",
                            immutable=False,
@@ -543,9 +543,9 @@ class StepsDaoTest(BaseTestsCase):
 
         step = Steps.query.one()
         self.assertEqual(step.type, StepType.FirstData)
-        self.assertEqual(step.data_step.events, 2000000)
-        self.assertEqual(step.data_step.files, 1000)
-        self.assertEqual(step.data_step.split, 10)
+        self.assertEqual(step.data_step.events, None)
+        self.assertEqual(step.data_step.files, None)
+        self.assertEqual(step.data_step.split, None)
 
 
     def test_step_insertion_without_parameters(self):
@@ -687,20 +687,34 @@ class StepsDaoTest(BaseTestsCase):
         self.assertTrue(details.has_key("blobs"))
 
     def test_step_first_data_with_ib_block_get_details(self):
-        data_step = factory.data_step(data_set="test-data_set", ib_block="test_ib", run="test-run")
+        data_step = factory.data_step(data_set="test-data_set", ib_block="test_ib", run="123,56")
         utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
-        expected = "input from: test-data_set with run test_ib#test-run"
+        expected = "input from: test-data_set with run test_ib#123,56"
         self.assertEqual(expected, details["text"])
 
     def test_step_first_data_without_ib_block_get_details(self):
-        data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="test-run")
+        data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="123,456")
         utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)
         id = Steps.query.one().id
 
         details = self.steps_dao.get_details(id)
-        expected = "input from: test-data_set with run test-run"
+        expected = "input from: test-data_set with run 123,456"
         self.assertEqual(expected, details["text"])
+
+    def test_run_field_format_in_data_step_validation_success(self):
+        data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="[123,34  ,454,       5,4]")
+        utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)
+        # No exception
+        self.assertModelCount(DataStep, 1)
+        self.assertModelCount(Steps, 1)
+
+    def test_run_field_format_in_data_step_validation_failed(self):
+        data_step = factory.data_step(data_set="test-data_set", ib_block=None, run="[123,3a,5,4]")
+        self.assertRaises(Exception, utils.prepare_step,
+                          title="step-title", type=StepType.FirstData, data_step=data_step)
+        self.assertModelCount(DataStep, 0)
+        self.assertModelCount(Steps, 0)
 

@@ -166,8 +166,8 @@ relvalDirectives.directive('blobTitleValidation',['$http', function($http) {
                         ctrl.$setValidity("unique", false);
                     })
                 }
-                        return value;
-                })
+                return value;
+            })
         },
         restrict: 'A',
         require: 'ngModel'
@@ -194,13 +194,42 @@ relvalDirectives.directive('batchTitleValidation',['$http', function($http) {
                         ctrl.$setValidity("unique", false);
                     })
                 }
-                        return value;
-                })
+                return value;
+            })
         },
         restrict: 'A',
         require: 'ngModel'
     }
 }]);
+
+relvalDirectives.directive('runFormatValidation', function() {
+    return {
+        link:  function(scope, element, attrs, ctrl) {
+            ctrl.$parsers.unshift(function(value) {
+                ctrl.$setValidity("runFormat", true)
+                if (value) {
+                    var run_value = value;
+                    run_value = run_value.replace(/ /g,'')
+                        .replace(/\[/g,'')
+                        .replace(/\]/g,'');
+                    var values = run_value.split(',')
+                    console.log(values)
+
+                    values.forEach(function(run) {
+                        var isnum = /^\d+$/.test(run);
+                        if (!isnum) {
+                            ctrl.$setValidity("runFormat", false);
+                            console.log("invalid")
+                        }
+                    })
+                }
+                return value;
+            })
+        },
+        restrict: 'A',
+        require: 'ngModel'
+    }
+});
 
 relvalDirectives.directive('entityActions', function() {
     return {

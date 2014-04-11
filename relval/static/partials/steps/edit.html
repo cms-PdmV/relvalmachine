@@ -112,10 +112,13 @@
     <textarea ng-model="currentItem.dataStep.label" class="form-control" id="labelInput"
               placeholder="Label"></textarea>
   </div>
-  <div class="form-group">
+  <div class="form-group" ng-class="{'has-error': isRunError()}">
     <label for="runInput">Run</label>
     <textarea ng-model="currentItem.dataStep.run" class="form-control" id="runInput"
-              placeholder="Run"></textarea>
+              placeholder="Run" name="run" run-format-validation></textarea>
+    <span class="help-block" ng-show="isRunError()">
+              Wrong format! Run should be comma separated integers.
+    </span>
   </div>
 </script>
 
