@@ -3,6 +3,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from relval import app
 import paramiko
+import os
 
 
 class SshService(object):
@@ -18,7 +19,7 @@ class SshService(object):
         self.ssh_client = paramiko.SSHClient()
         self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    def execute(self, command):
+    def connect_to_server(self):
         try:
             app.logger.info("Connecting to server %s with user %s and password %s" %
                             (self.hostname, self.username, self.password))
@@ -34,6 +35,7 @@ class SshService(object):
             app.logger.error("Unknown error connecting to ssh server %s" % self.hostname)
             raise
 
+    def execute(self, command):
         app.logger.info("Executing command in server\n%s\n" % command)
         _, stdout, stderr = self.ssh_client.exec_command(command)
 
@@ -44,6 +46,27 @@ class SshService(object):
         app.logger.info("STDERR from server: " + errors)
 
         return logs, errors
+
+    def upload_file_to_server(self, path, file_name, data):
+        # make sure dir exists for file if not create it
+        _, errors = self.execute("mkdir -p {0}".format(path))
+        if errors:
+            print "ERROR: ", errors
+            raise Exception("Failed to upload file. Cannot create dir for json files. {0}".format(errors))
+        app.logger.info("Uploading:\n{0}\nInto {1}".format(path, data))
+        try:
+            sftp_client = self.ssh_client.open_sftp()
+            with sftp_client.open(os.path.join(path, file_name), "wb") as f:
+                f.write(data)
+            print "file uploaded"
+        except Exception as ex:
+            print "Not uploaded"
+            app.logger.error("Failed to upload file: {0}".format(str(ex)))
+            raise ex
+
+
+
+
 
 
 class Job(object):

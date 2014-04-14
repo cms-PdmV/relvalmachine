@@ -6,20 +6,20 @@ cd {{directory}}
 source  /afs/cern.ch/cms/cmsset_default.sh
 
 if [ -r {{cmssw_release}}/src ] ; then
- echo release {{cmssw_release}} already exists
+  echo release {{cmssw_release}} already exists
 else
-scram p CMSSW {{cmssw_release}}
+  scram p CMSSW {{cmssw_release}}
 fi
 cd {{cmssw_release}}/src
-eval `scram runtime -sh`
 
-scram b
-cd ../../
+eval `scramv1 runtime -sh`
 
+git cms-addpkg Configuration/PyReleaseValidation
+yes | cp  -rf /afs/cern.ch/user/z/zgatelis/public/CMSSW_7_1_0_pre2/src/Configuration/PyReleaseValidation/python/* Configuration/PyReleaseValidation/python/
 
-{% for step in steps %}
-{{step.text}} -n {{step.events_num}} || exit $? ;
-{% endfor %}
+mkdir -p json_data
+cp ../../json_data json_data
 
+scram b -j 2
 
-cmsRun -e -j B2G-Summer12-00460_rt.xml B2G-Summer12-00460_1_cfg.py || exit $? ;
+runTheMatrix.py --what machine -n
