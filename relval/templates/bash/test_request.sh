@@ -18,8 +18,8 @@ git cms-addpkg Configuration/PyReleaseValidation
 yes | cp  -rf /afs/cern.ch/user/z/zgatelis/public/CMSSW_7_1_0_pre2/src/Configuration/PyReleaseValidation/python/* Configuration/PyReleaseValidation/python/
 
 mkdir -p json_data
-cp ../../json_data json_data
+cp ../../json_data/* json_data
 
 scram b -j 2
 
-runTheMatrix.py --what machine -n
+runTheMatrix.py --what machine -n -e

@@ -18,6 +18,9 @@ class LogsManager(object):
     def save_testing_log(self, name, errors, info, subdir):
         if errors:
             self.save_log(self.stderr_log(name), errors, os.path.join("tests", subdir))
+        else: # remove old log if no errors was
+            self.remove_if_exists(self.stderr_log(name), os.path.join("tests", subdir))
+
         self.save_log(self.stdout_log(name), info, os.path.join("tests", subdir))
 
     def save_log(self, name, text, subdir):
@@ -67,7 +70,7 @@ class LogsManager(object):
             if mtime < limit:
                 app.logger.info("Removing old directory %s. It is %d minutes old" % (
                     directory, int((current_time - mtime) / 60)))
-                LogsManager.remove_dir(path_to_file)
+                LogsManager.remove_dir_or_file(path_to_file)
 
     def __get_file_name(self, name):
         return self.__turn_into_valid_file_name(name) + ".log"
@@ -76,11 +79,17 @@ class LogsManager(object):
         return re.sub(r"[^-a-zA-Z0-9_.() ]+", '', name)
 
     @classmethod
-    def remove_dir(cls, dir_name):
+    def remove_dir_or_file(cls, dir_name):
         if os.path.isfile(dir_name):
             os.unlink(dir_name)
         else:
             shutil.rmtree(dir_name)
+
+    @classmethod
+    def remove_if_exists(cls, name, dir_name):
+        path = os.path.join(dir_name, name)
+        if os.path.exists(path):
+            os.remove(path)
 
     stderr_log = lambda self, name: "%s_stderr" % name
     stdout_log = lambda self, name: "%s_stdout" % name
