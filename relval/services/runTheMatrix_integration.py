@@ -1,8 +1,8 @@
-from relval.database.dao import RequestsDao, StepsDao
-from relval.database.models import StepType
-
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
+
+from relval.database.dao import RequestsDao, StepsDao
+from relval.database.models import StepType
 
 
 class DictWithoutNone(dict):
@@ -36,6 +36,7 @@ class ConfigurationPreparationService(object):
             step = step_assoc.step
             conf_step = dict()
             conf_step["name"] = step.name
+            conf_step["sequence_number"] = step_assoc.sequence_number
 
             if step.type == StepType.Default:
                 conf_step["parameters"] = self.construct_parameters(step)
