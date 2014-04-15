@@ -30,7 +30,10 @@ class ConfigurationPreparationService(object):
         configuration["label"] = request.label
         steps = dict()
 
-        for step in request.steps:
+        print [(assoc.sequence_number, assoc.step.title) for assoc in self.requests_dao.get_steps_sorted(request)]
+
+        for step_assoc in self.requests_dao.get_steps_sorted(request):
+            step = step_assoc.step
             conf_step = dict()
             conf_step["name"] = step.name
 

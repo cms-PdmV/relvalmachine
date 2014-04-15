@@ -20,7 +20,6 @@ class CommandsService(object):
     def __init__(self):
         self.env = Environment(loader=PackageLoader("relval", "/templates/bash"))
         self.request_dao = RequestsDao()
-        self.steps_dao = StepsDao()
         self.ssh_service = SshService()
         self.log_manager = LogsManager()
         self.config_preparation = ConfigurationPreparationService()
@@ -33,7 +32,6 @@ class CommandsService(object):
         request = self.request_dao.get(request_id)
         command = self.__render_test_command(request)
 
-        cmssw_dir = os.path.join(self.__get_testing_directory(request), request.cmssw_release, "src")
         json_data_dir = os.path.join(self.__get_testing_directory(request), "json_data")
         json_file = "{0}.json".format(request_id)
 

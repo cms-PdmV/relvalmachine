@@ -53,12 +53,11 @@ class SshService(object):
         if errors:
             print "ERROR: ", errors
             raise Exception("Failed to upload file. Cannot create dir for json files. {0}".format(errors))
-        app.logger.info("Uploading:\n{0}\nInto {1}".format(path, data))
+        app.logger.info("Uploading:\n{0}\nInto {1}".format(data, path))
         try:
             sftp_client = self.ssh_client.open_sftp()
             with sftp_client.open(os.path.join(path, file_name), "wb") as f:
                 f.write(data)
-            print "file uploaded"
         except Exception as ex:
             print "Not uploaded"
             app.logger.error("Failed to upload file: {0}".format(str(ex)))

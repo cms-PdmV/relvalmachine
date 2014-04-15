@@ -16,12 +16,13 @@ class LogsManager(object):
         self.logs_dir = app.config["LOGS_FROM_SERVER_DIR"]
 
     def save_testing_log(self, name, errors, info, subdir):
+        logs_dir = os.path.join("tests", subdir)
         if errors:
-            self.save_log(self.stderr_log(name), errors, os.path.join("tests", subdir))
-        else: # remove old log if no errors was
-            self.remove_if_exists(self.stderr_log(name), os.path.join("tests", subdir))
+            self.save_log(self.stderr_log(name), errors, logs_dir)
+        else:  # remove old log if no errors was
+            self.remove_if_exists(self.stderr_log(name), logs_dir)
 
-        self.save_log(self.stdout_log(name), info, os.path.join("tests", subdir))
+        self.save_log(self.stdout_log(name), info, logs_dir)
 
     def save_log(self, name, text, subdir):
         path = os.path.join(self.logs_dir, subdir)
@@ -29,7 +30,7 @@ class LogsManager(object):
             os.makedirs(path)
         name = self.__get_file_name(name)
         filename = os.path.join(path, name)
-        print filename
+        app.logger.info("Saving log to {0}".format(filename))
         with open(filename, "w") as log_file:
             log_file.write(text)
 
@@ -49,10 +50,12 @@ class LogsManager(object):
     def __get_log(self, name, subdir):
         name = self.__get_file_name(name)
         filename = os.path.join(self.logs_dir, subdir, name)
-        print filename
-        with open(filename, "r") as log_file:
-            content = log_file.read()
-            return content
+        try:
+            with open(filename, "r") as log_file:
+                content = log_file.read()
+                return content
+        except Exception:
+            return ""
 
     def delete_old_test_log_files(self):
         minutes_limit = app.config["DAYS_TO_KEEP_LOGS"]
@@ -85,9 +88,8 @@ class LogsManager(object):
         else:
             shutil.rmtree(dir_name)
 
-    @classmethod
-    def remove_if_exists(cls, name, dir_name):
-        path = os.path.join(dir_name, name)
+    def remove_if_exists(self, name, dir_name):
+        path = os.path.join(self.logs_dir, dir_name, self.__get_file_name(name))
         if os.path.exists(path):
             os.remove(path)
 
