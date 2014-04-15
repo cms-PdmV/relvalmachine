@@ -23,7 +23,7 @@ def run_server():
     app.run(host='0.0.0.0', port=port)
 
 
-if __name__ == "__main__":
+def run():
     try:
         run_server()
 
@@ -32,3 +32,7 @@ if __name__ == "__main__":
 
     except Exception as ex:
         print ex
+
+
+if __name__ == "__main__":
+    run()
