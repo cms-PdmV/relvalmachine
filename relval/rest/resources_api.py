@@ -227,7 +227,7 @@ class RequestApi(Resource):
         """ Retrieves request with id=request_id
         """
         req = self.dao.get(request_id)
-        req.steps
+        req.steps_assoc
         return req
 
     def put(self, request_id):

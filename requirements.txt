@@ -1,6 +1,7 @@
 flask==0.10
 flask-sqlalchemy==0.16
 flask-restful==0.2.1
+flask-script==0.6.7
 cx-Oracle==5.1.2
 paramiko==1.13
 futures==2.1.6

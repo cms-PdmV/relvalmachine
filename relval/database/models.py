@@ -1,4 +1,4 @@
-from sqlalchemy.orm import backref
+from sqlalchemy.orm.util import all_cascades
 
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
@@ -66,11 +66,16 @@ class RequestStatus(object):
                 RequestStatus.SubmittedSuccessful, RequestStatus.SubmittedFailed]
 
 
-steps_requests_association = db.Table(
-    'steps_requests_association',
-    db.Column('step_id', db.Integer, db.ForeignKey('steps.id')),
-    db.Column('request_id', db.Integer, db.ForeignKey('requests.id'))
-)
+class StepsRequestsAssociation(db.Model):
+    __tablename__ = "steps_requests_association"
+    id = db.Column("id", db.Integer, db.Sequence("requests_steps_assoc_id_seq"), primary_key=True)
+    step_id = db.Column('step_id', db.Integer, db.ForeignKey('steps.id'))
+    request_id = db.Column('request_id', db.Integer, db.ForeignKey('requests.id'))
+
+    sequence_number = db.Column('sequence_number', db.Integer)
+
+    step = db.relationship('Steps', backref=db.backref("requests_assoc", cascade="all,delete-orphan"))
+    request = db.relationship('Requests', backref=db.backref("steps_assoc", cascade="all,delete-orphan"))
 
 
 class Requests(db.Model):
@@ -92,11 +97,6 @@ class Requests(db.Model):
     ancestor_request = db.relationship("Requests", remote_side=[id])
 
     user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=True)
-
-    steps = db.relationship(
-        'Steps',
-        secondary=steps_requests_association,
-        backref=db.backref("requests", lazy="dynamic"))
 
     #TODO: add __repr__
 
@@ -139,10 +139,8 @@ class DataStep(db.Model):
 class Steps(db.Model):
     __tablename__ = "steps"
     id = db.Column("id", db.Integer, db.Sequence("step_id_seq"), primary_key=True)
-    sequence_number = db.Column("sequence_number", db.Integer)
     title = db.Column("title", db.String(256))
     name = db.Column("name", db.String(512), default="")
-    data_set = db.Column("data_set", db.String(1024))   # TODO remove this
     immutable = db.Column("immutable", db.Boolean, default=False)
     type = db.Column("type", db.Enum(*StepType.types()))
 

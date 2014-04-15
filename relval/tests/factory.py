@@ -44,13 +44,12 @@ def data_step(data_set="test-data-set", files="1", events="1", split="1", ib_blo
 
 
 def step(title="test-title", parameters_count=1, blobs_count=1, name="",
-                 immutable=False, type=StepType.Default, data_set=""):
+                 immutable=False, type=StepType.Default):
     return Steps(
         title=title,
         name=name,
         immutable=immutable,
         type=type,
-        data_set=data_set,
         parameters=[
             Parameters(flag="F%d" % i, value="V%d" % i) for i in range(parameters_count)
         ],

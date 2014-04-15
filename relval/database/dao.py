@@ -12,7 +12,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
 
 from relval import db
 from relval.database.models import Users, Requests, PredefinedBlob, Parameters, \
-    Steps, StepType, DataStep, RequestStatus, Batches
+    Steps, StepType, DataStep, RequestStatus, Batches, StepsRequestsAssociation
 
 from datetime import datetime
 
@@ -76,9 +76,13 @@ class RequestsDao(BaseValidationDao):
             status=RequestStatus.New,
             ancestor_request=ancestor_request
         )
-        request.steps = [
-            self.steps_dao.get(step["id"]) for step in steps
-        ]
+        assoc = []
+        for i, step in enumerate(steps):
+            assoc.append(StepsRequestsAssociation(
+                request=request,
+                step=self.steps_dao.get(step["id"]),
+                sequence_number=i))
+        request.steps_assoc = assoc
 
         #TODO: set status, test_status
         db.session.add(request)
@@ -99,9 +103,13 @@ class RequestsDao(BaseValidationDao):
         request.run_the_matrix_conf = run_the_matrix_conf
         request.events = events
         request.priority = priority
-        request.steps = [
-            self.steps_dao.get(step["id"]) for step in steps
-        ]
+        assoc = []
+        for i, step in enumerate(steps):
+            assoc.append(StepsRequestsAssociation(
+                request=request,
+                step=self.steps_dao.get(step["id"]),
+                sequence_number=i))
+        request.steps_assoc = assoc
         request.updated = datetime.now()
         db.session.commit()
 
@@ -124,21 +132,30 @@ class RequestsDao(BaseValidationDao):
         request = self.get(id)
 
         steps = []
-        for i, step in enumerate(request.steps):
-            text = "[{0}] {1}".format(i, self.steps_dao.get_details(step.id)["text"])
-            steps.append(dict(
-                title=step.title,
-                id=step.id,
-                text=text
-            ))
+        sorted_steps = self.get_steps_sorted(request)
+        for i, step_assoc in enumerate(sorted_steps):
+            step = step_assoc.step
+            if step is not None:
+                text = "[{0}] {1}".format(i, self.steps_dao.get_details(step.id)["text"])
+                steps.append(dict(
+                    title=step.title,
+                    id=step.id,
+                    text=text))
 
         return {
             "steps": steps,
             "cmssw_release": request.cmssw_release,
             "run_the_matrix": request.run_the_matrix_conf,
             "description": request.description,
-
         }
+
+    def get_steps_sorted(self, request):
+        steps = sorted(request.steps_assoc, key=lambda step_assoc: step_assoc.sequence_number)
+        return steps
+
+    def get_steps_sorted_by_id(self, request_id):
+        request = self.get(request_id)
+        return self.get_steps_sorted(request)
 
     def validate_distinct_label(self, label_to_validate):
         self.validate_distinct_value(label_to_validate, Requests.label)
@@ -164,7 +181,7 @@ class RequestsDao(BaseValidationDao):
         cmssw_release = customization.cmssw_release if customization.cmssw_release else req.cmssw_release
         priority_to_set = customization.priority if customization.priority else req.priority
         steps = [
-            {"id": step.id} for step in req.steps
+            {"id": step_assoc.step.id} for step_assoc in req.steps_assoc
         ]
 
         ancestor = self.get_ancestor(req)

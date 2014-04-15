@@ -6,7 +6,7 @@ __email__ = "zygimantas.gatelis@cern.ch"
     Marshallers rest api to construct json files
 """
 
-from flask.ext.restful import fields
+from flask.ext.restful import fields, marshal
 
 
 users_marshaller = {
@@ -102,6 +102,16 @@ requests_marshaller_paginated = {
     'items': fields.Nested(requests_marshaller)
 }
 
+
+class StepsAssocMapper(fields.Raw):
+    def format(self, value):
+        steps = []
+        for step_assoc in value:
+            steps.append(
+                marshal(step_assoc.step, step_tight_marshaller))
+        return steps
+
+
 request_marshaller = {
     'id': fields.String,
     'label': fields.String,
@@ -113,7 +123,7 @@ request_marshaller = {
     'events': fields.Integer,
     'priority': fields.Integer,
     'status': fields.String,
-    'steps': fields.Nested(step_tight_marshaller)
+    'steps': StepsAssocMapper(attribute='steps_assoc')
 }
 
 request_tight_marshaller = {

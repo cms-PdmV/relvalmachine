@@ -60,6 +60,7 @@ class RequestsDaoTests(BaseTestsCase):
     def setUp(self):
         BaseTestsCase.setUp(self)
         self.request_dao = RequestsDao()
+        self.steps_dao = StepsDao()
 
     def test_request_insertion(self):
         self.assertModelEmpty(Requests)
@@ -83,7 +84,7 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(request.events, 20)
         self.assertEqual(request.priority, 3)
         self.assertEqual(request.run_the_matrix_conf, "-l -i")
-        self.assertEqual(len(request.steps), 2)
+        self.assertEqual(len(request.steps_assoc), 2)
 
     def test_request_update(self):
         utils.prepare_request(label="label", description="desc", steps_count=2)
@@ -103,7 +104,7 @@ class RequestsDaoTests(BaseTestsCase):
         new_request = Requests.query.one()
         self.assertEqual(new_request.label, new_label)
         self.assertEqual(new_request.description, new_desc)
-        self.assertEqual(len(new_request.steps), 3)
+        self.assertEqual(len(new_request.steps_assoc), 3)
 
     def test_request_search(self):
         utils.prepare_request(label="label", step_title="second")
@@ -151,7 +152,7 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual(new_req.priority, customization.priority)
         self.assertEqual(new_req.cmssw_release, customization.cmssw_release)
         self.assertEqual(new_req.description, req.description)
-        self.assertEqual(len(new_req.steps), len(req.steps))
+        self.assertEqual(len(new_req.steps_assoc), len(req.steps_assoc))
 
     def test_request_get_details(self):
         utils.prepare_request(cmssw_release="7_0", run_the_matrix_conf="-all", steps_count=2)
@@ -162,6 +163,15 @@ class RequestsDaoTests(BaseTestsCase):
         self.assertEqual("7_0", details["cmssw_release"])
         self.assertEqual("-all", details["run_the_matrix"])
         self.assertEqual(2, len(details["steps"]))
+
+    def test_request_has_no_relations_to_deleted_step(self):
+        req = utils.prepare_request(steps_count=2)
+        self.assertModelCount(Requests, 1)
+
+        self.assertEqual(len(req.steps_assoc), 2)
+        id = req.steps_assoc[0].step.id
+        self.steps_dao.delete(id)
+        self.assertEqual(len(req.steps_assoc), 1)
 
 
 class BatchesDaoTest(BaseTestsCase):
