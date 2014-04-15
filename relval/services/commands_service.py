@@ -66,9 +66,17 @@ class CommandsService(object):
         template = self.env.get_template('test_request.sh')
         directory = self.__get_testing_directory(request)
 
-        return template.render(dict(
+        params = dict(
             cmssw_release=request.cmssw_release,
-            directory=directory))
+            directory=directory)
+
+        if request.run_the_matrix_conf:
+            params["run_the_matrix_conf"] = request.run_the_matrix_conf
+        # TODO: just temporary. Remove this
+        else:
+            params["run_the_matrix_conf"] = "--what machine -n -e"
+
+        return template.render(params)
 
     def __get_testing_directory(self, request):
         return os.path.join(app.config["TESTS_DIR"], self.__get_subdir(request))

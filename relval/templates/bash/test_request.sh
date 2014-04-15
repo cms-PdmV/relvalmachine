@@ -22,4 +22,4 @@ cp ../../json_data/* json_data
 
 scram b -j 2
 
-runTheMatrix.py --what machine -n -e
+runTheMatrix.py {{run_the_matrix_conf}}
