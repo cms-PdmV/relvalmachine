@@ -30,8 +30,6 @@ class ConfigurationPreparationService(object):
         configuration["label"] = request.label
         steps = dict()
 
-        print [(assoc.sequence_number, assoc.step.title) for assoc in self.requests_dao.get_steps_sorted(request)]
-
         for step_assoc in self.requests_dao.get_steps_sorted(request):
             step = step_assoc.step
             conf_step = dict()
@@ -81,8 +79,7 @@ class ConfigurationPreparationService(object):
         info["ib_blacklist"] = data_step.ib_blacklist
         info["ib_block"] = data_step.ib_block
 
-        info["run"] = "1234,53432,6534 ,   6534, 524"
-        # info["run"] = data_step.run  # should be numbers separated by comma
+        info["run"] = data_step.run  # should be numbers separated by comma
         return info
 
 
