@@ -59,12 +59,14 @@ class ConfigurationPreparationService(object):
         return configuration
 
     def construct_parameters(self, step):
+        none_to_empty = lambda x: x if x is not None else ""
+
         parameters = dict()
         for param in step.parameters:
-            parameters[param.flag] = param.value
+            parameters[param.flag] = none_to_empty(param.value)
         for blob in step.predefined_blobs:
             for param in blob.parameters:
-                parameters[param.flag] = param.value
+                parameters[param.flag] = none_to_empty(param.value)
         return parameters
 
     def construct_data_step(self, step):
