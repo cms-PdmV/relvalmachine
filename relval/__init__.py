@@ -45,7 +45,6 @@ paramiko_logger = logging.getLogger("paramiko")
 paramiko_logger.addHandler(service_log_handler)
 
 
-
 import relval.views
 import relval.rest
 import relval.services

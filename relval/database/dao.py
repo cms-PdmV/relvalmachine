@@ -34,7 +34,7 @@ class BaseValidationDao(object):
     def remove_empty_parameters(self, parameters):
         new_params = []
         for param in parameters:
-            if param["value"] and param["flag"]: # at least one of flag and value shouldn't be empty
+            if param["value"] or param["flag"]: # at least one of flag and value shouldn't be empty
                 new_params.append(param)
         return new_params
 
