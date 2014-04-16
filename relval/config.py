@@ -43,7 +43,7 @@ LOGS_FROM_SERVER_DIR = configuration.get("SSH", "LOGS_FROM_SERVER_DIR")
 TESTS_DIR = configuration.get("SSH", "TESTS_DIR")
 DAYS_TO_KEEP_LOGS = int(configuration.get("SSH", "DAYS_TO_KEEP_LOGS"))
 
-APP_HOSTNAME = configuration.get("OTHER", "APP_HOST")
+APP_HOSTNAME = configuration.get("OTHER", "APP_HOSTNAME")
 
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_DATABASE_URI = "oracle+cx_oracle://%s:%s@%s:%s/%s" % (
