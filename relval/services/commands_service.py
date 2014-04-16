@@ -26,6 +26,7 @@ class CommandsService(object):
         return self.__render_test_command(request)
 
     def submit_for_testing(self, request_id):
+        self.request_dao.update_status(request_id, RequestStatus.CurrentlyTesting)
         request = self.request_dao.get(request_id)
         command = self.__render_test_command(request)
 

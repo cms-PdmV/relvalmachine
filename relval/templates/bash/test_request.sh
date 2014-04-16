@@ -21,7 +21,7 @@ scram b -j 2
 
 mkdir -p json_data
 cern-get-sso-cookie -u {{hostname}} -o relvalmachine-cookie.txt --krb
-curl -s -k -o json_data/{{id}}.json {{hostname}}/api/conf/{{id}} --cookie relvalmachine-cookie.txt
+curl -s -k -o json_data/{{id}}.json {{hostname}}/api/conf/tests/{{id}} --cookie relvalmachine-cookie.txt
 
 
 runTheMatrix.py {{run_the_matrix_conf}}
