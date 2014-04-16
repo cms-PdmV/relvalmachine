@@ -54,7 +54,8 @@ class LogsManager(object):
             with open(filename, "r") as log_file:
                 content = log_file.read()
                 return content
-        except Exception:
+        except Exception as ex:
+            app.logger.info("Failed to find log file {0}. Error: {1}".format(filename, str(ex)))
             return ""
 
     def delete_old_test_log_files(self):
