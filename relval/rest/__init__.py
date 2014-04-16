@@ -6,12 +6,12 @@ from relval import app
 from relval.rest.resources_api import \
     UsersListApi, PredefinedBlobsApi, PredefinedBlobApi,\
     StepsApi, StepApi, RequestsApi, \
-    RequestApi, BatchesApi, BatchApi, IntegrationApi
+    RequestApi, BatchesApi, BatchApi
 from relval.rest.validation_api import \
     StepsValidationApi, RequestsValidationApi, BlobsValidationApi, BatchesValidationApi
 from relval.rest.details_api import BlobDetailsApi, StepDetailsApi, RequestDetailsApi, BatchDetailsApi
 from relval.rest.users_api import UsersResource
-from relval.rest.commands_api import RequestCommandApi, RequestLogsCommandApi
+from relval.rest.commands_api import RequestCommandApi, RequestLogsCommandApi, RunTheMatrixConfigurationApi
 from flask.ext.restful import Api
 
 
@@ -45,6 +45,6 @@ restful_api.add_resource(UsersResource, "/api/users/<field>")
 restful_api.add_resource(RequestCommandApi, "/api/commands/test/<int:request_id>")
 restful_api.add_resource(RequestLogsCommandApi, "/api/commands/test/logs/<int:request_id>")
 
-# integration endpoint
-restful_api.add_resource(IntegrationApi, "/api/conf/<int:request_id>")
+# endpoints for integration into
+restful_api.add_resource(RunTheMatrixConfigurationApi, "/api/conf/tests/<int:request_id>")
 

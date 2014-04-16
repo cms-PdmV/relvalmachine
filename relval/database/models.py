@@ -51,7 +51,7 @@ class Batches(db.Model):
 
 class RequestStatus(object):
     New = "new"
-    ReadyForTest = "readyForTest"
+    CurrentlyTesting = "currentlyTesting"
     TestPassed = "testPassed"
     TestFailed = "testFailed"
     Approved = "approved"
@@ -61,7 +61,7 @@ class RequestStatus(object):
 
     @staticmethod
     def types():
-        return [RequestStatus.New, RequestStatus.ReadyForTest, RequestStatus.TestPassed,
+        return [RequestStatus.New, RequestStatus.CurrentlyTesting, RequestStatus.TestPassed,
                 RequestStatus.TestFailed, RequestStatus.Approved, RequestStatus.Disapproved,
                 RequestStatus.SubmittedSuccessful, RequestStatus.SubmittedFailed]
 

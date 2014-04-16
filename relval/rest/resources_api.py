@@ -282,16 +282,3 @@ class BatchApi(Resource):
         data = convert_keys_to_string(request.json)
         self.dao.update(batch_id, **data)
 
-
-class IntegrationApi(Resource):
-    """ Probably temporary endpoint just to view json which will be passed to run the matrix
-    """
-
-    def __init__(self):
-        self.service = ConfigurationPreparationService()
-
-    def get(self, request_id):
-        return jsonify(
-            self.service.prepare_configuration(request_id)
-        )
-

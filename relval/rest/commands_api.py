@@ -2,12 +2,14 @@ __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
 
+from relval.services.runTheMatrix_integration import ConfigurationPreparationService
 from relval.services.concurrent_executor import SubmitForTestingTask
 from relval.services import tasks_executor
 from relval import app
 from relval.services.commands_service import CommandsService
 from flask.ext.restful import Resource
 from flask.wrappers import Response
+from flask import jsonify
 from functools import wraps
 
 
@@ -53,3 +55,16 @@ class RequestLogsCommandApi(Resource):
     @returns_plain_text
     def get(self, request_id):
         return self.service.get_logs(request_id)
+
+
+class RunTheMatrixConfigurationApi(Resource):
+    """ Endpoint to fetch json configuration for runTheMatrix
+    """
+
+    def __init__(self):
+        self.service = ConfigurationPreparationService()
+
+    def get(self, request_id):
+        return jsonify(
+            self.service.prepare_configuration(request_id)
+        )

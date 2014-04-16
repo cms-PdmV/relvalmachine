@@ -140,7 +140,8 @@ class RequestsDao(BaseValidationDao):
                 steps.append(dict(
                     title=step.title,
                     id=step.id,
-                    text=text))
+                    text=text
+))
 
         return {
             "steps": steps,
@@ -415,8 +416,6 @@ class StepsDao(BaseValidationDao):
         step = self.get(id)
         text = "cmsDriver.py {0} ".format(step.name or "")
         blobs = []
-        if step.type == StepType.FirstMc:
-            text += step.data_step.data_set + " "
         if step.type == StepType.Default or step.type == StepType.FirstMc:
             for p in step.parameters:
                 text += " ".join([p.flag or "", p.value or ""]) + " "  # null safe
