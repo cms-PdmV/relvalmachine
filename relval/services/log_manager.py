@@ -6,7 +6,7 @@ import shutil
 import time
 import re
 from relval import app
-
+from relval.services.ssh_service import SshService
 
 class LogsManager(object):
     """ Service that manages logs from testing submission and other servers.
@@ -15,66 +15,43 @@ class LogsManager(object):
     def __init__(self):
         self.logs_dir = app.config["LOGS_FROM_SERVER_DIR"]
 
+        # check if we need to ssh into machine when
+        if self.logs_dir.startswith("/afs"):
+            self.logs_handler = LogsOnExternalMachineHandler()
+        else:
+            self.logs_handler = LogsOnFileSystemHandler()
+
     def save_testing_log(self, name, errors, info, subdir):
-        logs_dir = os.path.join("tests", subdir)
-        if errors:
-            self.save_log(self.stderr_log(name), errors, logs_dir)
-        else:  # remove old log if no errors was
-            self.remove_if_exists(self.stderr_log(name), logs_dir)
-
-        self.save_log(self.stdout_log(name), info, logs_dir)
-
-    def save_log(self, name, text, subdir):
         path = os.path.join(self.logs_dir, subdir)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        name = self.__get_file_name(name)
-        filename = os.path.join(path, name)
-        app.logger.info("Saving log to {0}".format(filename))
-        with open(filename, "w") as log_file:
-            log_file.write(text)
+        errors_file_name = self.__get_file_name(self.stderr_log(name))
+        info_file_name = self.__get_file_name(self.stdout_log(name))
+        if errors:
+            self.logs_handler.save_log_file(errors_file_name, path, errors)
+        else:  # remove old log if no errors was
+            self.logs_handler.remove_log(os.path.join(path, errors_file_name))
+
+        self.logs_handler.save_log_file(info_file_name, path, info)
 
     def get_logs(self, name, subdir):
         """ Returns both stdout and stderr logs
         """
+        path = os.path.join(self.logs_dir, subdir)
         return "STDOUT:\n{0}\nSTDERR:\n{1}".format(
-            self.get_testing_std_out_log(name, subdir),
-            self.get_testing_std_error_log(name, subdir))
+            self.get_testing_std_out_log(name, path),
+            self.get_testing_std_error_log(name, path))
 
-    def get_testing_std_error_log(self, name, subdir):
-        return self.__get_log(self.stderr_log(name), os.path.join("tests", subdir))
+    def get_testing_std_error_log(self, name, path):
+        file_name = self.__get_file_name(self.stderr_log(name))
+        path = os.path.join(path, file_name)
+        return self.logs_handler.get_log_file(path)
 
-    def get_testing_std_out_log(self, name, subdir):
-        return self.__get_log(self.stdout_log(name), os.path.join("tests", subdir))
-
-    def __get_log(self, name, subdir):
-        name = self.__get_file_name(name)
-        filename = os.path.join(self.logs_dir, subdir, name)
-        try:
-            with open(filename, "r") as log_file:
-                content = log_file.read()
-                return content
-        except Exception as ex:
-            app.logger.info("Failed to find log file {0}. Error: {1}".format(filename, str(ex)))
-            return ""
+    def get_testing_std_out_log(self, name, path):
+        file_name = self.__get_file_name(self.stdout_log(name))
+        path = os.path.join(path, file_name)
+        return self.logs_handler.get_log_file(path)
 
     def delete_old_test_log_files(self):
-        minutes_limit = app.config["DAYS_TO_KEEP_LOGS"]
-        current_time = time.time()
-        # limit = current_time - 60 * 60 * 24 * days_limit
-
-        limit = current_time - 60 * minutes_limit
-        path = os.path.join(self.logs_dir, "tests")
-        if not os.path.exists(path):
-            os.makedirs(path)
-        for directory in os.listdir(path):
-            path_to_file = os.path.join(path, directory)
-            st = os.stat(path_to_file)
-            mtime = st.st_mtime
-            if mtime < limit:
-                app.logger.info("Removing old directory %s. It is %d minutes old" % (
-                    directory, int((current_time - mtime) / 60)))
-                LogsManager.remove_dir_or_file(path_to_file)
+        self.logs_handler.delete_old_logs(app.config["DAYS_TO_KEEP_LOGS"], self.logs_dir)
 
     def __get_file_name(self, name):
         return self.__turn_into_valid_file_name(name) + ".log"
@@ -94,6 +71,85 @@ class LogsManager(object):
         if os.path.exists(path):
             os.remove(path)
 
+
     stderr_log = lambda self, name: "%s_stderr" % name
     stdout_log = lambda self, name: "%s_stdout" % name
+
+
+class LogsHandler(object):
+
+    def save_log_file(self, name, path, content):
+        raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
+
+    def get_log_file(self, path):
+        raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
+
+    def remove_log(self, path):
+        raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
+
+    def delete_old_logs(self, time):
+        raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
+
+
+class LogsOnFileSystemHandler(LogsHandler):
+
+    def save_log_file(self, name, path, content):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        filename = os.path.join(path, name)
+        app.logger.info("Saving log to {0}".format(filename))
+        with open(filename, "w") as log_file:
+            log_file.write(content)
+
+    def get_log_file(self, path):
+        try:
+            with open(path, "r") as log_file:
+                content = log_file.read()
+                return content
+        except Exception as ex:
+            app.logger.info("Failed to find log file {0}. Error: {1}".format(path, str(ex)))
+            return ""
+
+    def remove_log(self, path):
+        if os.path.exists(path):
+            os.remove(path)
+
+    def delete_old_logs(self, time_limit, path):
+        current_time = time.time()
+
+        # This is days
+        # limit = current_time - 60 * 60 * 24 * time_limit
+        # This is minutes
+        limit = current_time - 60 * time_limit
+
+        current_time = time.time()
+        if not os.path.exists(path):
+            os.makedirs(path)
+        for directory in os.listdir(path):
+            path_to_file = os.path.join(path, directory)
+            st = os.stat(path_to_file)
+            mtime = st.st_mtime
+            if mtime < limit:
+                app.logger.info("Removing old directory %s. It is %d minutes old" % (
+                    directory, int((current_time - mtime) / 60)))
+                LogsManager.remove_dir_or_file(path_to_file)
+
+
+class LogsOnExternalMachineHandler(LogsHandler):
+
+    def __init__(self):
+        self.ssh = SshService()
+
+    def save_log_file(self, name, path, content):
+        self.ssh.connect_to_server();
+        self.ssh.upload_file_to_server(path, name, content)
+
+    def get_log_file(self, path):
+        self.ssh.connect_to_server();
+        return self.ssh.get_file_content(path)
+
+    def remove_log(self, path):
+        self.ssh.connect_to_server()
+        self.ssh.remove_file(path)
+
 

@@ -686,16 +686,6 @@ class StepsDaoTest(BaseTestsCase):
         expected = "cmsDriver.py name " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
         self.assertEqual(expected, details["text"])
 
-    def test_step_first_mc_get_details(self):
-        utils.prepare_step(title="step-title", parameters_count=3, type=StepType.FirstMc, blobs_count=2,
-                           data_step=factory.data_step(data_set="data_set"))
-        id = Steps.query.one().id
-
-        details = self.steps_dao.get_details(id)
-        expected = "cmsDriver.py  data_set " + " ".join(["F{0} V{0}".format(i) for i in range(3)]) + " "
-        self.assertEqual(expected, details["text"])
-        self.assertTrue(details.has_key("blobs"))
-
     def test_step_first_data_with_ib_block_get_details(self):
         data_step = factory.data_step(data_set="test-data_set", ib_block="test_ib", run="123,56")
         utils.prepare_step(title="step-title", type=StepType.FirstData, data_step=data_step)

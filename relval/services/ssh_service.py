@@ -63,6 +63,25 @@ class SshService(object):
             app.logger.error("Failed to upload file: {0}".format(str(ex)))
             raise ex
 
+    def get_file_content(self, path):
+        try:
+            sftp_client = self.ssh_client.open_sftp()
+            with sftp_client.open(path, "r") as f:
+                return f.read()
+        except Exception as ex:
+            print "Cannot read content"
+            app.logger.error("Failed to read content from file {0}. Error: {1}".format(path, str(ex)))
+            raise ex
+
+    def remove_file(self, path):
+        try:
+            sftp_client = self.ssh_client.open_sftp()
+            sftp_client.remove(path)
+        except Exception as ex:
+            print "Cannot remove file"
+            app.logger.error("Failed to delete file {0}. Error: {1}".format(path, str(ex)))
+            raise ex
+
 
 
 

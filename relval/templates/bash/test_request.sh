@@ -14,6 +14,7 @@ cd {{cmssw_release}}/src
 
 eval `scramv1 runtime -sh`
 
+# no need for this when runTheMatrix changes will be merged.
 git cms-addpkg Configuration/PyReleaseValidation
 yes | cp  -rf /afs/cern.ch/user/z/zgatelis/public/CMSSW_7_1_0_pre4/src/Configuration/PyReleaseValidation/python/* Configuration/PyReleaseValidation/python/
 
