@@ -146,7 +146,12 @@ class LogsOnExternalMachineHandler(LogsHandler):
 
     def get_log_file(self, path):
         self.ssh.connect_to_server();
-        return self.ssh.get_file_content(path)
+        try:
+            content = self.ssh.get_file_content(path)
+            return content
+        except Exception as ex:
+            app.logger.info("Failed to find log file {0}. Error: {1}".format(path, str(ex)))
+            return ""
 
     def remove_log(self, path):
         self.ssh.connect_to_server()
