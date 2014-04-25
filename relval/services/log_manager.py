@@ -1,3 +1,4 @@
+
 __author__ = "Zygimantas Gatelis"
 __email__ = "zygimantas.gatelis@cern.ch"
 
@@ -5,6 +6,7 @@ import os
 import shutil
 import time
 import re
+from functools import wraps
 from jinja2.environment import Environment
 from jinja2.loaders import PackageLoader
 from relval import app
@@ -116,11 +118,19 @@ class LogsHandler(object):
         raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
 
 
+def accepts_list(f):
+    @wraps(f)
+    def decorated_function(self, arg):
+        if type(arg) is not list:
+            arg = [arg]
+        return f(self, arg)
+    return decorated_function
+
+
 class LogsOnFileSystemHandler(LogsHandler):
 
+    @accepts_list
     def save_log_file(self, log_files):
-        if type(log_files) is not list:
-            log_files = [log_files]
         for log in log_files:
             if not os.path.exists(log.path):
                 os.makedirs(log.path)
@@ -128,10 +138,9 @@ class LogsOnFileSystemHandler(LogsHandler):
             with open(log.full_path(), "w") as log_file:
                 log_file.write(log.content)
 
+    @accepts_list
     def get_log_file(self, log_files):
         contents = []
-        if type(log_files) is not list:
-            log_files = [log_files]
         for log in log_files:
             try:
                 with open(log.full_path(), "r") as log_file:
@@ -142,9 +151,8 @@ class LogsOnFileSystemHandler(LogsHandler):
                 contents.append("")
         return contents
 
+    @accepts_list
     def remove_log(self, log_files):
-        if type(log_files) is not list:
-            log_files = [log_files]
         for log in log_files:
             if os.path.exists(log.full_path()):
                 os.remove(log.full_path())
@@ -176,9 +184,8 @@ class LogsOnExternalMachineHandler(LogsHandler):
         self.ssh = SshService()
         self.env = Environment(loader=PackageLoader("relval", "/templates/bash"))
 
+    @accepts_list
     def save_log_file(self, log_files):
-        if type(log_files) is not list:
-            log_files = [log_files]
         for log in log_files:
             try:
                 self.ssh.connect_to_server()
@@ -186,9 +193,8 @@ class LogsOnExternalMachineHandler(LogsHandler):
             except Exception:
                 pass  # do not stop if one file fails
 
+    @accepts_list
     def get_log_file(self, log_files):
-        if type(log_files) is not list:
-            log_files = [log_files]
         contents = []
         self.ssh.connect_to_server()
         sftp = self.ssh.get_sftp_client()
@@ -198,12 +204,11 @@ class LogsOnExternalMachineHandler(LogsHandler):
                     contents.append(f.read())
             except Exception as ex:
                 app.logger.info("Failed to find log file {0}. Error: {1}".format(log.full_path(), str(ex)))
-                return contents.append("")
+                contents.append("")
         return contents
 
+    @accepts_list
     def remove_log(self, log_files):
-        if type(log_files) is not list:
-            log_files = [log_files]
         self.ssh.connect_to_server()
         sftp = self.ssh.get_sftp_client()
         for log in log_files:
