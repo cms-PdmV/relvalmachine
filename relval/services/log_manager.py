@@ -5,8 +5,11 @@ import os
 import shutil
 import time
 import re
+from jinja2.environment import Environment
+from jinja2.loaders import PackageLoader
 from relval import app
 from relval.services.ssh_service import SshService
+
 
 class LogsManager(object):
     """ Service that manages logs from testing submission and other servers.
@@ -139,6 +142,7 @@ class LogsOnExternalMachineHandler(LogsHandler):
 
     def __init__(self):
         self.ssh = SshService()
+        self.env = Environment(loader=PackageLoader("relval", "/templates/bash"))
 
     def save_log_file(self, name, path, content):
         self.ssh.connect_to_server();
@@ -158,6 +162,19 @@ class LogsOnExternalMachineHandler(LogsHandler):
         try:
             self.ssh.remove_file(path)
         except Exception as ex:
+            app.logger.info("Cannot find file {0}".format(path))
             pass  # file not exists
 
+    def delete_old_logs(self, time_limit, path):  # time limit in days
+        template = self.env.get_template('delete_old_logs.sh')
 
+        params = dict(
+            days_to_keep_logs=time_limit,
+            directory=path)
+
+        command = template.render(params)
+        try:
+            self.ssh.execute(command)
+        except Exception as ex:
+            app.logger.error(
+                "Failed to execute command on server when cleaning up old log files. Error: {0}".format(str(ex)))

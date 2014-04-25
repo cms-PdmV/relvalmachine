@@ -47,6 +47,9 @@ class SshService(object):
 
         return logs, errors
 
+    def get_sftp_client(self):
+        return self.ssh_client.open_sftp()
+
     def upload_file_to_server(self, path, file_name, data):
         # make sure dir exists for file if not create it
         _, errors = self.execute("mkdir -p {0}".format(path))
@@ -64,23 +67,13 @@ class SshService(object):
             raise ex
 
     def get_file_content(self, path):
-        try:
-            sftp_client = self.ssh_client.open_sftp()
-            with sftp_client.open(path, "r") as f:
-                return f.read()
-        except Exception as ex:
-            print "Cannot read content"
-            app.logger.error("Failed to read content from file {0}. Error: {1}".format(path, str(ex)))
-            raise ex
+        sftp_client = self.ssh_client.open_sftp()
+        with sftp_client.open(path, "r") as f:
+            return f.read()
 
     def remove_file(self, path):
-        try:
-            sftp_client = self.ssh_client.open_sftp()
-            sftp_client.remove(path)
-        except Exception as ex:
-            print "Cannot remove file"
-            app.logger.error("Failed to delete file {0}. Error: {1}".format(path, str(ex)))
-            raise ex
+        sftp_client = self.ssh_client.open_sftp()
+        sftp_client.remove(path)
 
 
 
