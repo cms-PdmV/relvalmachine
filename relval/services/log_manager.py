@@ -87,7 +87,7 @@ class LogsHandler(object):
     def remove_log(self, path):
         raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
 
-    def delete_old_logs(self, time):
+    def delete_old_logs(self, time_limit, path):
         raise NotImplementedError("LogsHandler is abstract. Please extend and override this method.")
 
 
@@ -150,6 +150,9 @@ class LogsOnExternalMachineHandler(LogsHandler):
 
     def remove_log(self, path):
         self.ssh.connect_to_server()
-        self.ssh.remove_file(path)
+        try:
+            self.ssh.remove_file(path)
+        except Exception as ex:
+            pass  # file not exists
 
 
