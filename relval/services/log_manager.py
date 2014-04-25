@@ -194,7 +194,7 @@ class LogsOnExternalMachineHandler(LogsHandler):
         sftp = self.ssh.get_sftp_client()
         for log in log_files:
             try:
-                with sftp.open(log.full_path, "r") as f:
+                with sftp.open(log.full_path(), "r") as f:
                     contents.append(f.read())
             except Exception as ex:
                 app.logger.info("Failed to find log file {0}. Error: {1}".format(log.full_path(), str(ex)))
@@ -208,9 +208,9 @@ class LogsOnExternalMachineHandler(LogsHandler):
         sftp = self.ssh.get_sftp_client()
         for log in log_files:
             try:
-                sftp.remove(log.full_path)
+                sftp.remove(log.full_path())
             except Exception as ex:
-                app.logger.info("Cannot find file {0}".format(log.full_path))
+                app.logger.info("Cannot find file {0}".format(log.full_path()))
                 pass  # file not exists
 
     def delete_old_logs(self, time_limit, path):  # time limit in days
