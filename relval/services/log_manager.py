@@ -122,7 +122,7 @@ class LogsOnFileSystemHandler(LogsHandler):
 
         # This is days
         # limit = current_time - 60 * 60 * 24 * time_limit
-        # This is minutes
+        # This is minutes use only for testing to test. In prod we use days
         limit = current_time - 60 * time_limit
 
         current_time = time.time()
@@ -174,6 +174,7 @@ class LogsOnExternalMachineHandler(LogsHandler):
 
         command = template.render(params)
         try:
+            self.ssh.connect_to_server()
             self.ssh.execute(command)
         except Exception as ex:
             app.logger.error(
