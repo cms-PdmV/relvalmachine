@@ -79,7 +79,11 @@ holds correct database configuration.
 
 After you verify database connection parameters you can create database (if not created yet) with command:
 
-    python relval/database/create.py
+    python manage.py createdb
+
+Use this command if you want to drop database (all data will be lost then)
+
+    python manage.py dropdb
 
 ## Deploy application
 

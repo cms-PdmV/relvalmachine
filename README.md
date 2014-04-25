@@ -17,11 +17,11 @@ If you want to deploy on virtual machine check `deployment-descriptor.md` file f
 
 After that You can create database with following command:
 
-    python relval/database/create.py
+    python manage.py create.db
 
 If You want to drop database for whatever reason you can use fallowing command:
 
-    python relval/database/drop.py
+    python manage.py dropdb
 
 ### Deployment
 
