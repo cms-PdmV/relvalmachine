@@ -75,7 +75,9 @@ At first make sure that you still using virtualenv created previously, then cd i
 Configuration is stored in file `relval/config.py`.
 Before deployment you should set correct `ENVIRONMENT` property
 and verify that corresponding configuration file (defined in property `[ENVIRONMENT]_ENV_CONFIG_FILE`)
-holds correct database configuration.
+holds correct configuration.
+Local configuration is stored into `relval/configuration/local.properties`. You can use this file as example of configuration. You should place similiar file into virtual machine and set `[ENVIRONMENT]_ENV_CONFIG_FILE` to property file path before deployment.
+
 
 After you verify database connection parameters you can create database (if not created yet) with command:
 
